@@ -1,0 +1,768 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Project Schedule | {{ project.name }} | AIMS
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+.schedule-page-heading {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.schedule-page-heading h2 {
+    margin: 0 0 5px;
+}
+
+.schedule-page-heading p {
+    margin: 0;
+    color: #748087;
+    font-size: 11px;
+}
+
+.schedule-source-label {
+    padding: 6px 10px;
+    background: #eef4f2;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.schedule-toolbar {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.schedule-search {
+    width: 390px;
+    height: 43px;
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d8e0dd;
+    border-radius: 8px;
+}
+
+.schedule-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+}
+
+.schedule-filters {
+    display: flex;
+    gap: 6px;
+}
+
+.schedule-filter-button {
+    padding: 0 13px;
+    border: 1px solid #d7dfdc;
+    border-radius: 7px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.schedule-filter-button.active {
+    background: #285f4c;
+    color: #ffffff;
+}
+
+.schedule-package-list {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.schedule-package {
+    background: #ffffff;
+    border: 1px solid #dce4e1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.schedule-package-header {
+    padding: 17px 20px;
+    display: flex;
+    justify-content: space-between;
+    background: #f8faf9;
+}
+
+.package-eyebrow {
+    font-size: 8px;
+    color: #77837f;
+}
+
+.package-pm {
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule-table th {
+    padding: 11px 16px;
+    border-bottom: 1px solid #e5ebe8;
+    text-align: left;
+    font-size: 8px;
+}
+
+.schedule-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid #edf0ef;
+    font-size: 10px;
+}
+
+.schedule-status {
+    display: inline-block;
+    min-width: 68px;
+    padding: 5px 8px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.schedule-status.complete {
+    background: #e5f3ec;
+    color: #1c7555;
+}
+
+.schedule-status.track {
+    background: #e8f0ed;
+    color: #376554;
+}
+
+.schedule-status.behind {
+    background: #fde9e7;
+    color: #a7493d;
+}
+
+.progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.progress-bar {
+    width: 90px;
+    height: 6px;
+    background: #e8edeb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0;
+    height: 100%;
+    background: #39745e;
+}
+
+.schedule-risk {
+    margin: 15px 20px 18px;
+    padding: 12px 14px;
+    background: #fff8e8;
+    border: 1px solid #f0e1b8;
+    border-radius: 7px;
+}
+
+.schedule-risk strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 9px;
+}
+
+.schedule-risk p {
+    margin: 0;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+</style>
+
+
+
+<section class="project-dashboard-header">
+
+    <div>
+
+        <span class="page-eyebrow">
+            PROJECT {{ project.number }}
+        </span>
+
+        <h1>
+            {{ project.name }}
+        </h1>
+
+        <p>
+            Tech Center fabrication schedule and milestone tracking
+        </p>
+
+    </div>
+
+    <span class="status-badge active-status-badge">
+        {{ project.status }}
+    </span>
+
+</section>
+
+
+
+<nav class="project-dashboard-nav">
+
+    <a
+        href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Overview
+    </a>
+
+    <a
+        href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Purchase Orders
+    </a>
+
+    <a
+        href="{{ url_for('project_schedule', project_slug=project_slug) }}"
+        class="project-dashboard-tab active"
+    >
+        Project Schedule
+    </a>
+
+    <a
+        href="{{ url_for('project_materials', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Materials
+    </a>
+
+    <a
+        href="#"
+        class="project-dashboard-tab"
+    >
+        Reports
+    </a>
+
+</nav>
+
+
+
+<section class="schedule-page-heading">
+
+    <div>
+
+        <h2>
+            Project Schedule
+        </h2>
+
+        <p>
+            Engineering, procurement, fabrication, FAT,
+            shipment, and as-built milestones.
+        </p>
+
+    </div>
+
+    <span class="schedule-source-label">
+        Tech Center Schedule
+    </span>
+
+</section>
+
+
+
+<section class="schedule-toolbar">
+
+    <div class="schedule-search">
+
+        <input
+            type="text"
+            id="scheduleSearch"
+            placeholder="Search milestone or package..."
+            oninput="filterSchedule()"
+        >
+
+    </div>
+
+
+    <div class="schedule-filters">
+
+        <button
+            class="schedule-filter-button active"
+            onclick="setScheduleFilter('all', this)"
+        >
+            All
+        </button>
+
+        <button
+            class="schedule-filter-button"
+            onclick="setScheduleFilter('complete', this)"
+        >
+            Complete
+        </button>
+
+        <button
+            class="schedule-filter-button"
+            onclick="setScheduleFilter('track', this)"
+        >
+            On Track
+        </button>
+
+        <button
+            class="schedule-filter-button"
+            onclick="setScheduleFilter('behind', this)"
+        >
+            Behind
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<section class="schedule-package-list">
+
+
+{% for package in schedule %}
+
+
+<article
+    class="schedule-package"
+    data-package-search="{{ package.package }} {{ package.project_number }} {{ package.pm }}"
+>
+
+
+    <div class="schedule-package-header">
+
+        <div>
+
+            <span class="package-eyebrow">
+                {{ package.project_number }}
+            </span>
+
+            <h3>
+                {{ package.package }}
+            </h3>
+
+        </div>
+
+        <span class="package-pm">
+            PM: {{ package.pm }}
+        </span>
+
+    </div>
+
+
+
+    <table class="schedule-table">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    STATUS
+                </th>
+
+                <th>
+                    ACTIVITY
+                </th>
+
+                <th>
+                    % COMPLETE
+                </th>
+
+                <th>
+                    TARGET DATE
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+        {% for milestone in package.milestones %}
+
+
+        <tr
+            class="schedule-row"
+            data-status="{{ milestone.status }}"
+            data-search="{{ milestone.description }} {{ milestone.date }}"
+        >
+
+
+            <td>
+
+
+                {% if milestone.status == "Complete" %}
+
+                <span class="schedule-status complete">
+                    Complete
+                </span>
+
+
+                {% elif milestone.status == "Behind" %}
+
+                <span class="schedule-status behind">
+                    Behind
+                </span>
+
+
+                {% else %}
+
+                <span class="schedule-status track">
+                    On Track
+                </span>
+
+
+                {% endif %}
+
+
+            </td>
+
+
+
+            <td>
+
+                <strong>
+                    {{ milestone.description }}
+                </strong>
+
+            </td>
+
+
+
+            <td>
+
+
+                {% if milestone.percent is not none %}
+
+
+                <div class="progress-wrapper">
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress-fill"
+                            data-progress="{{ milestone.percent }}"
+                        >
+                        </div>
+
+                    </div>
+
+
+                    <span>
+                        {{ milestone.percent }}%
+                    </span>
+
+
+                </div>
+
+
+                {% else %}
+
+
+                <span>
+                    —
+                </span>
+
+
+                {% endif %}
+
+
+            </td>
+
+
+
+            <td>
+                {{ milestone.date }}
+            </td>
+
+
+        </tr>
+
+
+        {% endfor %}
+
+
+        </tbody>
+
+
+    </table>
+
+
+
+    {% if package.risk %}
+
+
+    <div class="schedule-risk">
+
+        <strong>
+            ⚠ PROJECT / SCHEDULE RISK
+        </strong>
+
+        <p>
+            {{ package.risk }}
+        </p>
+
+    </div>
+
+
+    {% endif %}
+
+
+</article>
+
+
+{% endfor %}
+
+
+</section>
+
+
+
+<script>
+
+
+let scheduleFilter = "all";
+
+
+function initializeProgressBars() {
+
+    document
+        .querySelectorAll(
+            ".progress-fill"
+        )
+        .forEach(
+            function(bar) {
+
+                let value =
+                    Number(
+                        bar.dataset.progress
+                    );
+
+                if (
+                    Number.isNaN(value)
+                ) {
+
+                    value = 0;
+
+                }
+
+                value =
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            value
+                        )
+                    );
+
+                bar.style.width =
+                    value + "%";
+
+            }
+        );
+
+}
+
+
+function normalizeStatus(value) {
+
+    const status =
+        value
+            .toLowerCase()
+            .trim();
+
+
+    if (
+        status === "complete"
+    ) {
+
+        return "complete";
+
+    }
+
+
+    if (
+        status === "behind"
+    ) {
+
+        return "behind";
+
+    }
+
+
+    return "track";
+
+}
+
+
+function setScheduleFilter(
+    filter,
+    button
+) {
+
+    scheduleFilter = filter;
+
+
+    document
+        .querySelectorAll(
+            ".schedule-filter-button"
+        )
+        .forEach(
+            function(btn) {
+
+                btn
+                    .classList
+                    .remove(
+                        "active"
+                    );
+
+            }
+        );
+
+
+    button
+        .classList
+        .add(
+            "active"
+        );
+
+
+    filterSchedule();
+
+}
+
+
+function filterSchedule() {
+
+    const searchValue =
+        document
+            .getElementById(
+                "scheduleSearch"
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    document
+        .querySelectorAll(
+            ".schedule-package"
+        )
+        .forEach(
+            function(packageCard) {
+
+
+                const packageText =
+                    packageCard
+                        .dataset
+                        .packageSearch
+                        .toLowerCase();
+
+
+                const rows =
+                    packageCard
+                        .querySelectorAll(
+                            ".schedule-row"
+                        );
+
+
+                let visibleRows = 0;
+
+
+                rows.forEach(
+                    function(row) {
+
+
+                        const rowText =
+                            row
+                                .dataset
+                                .search
+                                .toLowerCase();
+
+
+                        const status =
+                            normalizeStatus(
+                                row.dataset.status
+                            );
+
+
+                        const searchMatch =
+                            packageText.includes(
+                                searchValue
+                            ) ||
+                            rowText.includes(
+                                searchValue
+                            );
+
+
+                        const statusMatch =
+                            scheduleFilter ===
+                            "all" ||
+                            scheduleFilter ===
+                            status;
+
+
+                        if (
+                            searchMatch &&
+                            statusMatch
+                        ) {
+
+                            row.style.display =
+                                "table-row";
+
+                            visibleRows++;
+
+                        } else {
+
+                            row.style.display =
+                                "none";
+
+                        }
+
+
+                    }
+                );
+
+
+                packageCard.style.display =
+                    visibleRows > 0
+                    ? "block"
+                    : "none";
+
+
+            }
+        );
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeProgressBars
+);
+
+
+</script>
+
+
+{% endblock %}

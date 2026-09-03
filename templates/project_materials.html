@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Materials | {{ project.name }} | AIMS
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+.material-page-heading {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.material-page-heading h2 {
+    margin: 0 0 5px;
+}
+
+.material-page-heading p {
+    margin: 0;
+    color: #748087;
+    font-size: 11px;
+}
+
+.material-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.material-card {
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #dce4e1;
+    border-radius: 10px;
+}
+
+.material-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.material-receipt-label {
+    font-size: 8px;
+    color: #78847f;
+}
+
+.material-po {
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+.material-part-section {
+    margin-top: 15px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 0.8fr 2fr;
+    background: #f8faf9;
+}
+
+.material-section-label {
+    display: block;
+    font-size: 8px;
+    color: #7d8884;
+}
+
+.staging-grid {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid #e1e7e4;
+}
+
+.staging-grid > div {
+    padding: 13px;
+    border-right: 1px solid #e1e7e4;
+}
+
+.staging-grid > div:last-child {
+    border-right: none;
+}
+
+.staging-grid span {
+    display: block;
+    font-size: 9px;
+    color: #77837f;
+}
+
+.empty-materials {
+    padding: 60px;
+    background: #ffffff;
+    border: 1px solid #dce4e1;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.empty-materials p {
+    color: #748087;
+    font-size: 11px;
+}
+
+</style>
+
+
+
+<section class="project-dashboard-header">
+
+    <div>
+
+        <span class="page-eyebrow">
+            PROJECT {{ project.number }}
+        </span>
+
+        <h1>
+            {{ project.name }}
+        </h1>
+
+        <p>
+            Project material staging and storage visibility
+        </p>
+
+    </div>
+
+    <span class="status-badge active-status-badge">
+        {{ project.status }}
+    </span>
+
+</section>
+
+
+
+<nav class="project-dashboard-nav">
+
+    <a
+        href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Overview
+    </a>
+
+    <a
+        href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Purchase Orders
+    </a>
+
+    <a
+        href="{{ url_for('project_schedule', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Project Schedule
+    </a>
+
+    <a
+        href="{{ url_for('project_materials', project_slug=project_slug) }}"
+        class="project-dashboard-tab active"
+    >
+        Materials
+    </a>
+
+    <a href="#" class="project-dashboard-tab">
+        Reports
+    </a>
+
+</nav>
+
+
+
+<section class="material-page-heading">
+
+    <div>
+
+        <h2>
+            Materials
+        </h2>
+
+        <p>
+            Receipt, staging, and project storage information.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+{% if materials %}
+
+
+<section class="material-card-list">
+
+
+{% for material in materials %}
+
+
+<article class="material-card">
+
+
+    <div class="material-card-header">
+
+        <div>
+
+            <span class="material-receipt-label">
+                RECEIPT
+            </span>
+
+            <h3>
+                {{ material.receipt }}
+            </h3>
+
+            <span class="material-po">
+                PO {{ material.po_number }}
+            </span>
+
+        </div>
+
+
+        <strong>
+            {{ material.status }}
+        </strong>
+
+    </div>
+
+
+
+    <div class="material-part-section">
+
+        <div>
+
+            <span class="material-section-label">
+                PART NUMBER
+            </span>
+
+            <strong>
+                {{ material.part_number }}
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span class="material-section-label">
+                DESCRIPTION
+            </span>
+
+            <strong>
+                {{ material.description }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="staging-grid">
+
+        <div>
+
+            <span>
+                Received
+            </span>
+
+            <strong>
+                {{ material.received_qty }}
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                Staged
+            </span>
+
+            <strong>
+                {{ material.staged_qty }}
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                Remaining
+            </span>
+
+            <strong>
+                {{ material.remaining_to_stage }}
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                Storage Location
+            </span>
+
+            <strong>
+                {{ material.location }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+</article>
+
+
+{% endfor %}
+
+
+</section>
+
+
+{% else %}
+
+
+<div class="empty-materials">
+
+    <h3>
+        Material data not added yet
+    </h3>
+
+    <p>
+        This project exists in the Tech Center fabrication
+        schedule, but receipt and staging information has not
+        been added to the mock yet.
+    </p>
+
+</div>
+
+
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Purchase Orders | {{ project.name }} | AIMS
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+.po-page-heading {
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.po-page-heading h2 {
+    margin: 0 0 5px;
+    font-size: 20px;
+}
+
+.po-page-heading p {
+    margin: 0;
+    color: #748087;
+    font-size: 11px;
+}
+
+.acumatica-source-label {
+    padding: 6px 10px;
+    background: #eef4f2;
+    border: 1px solid #d7e3df;
+    border-radius: 20px;
+    color: #3f6759;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.po-toolbar {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.po-search {
+    width: 390px;
+    height: 43px;
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d8e0dd;
+    border-radius: 8px;
+}
+
+.po-search span {
+    margin-right: 8px;
+}
+
+.po-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.po-filter-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.po-filter-button {
+    height: 36px;
+    padding: 0 13px;
+    border: 1px solid #d7dfdc;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #59676c;
+    cursor: pointer;
+}
+
+.po-filter-button.active {
+    background: #285f4c;
+    color: #ffffff;
+}
+
+.po-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.po-card {
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #dce4e1;
+    border-radius: 10px;
+}
+
+.po-card-header {
+    margin-bottom: 17px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.po-number-label {
+    display: block;
+    color: #78847f;
+    font-size: 8px;
+}
+
+.po-vendor {
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+.po-part-section {
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 0.8fr 2fr;
+    gap: 20px;
+    background: #f8faf9;
+    border-radius: 7px;
+}
+
+.po-section-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 8px;
+}
+
+.po-quantity-grid {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid #e1e7e4;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.po-quantity-grid > div {
+    padding: 13px;
+    border-right: 1px solid #e1e7e4;
+}
+
+.po-quantity-grid > div:last-child {
+    border-right: none;
+}
+
+.po-quantity-grid span {
+    display: block;
+    margin-bottom: 6px;
+    color: #77837f;
+    font-size: 9px;
+}
+
+.po-receipt-status {
+    font-size: 9px;
+}
+
+.empty-state {
+    padding: 60px 20px;
+    background: #ffffff;
+    border: 1px solid #dce4e1;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin-bottom: 7px;
+}
+
+.empty-state p {
+    color: #748087;
+    font-size: 11px;
+}
+
+</style>
+
+
+
+<section class="project-dashboard-header">
+
+    <div>
+
+        <span class="page-eyebrow">
+            PROJECT {{ project.number }}
+        </span>
+
+        <h1>
+            {{ project.name }}
+        </h1>
+
+        <p>
+            Project purchasing and receipt visibility
+        </p>
+
+    </div>
+
+    <span class="status-badge active-status-badge">
+        {{ project.status }}
+    </span>
+
+</section>
+
+
+
+<nav class="project-dashboard-nav">
+
+    <a
+        href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Overview
+    </a>
+
+    <a
+        href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
+        class="project-dashboard-tab active"
+    >
+        Purchase Orders
+    </a>
+
+    <a
+        href="{{ url_for('project_schedule', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Project Schedule
+    </a>
+
+    <a
+        href="{{ url_for('project_materials', project_slug=project_slug) }}"
+        class="project-dashboard-tab"
+    >
+        Materials
+    </a>
+
+    <a
+        href="#"
+        class="project-dashboard-tab"
+    >
+        Reports
+    </a>
+
+</nav>
+
+
+
+<section class="po-page-heading">
+
+    <div>
+
+        <h2>
+            Purchase Orders
+        </h2>
+
+        <p>
+            Purchasing information associated with this project.
+        </p>
+
+    </div>
+
+    <span class="acumatica-source-label">
+        Proposed Acumatica Source
+    </span>
+
+</section>
+
+
+
+{% if purchase_orders %}
+
+
+<section class="po-toolbar">
+
+    <div class="po-search">
+
+        <span>
+            ⌕
+        </span>
+
+        <input
+            type="text"
+            id="poSearch"
+            placeholder="Search PO, vendor, or part number..."
+            oninput="filterPurchaseOrders()"
+        >
+
+    </div>
+
+</section>
+
+
+
+<section class="po-list">
+
+
+{% for po in purchase_orders %}
+
+
+<article
+    class="po-card"
+    data-search="{{ po.po_number }} {{ po.vendor }} {{ po.part_number }} {{ po.description }}"
+>
+
+    <div class="po-card-header">
+
+        <div>
+
+            <span class="po-number-label">
+                PURCHASE ORDER
+            </span>
+
+            <h3>
+                PO {{ po.po_number }}
+            </h3>
+
+            <span class="po-vendor">
+                {{ po.vendor }}
+            </span>
+
+        </div>
+
+        <strong>
+            {{ po.status }}
+        </strong>
+
+    </div>
+
+
+    <div class="po-part-section">
+
+        <div>
+
+            <span class="po-section-label">
+                PART NUMBER
+            </span>
+
+            <strong>
+                {{ po.part_number }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span class="po-section-label">
+                DESCRIPTION
+            </span>
+
+            <strong>
+                {{ po.description }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="po-quantity-grid">
+
+        <div>
+            <span>Ordered</span>
+            <strong>{{ po.ordered_qty }}</strong>
+        </div>
+
+        <div>
+            <span>Received</span>
+            <strong>{{ po.received_qty }}</strong>
+        </div>
+
+        <div>
+            <span>Remaining</span>
+            <strong>{{ po.remaining_qty }}</strong>
+        </div>
+
+        <div>
+            <span>Receipt Status</span>
+            <strong class="po-receipt-status">
+                {{ po.receipt_status }}
+            </strong>
+        </div>
+
+    </div>
+
+</article>
+
+
+{% endfor %}
+
+
+</section>
+
+
+{% else %}
+
+
+<div class="empty-state">
+
+    <h3>
+        Purchase order data not added yet
+    </h3>
+
+    <p>
+        The Tech Center schedule identifies this project,
+        but procurement records for this project have not
+        been added to the AIMS mock.
+    </p>
+
+</div>
+
+
+{% endif %}
+
+
+
+<script>
+
+function filterPurchaseOrders() {
+
+    const search =
+        document
+            .getElementById("poSearch");
+
+    if (!search) {
+        return;
+    }
+
+    const value =
+        search.value.toLowerCase();
+
+    document
+        .querySelectorAll(".po-card")
+        .forEach(
+            function(card) {
+
+                const text =
+                    card.dataset.search.toLowerCase();
+
+                card.style.display =
+                    text.includes(value)
+                    ? "block"
+                    : "none";
+
+            }
+        );
+
+}
+
+</script>
+
+
+{% endblock %}

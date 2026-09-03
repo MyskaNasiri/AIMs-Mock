@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        AIMS Tech Center
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOP HEADER
+===================================================== -->
+
+<header class="topbar">
+
+
+    <div class="brand-area">
+
+
+        <div class="audubon-brand">
+
+            <img
+                src="{{ url_for('static', filename='images/images.png') }}"
+                alt="Audubon Logo"
+                class="audubon-logo"
+            >
+
+            <span class="audubon-name">
+                audubon
+            </span>
+
+        </div>
+
+
+        <div class="header-divider"></div>
+
+
+        <span class="aims-title">
+            AIMS
+        </span>
+
+
+        <div class="header-divider"></div>
+
+
+        <select
+            class="workspace-selector"
+            onchange="changeWorkspace(this.value)"
+        >
+
+            <option
+                value="/tech-center"
+                selected
+            >
+                Tech Center
+            </option>
+
+        </select>
+
+
+    </div>
+
+
+
+    <div class="header-actions">
+
+
+        <button
+            class="notification-button"
+            title="Notifications"
+            aria-label="Notifications"
+        >
+            ◇
+        </button>
+
+
+        <div class="header-divider small"></div>
+
+
+        <div class="user-avatar">
+            MN
+        </div>
+
+
+        <div class="user-info">
+
+            <strong>
+                Myska Nasiri
+            </strong>
+
+            <span>
+                Tech Center
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</header>
+
+
+
+<!-- =====================================================
+     APP LAYOUT
+===================================================== -->
+
+<div class="app-layout">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="sidebar-navigation">
+
+
+            <!-- HOME -->
+
+            <a
+                href="{{ url_for('tech_center_home') }}"
+                class="nav-item {% if request.endpoint == 'tech_center_home' %}active{% endif %}"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Home
+                </span>
+
+            </a>
+
+
+
+            <!-- MATERIALS MANAGEMENT -->
+
+            <a
+                href="{{ url_for('materials') }}"
+                class="nav-item {% if request.endpoint == 'materials' %}active{% endif %}"
+            >
+
+                <span class="nav-icon">
+                    ▦
+                </span>
+
+                <span>
+                    Materials Management
+                </span>
+
+            </a>
+
+
+
+            <!-- PROJECTS -->
+
+            <div
+                class="project-nav-wrapper"
+                id="projectNavWrapper"
+                onmouseenter="openProjectFlyout()"
+                onmouseleave="scheduleProjectFlyoutClose()"
+            >
+
+
+                <button
+                    type="button"
+                    class="nav-item project-nav-button {% if request.endpoint in ['project_dashboard', 'project_purchase_orders', 'project_schedule', 'project_materials'] %}active{% endif %}"
+                    onclick="toggleProjectFlyout(event)"
+                >
+
+                    <span class="nav-icon">
+                        ▣
+                    </span>
+
+                    <span class="nav-label">
+                        Projects
+                    </span>
+
+                    <span class="flyout-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+
+
+                <!-- =====================================
+                     PROJECT FLYOUT
+                ====================================== -->
+
+                <div
+                    class="project-flyout"
+                    id="projectFlyout"
+                    onmouseenter="cancelProjectFlyoutClose()"
+                    onmouseleave="scheduleProjectFlyoutClose()"
+                >
+
+
+                    <div class="project-flyout-header">
+
+
+                        <div>
+
+                            <span class="flyout-eyebrow">
+                                TECH CENTER
+                            </span>
+
+                            <h3>
+                                Projects
+                            </h3>
+
+                        </div>
+
+
+                        <span class="project-count">
+                            {{ projects_menu|length }} Projects
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- SEARCH -->
+
+                    <div class="flyout-search">
+
+                        <span class="flyout-search-icon">
+                            ⌕
+                        </span>
+
+                        <input
+                            type="text"
+                            id="flyoutProjectSearch"
+                            placeholder="Search projects..."
+                            oninput="filterFlyoutProjects()"
+                            onclick="event.stopPropagation()"
+                        >
+
+                    </div>
+
+
+
+                    <!-- REAL TECH CENTER PROJECTS -->
+
+                    <div class="flyout-project-list">
+
+
+                        {% for slug, project_item in projects_menu.items() %}
+
+
+                        <a
+                            href="{{ url_for('project_dashboard', project_slug=slug) }}"
+                            class="flyout-project"
+                            data-project="{{ project_item.name }} {{ project_item.short_name }} {{ project_item.number }} {{ project_item.client }} {{ project_item.pm }}"
+                        >
+
+
+                            <div class="flyout-project-icon">
+                                {{ project_item.initials }}
+                            </div>
+
+
+
+                            <div class="flyout-project-info">
+
+                                <strong>
+                                    {{ project_item.short_name }}
+                                </strong>
+
+                                <span>
+                                    {{ project_item.number }}
+                                </span>
+
+                            </div>
+
+
+
+                            <span class="flyout-project-status">
+                                {{ project_item.status }}
+                            </span>
+
+
+
+                            <span class="flyout-project-arrow">
+                                →
+                            </span>
+
+
+                        </a>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+
+                    <div
+                        class="flyout-no-results"
+                        id="flyoutNoResults"
+                    >
+                        No matching projects found.
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- REPORTING -->
+
+            <a
+                href="{{ url_for('reporting') }}"
+                class="nav-item {% if request.endpoint == 'reporting' %}active{% endif %}"
+            >
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                <span>
+                    Reporting
+                </span>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =============================================
+             SIDEBAR FOOTER
+        ============================================== -->
+
+        <div class="sidebar-footer">
+
+
+            <div class="sidebar-brand">
+
+                <img
+                    src="{{ url_for('static', filename='images/images.png') }}"
+                    alt="Audubon Logo"
+                    class="sidebar-logo"
+                >
+
+                <span>
+                    audubon
+                </span>
+
+            </div>
+
+
+            <span class="mock-label">
+                AIMS Tech Center Mock
+            </span>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =================================================
+         PAGE CONTENT
+    ================================================== -->
+
+    <main class="main-content">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+let projectFlyoutTimer;
+
+
+
+function changeWorkspace(value) {
+
+    if (value) {
+
+        window.location.href = value;
+
+    }
+
+}
+
+
+
+function openProjectFlyout() {
+
+    clearTimeout(projectFlyoutTimer);
+
+
+    const flyout =
+        document.getElementById(
+            "projectFlyout"
+        );
+
+
+    if (flyout) {
+
+        flyout
+            .classList
+            .add(
+                "open"
+            );
+
+    }
+
+}
+
+
+
+function closeProjectFlyout() {
+
+    const flyout =
+        document.getElementById(
+            "projectFlyout"
+        );
+
+
+    if (flyout) {
+
+        flyout
+            .classList
+            .remove(
+                "open"
+            );
+
+    }
+
+}
+
+
+
+function scheduleProjectFlyoutClose() {
+
+    clearTimeout(projectFlyoutTimer);
+
+
+    projectFlyoutTimer =
+        setTimeout(
+            function() {
+
+                closeProjectFlyout();
+
+            },
+            300
+        );
+
+}
+
+
+
+function cancelProjectFlyoutClose() {
+
+    clearTimeout(projectFlyoutTimer);
+
+}
+
+
+
+function toggleProjectFlyout(event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    clearTimeout(projectFlyoutTimer);
+
+
+    const flyout =
+        document.getElementById(
+            "projectFlyout"
+        );
+
+
+    if (flyout) {
+
+        flyout
+            .classList
+            .toggle(
+                "open"
+            );
+
+    }
+
+}
+
+
+
+function filterFlyoutProjects() {
+
+    const searchInput =
+        document.getElementById(
+            "flyoutProjectSearch"
+        );
+
+
+    const searchValue =
+        searchInput
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const projects =
+        document.querySelectorAll(
+            ".flyout-project"
+        );
+
+
+    let visibleProjects = 0;
+
+
+    projects.forEach(
+        function(project) {
+
+
+            const projectSearch =
+                project
+                    .dataset
+                    .project
+                    .toLowerCase();
+
+
+            if (
+                projectSearch.includes(
+                    searchValue
+                )
+            ) {
+
+                project.style.display =
+                    "flex";
+
+                visibleProjects++;
+
+            } else {
+
+                project.style.display =
+                    "none";
+
+            }
+
+
+        }
+    );
+
+
+    const noResults =
+        document.getElementById(
+            "flyoutNoResults"
+        );
+
+
+    if (visibleProjects === 0) {
+
+        noResults.style.display =
+            "block";
+
+    } else {
+
+        noResults.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+
+        const wrapper =
+            document.getElementById(
+                "projectNavWrapper"
+            );
+
+
+        if (
+            wrapper &&
+            !wrapper.contains(
+                event.target
+            )
+        ) {
+
+            closeProjectFlyout();
+
+        }
+
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

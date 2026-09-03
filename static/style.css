@@ -1,0 +1,2607 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f6f8f7;
+
+    color: #1e2931;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   TOP HEADER
+========================================================= */
+
+.topbar {
+    height: 78px;
+
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1000;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #dde4e1;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand-area {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.audubon-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.audubon-logo {
+    width: 38px;
+    height: 38px;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+.audubon-name {
+    color: #202c31;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+}
+
+.aims-title {
+    color: #28634f;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.header-divider {
+    width: 1px;
+    height: 30px;
+
+    margin: 0 3px;
+
+    background: #d8dfdc;
+}
+
+.header-divider.small {
+    height: 28px;
+}
+
+
+/* =========================================================
+   WORKSPACE SELECTOR
+========================================================= */
+
+.workspace-selector {
+    width: 190px;
+    height: 42px;
+
+    padding: 0 13px;
+
+    border: 1px solid #ced7d3;
+
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #1f292d;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.workspace-selector:hover {
+    border-color: #789a90;
+}
+
+.workspace-selector:focus {
+    border-color: #286c55;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(40, 108, 85, 0.10);
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+}
+
+.notification-button {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #47565c;
+
+    font-size: 19px;
+
+    cursor: pointer;
+}
+
+.notification-button:hover {
+    background: #f1f5f3;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #286c55;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info strong {
+    color: #202c31;
+
+    font-size: 13px;
+}
+
+.user-info span {
+    margin-top: 3px;
+
+    color: #77827e;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   APPLICATION LAYOUT
+========================================================= */
+
+.app-layout {
+    display: flex;
+
+    min-height: calc(100vh - 78px);
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 255px;
+
+    flex-shrink: 0;
+
+    position: relative;
+
+    padding: 24px 18px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: #ffffff;
+
+    border-right: 1px solid #dde4e1;
+
+    overflow: visible;
+
+    z-index: 600;
+}
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+========================================================= */
+
+.nav-item {
+    width: 100%;
+    min-height: 50px;
+
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    border-radius: 8px;
+
+    color: #1f2c31;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.nav-item:hover {
+    background: #eef5f2;
+
+    color: #215f4b;
+}
+
+.nav-item.active {
+    background:
+        linear-gradient(
+            110deg,
+            #275c4b,
+            #1e6a52
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 3px 8px
+        rgba(30, 106, 82, 0.14);
+}
+
+.nav-icon {
+    width: 22px;
+
+    flex-shrink: 0;
+
+    text-align: center;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   PROJECT FLYOUT WRAPPER
+========================================================= */
+
+.project-nav-wrapper {
+    width: 100%;
+
+    position: relative;
+}
+
+.project-nav-button {
+    border: none;
+
+    cursor: pointer;
+
+    text-align: left;
+}
+
+.nav-label {
+    flex: 1;
+
+    text-align: left;
+}
+
+.flyout-arrow {
+    margin-left: auto;
+
+    font-size: 18px;
+
+    opacity: 0.75;
+}
+
+
+/* =========================================================
+   PROJECT FLYOUT
+========================================================= */
+
+.project-flyout {
+    width: 365px;
+
+    display: none;
+
+    position: absolute;
+
+    top: -12px;
+
+    left: calc(100% + 12px);
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 14px 35px
+        rgba(28, 54, 46, 0.16);
+
+    z-index: 2000;
+}
+
+.project-flyout.open {
+    display: block;
+}
+
+
+/* Invisible hover bridge */
+
+.project-flyout::before {
+    content: "";
+
+    width: 18px;
+    height: 100%;
+
+    position: absolute;
+
+    top: 0;
+    left: -17px;
+}
+
+
+/* =========================================================
+   FLYOUT HEADER
+========================================================= */
+
+.project-flyout-header {
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.flyout-eyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #287458;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+.project-flyout-header h3 {
+    margin: 0;
+
+    color: #1f2c31;
+
+    font-size: 18px;
+}
+
+.project-count {
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    background: #e8f3ee;
+
+    color: #1d7153;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FLYOUT SEARCH
+========================================================= */
+
+.flyout-search {
+    height: 41px;
+
+    margin-bottom: 12px;
+
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+
+    background: #f8faf9;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 7px;
+}
+
+.flyout-search:focus-within {
+    background: #ffffff;
+
+    border-color: #6e9b89;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(40, 108, 85, 0.08);
+}
+
+.flyout-search-icon {
+    margin-right: 8px;
+
+    color: #74817d;
+
+    font-size: 16px;
+}
+
+.flyout-search input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #26343a;
+
+    font-size: 12px;
+}
+
+.flyout-search input::placeholder {
+    color: #929c99;
+}
+
+
+/* =========================================================
+   FLYOUT PROJECT LIST
+========================================================= */
+
+.flyout-project-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.flyout-project {
+    min-height: 62px;
+
+    padding: 9px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 8px;
+
+    color: #1e2931;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.flyout-project:hover {
+    background: #eef5f2;
+
+    transform: translateX(2px);
+}
+
+.flyout-project-icon {
+    width: 38px;
+    height: 38px;
+
+    margin-right: 11px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: #e5f1ec;
+
+    color: #17664c;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.flyout-project-info {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.flyout-project-info strong {
+    color: #26343a;
+
+    font-size: 11px;
+}
+
+.flyout-project-info span {
+    margin-top: 4px;
+
+    color: #7a858a;
+
+    font-size: 9px;
+}
+
+.flyout-project-status {
+    margin-right: 9px;
+
+    padding: 4px 7px;
+
+    border-radius: 15px;
+
+    background: #e5f3ec;
+
+    color: #1c7555;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.flyout-project-arrow {
+    color: #39755f;
+
+    font-size: 14px;
+}
+
+.flyout-no-results {
+    display: none;
+
+    padding: 20px 10px;
+
+    color: #7a858a;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   SIDEBAR FOOTER
+========================================================= */
+
+.sidebar-footer {
+    padding: 20px 6px 0;
+
+    border-top: 1px solid #e4e9e7;
+
+    color: #77827e;
+
+    font-size: 11px;
+}
+
+.sidebar-brand {
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+}
+
+.sidebar-logo {
+    width: 26px;
+    height: 26px;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+.sidebar-brand span {
+    color: #27342f;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mock-label {
+    color: #77827e;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 24px 34px 45px;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   PAGE HEADERS
+========================================================= */
+
+.page-eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #267254;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+
+/* =========================================================
+   HOME HERO
+========================================================= */
+
+.hero-card {
+    min-height: 150px;
+
+    margin-bottom: 18px;
+
+    padding: 28px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            110deg,
+            #11503f,
+            #174f43,
+            #1d443d
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 3px 10px
+        rgba(25, 55, 45, 0.05);
+}
+
+.hero-label {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #79d29e;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.7px;
+}
+
+.hero-card h1 {
+    margin: 0 0 8px;
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.hero-card p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   WORKSPACE STATUS
+========================================================= */
+
+.workspace-status {
+    min-width: 240px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.workspace-symbol {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.35);
+
+    border-radius: 50%;
+
+    font-size: 21px;
+}
+
+.workspace-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #6fd294;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+.workspace-status strong {
+    display: block;
+
+    font-size: 16px;
+}
+
+.active-status {
+    margin-top: 7px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 11px;
+}
+
+.green-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #62d28d;
+}
+
+
+/* =========================================================
+   METRIC CARDS
+========================================================= */
+
+.metric-grid {
+    margin-bottom: 16px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.metric-card {
+    min-height: 130px;
+
+    padding: 19px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: #ffffff;
+
+    border: 1px solid #dde4e1;
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 2px 6px
+        rgba(25, 55, 45, 0.025);
+}
+
+.metric-top {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.metric-icon {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8f3ee;
+
+    color: #176147;
+
+    font-size: 18px;
+}
+
+.metric-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #46565c;
+
+    font-size: 13px;
+}
+
+.metric-number {
+    display: block;
+
+    font-size: 27px;
+    font-weight: 700;
+}
+
+.metric-card a {
+    color: #176c50;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.metric-card a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
+.dashboard-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(300px, 0.75fr);
+
+    gap: 15px;
+}
+
+.dashboard-left,
+.dashboard-right {
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+.dashboard-card {
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dde4e1;
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 2px 6px
+        rgba(25, 55, 45, 0.025);
+}
+
+.card-title-row {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.card-title-row h2 {
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.card-title-row a {
+    color: #176c50;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   PROJECT OVERVIEW
+========================================================= */
+
+.project-overview {
+    min-height: 230px;
+
+    padding: 5px 15px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 50px;
+}
+
+.donut-chart {
+    width: 205px;
+    height: 205px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #237657 0% 35%,
+            #78a88f 35% 60%,
+            #e3ac3e 60% 83%,
+            #527da7 83% 100%
+        );
+}
+
+.donut-hole {
+    width: 108px;
+    height: 108px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    text-align: center;
+}
+
+.donut-hole strong {
+    font-size: 27px;
+}
+
+.donut-hole span {
+    margin-top: 3px;
+
+    color: #637078;
+
+    font-size: 11px;
+}
+
+.project-list {
+    flex: 1;
+}
+
+.project-row {
+    padding: 12px 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    color: #1e2931;
+
+    border-bottom: 1px solid #e7ecea;
+}
+
+.project-row:last-child {
+    border-bottom: none;
+}
+
+.project-row:hover .project-name strong {
+    color: #176c50;
+}
+
+.project-dot {
+    width: 11px;
+    height: 11px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
+
+.dot-one {
+    background: #237657;
+}
+
+.dot-two {
+    background: #78a88f;
+}
+
+.dot-three {
+    background: #e3ac3e;
+}
+
+.dot-four {
+    background: #527da7;
+}
+
+.project-name {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.project-name strong {
+    color: #26343a;
+
+    font-size: 12px;
+}
+
+.project-name span {
+    margin-top: 3px;
+
+    color: #7b868b;
+
+    font-size: 10px;
+}
+
+.project-row > strong {
+    color: #26343a;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.activity-row {
+    min-height: 55px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid #e8ecea;
+}
+
+.activity-row:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 35px;
+    height: 35px;
+
+    margin-right: 12px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: #e7f2ed;
+
+    color: #17664c;
+}
+
+.activity-description {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-description strong {
+    font-size: 11px;
+}
+
+.activity-description span {
+    margin-top: 4px;
+
+    color: #7a858a;
+
+    font-size: 10px;
+}
+
+.activity-time {
+    color: #66757a;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   IMPORTANT DATES
+========================================================= */
+
+.important-date {
+    padding: 15px 5px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    border-bottom: 1px solid #e7ecea;
+}
+
+.important-date:last-child {
+    border-bottom: none;
+}
+
+.calendar-box {
+    width: 55px;
+    height: 62px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: #f7f9f8;
+
+    border: 1px solid #dce5e1;
+
+    border-radius: 7px;
+}
+
+.calendar-box span {
+    color: #278260;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.calendar-box strong {
+    margin-top: 3px;
+
+    font-size: 21px;
+}
+
+.important-date > div:last-child > strong {
+    font-size: 12px;
+}
+
+.important-date p {
+    margin: 5px 0 0;
+
+    color: #6e7a80;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+.announcement-card {
+    padding: 17px;
+
+    background:
+        linear-gradient(
+            120deg,
+            #f1f7f4,
+            #f7faf8
+        );
+
+    border: 1px solid #d9e4df;
+
+    border-radius: 7px;
+}
+
+.notice-badge {
+    display: inline-block;
+
+    padding: 4px 8px;
+
+    background: #267254;
+
+    border-radius: 4px;
+
+    color: #ffffff;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.announcement-card h3 {
+    margin: 12px 0 8px;
+
+    font-size: 13px;
+}
+
+.announcement-card p {
+    margin: 0 0 15px;
+
+    color: #4f5d63;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+.announcement-meta {
+    color: #788489;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   PROJECT DASHBOARD HEADER
+========================================================= */
+
+.project-dashboard-header {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.project-dashboard-header h1 {
+    margin: 0 0 6px;
+
+    font-size: 28px;
+}
+
+.project-dashboard-header p {
+    margin: 0;
+
+    color: #6f7b80;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge {
+    padding: 5px 9px;
+
+    display: inline-flex;
+    align-items: center;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.active-status-badge {
+    background: #e5f3ec;
+
+    color: #1c7555;
+}
+
+
+/* =========================================================
+   PROJECT DASHBOARD NAVIGATION
+========================================================= */
+
+.project-dashboard-nav {
+    margin-bottom: 20px;
+
+    padding: 5px;
+
+    display: flex;
+
+    gap: 4px;
+
+    background: #ffffff;
+
+    border: 1px solid #dde4e1;
+
+    border-radius: 8px;
+}
+
+.project-dashboard-tab {
+    padding: 10px 15px;
+
+    border-radius: 6px;
+
+    color: #59686d;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.project-dashboard-tab:hover {
+    background: #f0f5f3;
+
+    color: #1c664d;
+}
+
+.project-dashboard-tab.active {
+    background: #285f4c;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MATERIAL STATUS
+========================================================= */
+
+.material-status-row {
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid #e7ecea;
+}
+
+.material-status-row:last-child {
+    border-bottom: none;
+}
+
+.material-status-row > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.material-status-row strong {
+    font-size: 12px;
+}
+
+.material-status-row > div span {
+    margin-top: 4px;
+
+    color: #7a858a;
+
+    font-size: 10px;
+}
+
+.material-status {
+    padding: 5px 8px;
+
+    display: inline-block;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.material-status.staged {
+    background: #e6f3ec;
+
+    color: #1c7555;
+}
+
+.material-status.partial {
+    background: #fff4da;
+
+    color: #956a10;
+}
+
+.material-status.waiting {
+    background: #eef1f3;
+
+    color: #627078;
+}
+
+
+/* =========================================================
+   PROJECT INFORMATION
+========================================================= */
+
+.project-info-row {
+    padding: 12px 0;
+
+    display: flex;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid #e7ecea;
+}
+
+.project-info-row:last-child {
+    border-bottom: none;
+}
+
+.project-info-row span {
+    color: #748087;
+
+    font-size: 11px;
+}
+
+.project-info-row strong {
+    color: #26343a;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .metric-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 850px) {
+
+    .user-info {
+        display: none;
+    }
+
+    .sidebar {
+        width: 205px;
+    }
+
+    .project-overview {
+        flex-direction: column;
+
+        gap: 25px;
+    }
+
+    .workspace-status {
+        display: none;
+    }
+
+    .project-dashboard-nav {
+        overflow-x: auto;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .audubon-name {
+        display: none;
+    }
+
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        width: 75px;
+
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .nav-item > span:not(.nav-icon) {
+        display: none;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main-content {
+        padding: 18px;
+    }
+
+    .workspace-selector {
+        width: 140px;
+    }
+
+    .project-flyout {
+        width: 310px;
+    }
+
+/* =========================================================
+   PURCHASE ORDERS PAGE
+========================================================= */
+
+.po-page-heading {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.po-page-heading h2 {
+    margin: 0 0 5px;
+
+    font-size: 20px;
+}
+
+.po-page-heading p {
+    margin: 0;
+
+    color: #748087;
+
+    font-size: 11px;
+}
+
+.acumatica-source-label {
+    padding: 6px 10px;
+
+    background: #eef4f2;
+
+    border: 1px solid #d7e3df;
+
+    border-radius: 20px;
+
+    color: #3f6759;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PO TOOLBAR
+========================================================= */
+
+.po-toolbar {
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.po-search {
+    width: 390px;
+    height: 43px;
+
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+
+    background: #ffffff;
+
+    border: 1px solid #d8e0dd;
+
+    border-radius: 8px;
+}
+
+.po-search > span {
+    margin-right: 8px;
+
+    color: #71807b;
+
+    font-size: 16px;
+}
+
+.po-search input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #26343a;
+
+    font-size: 12px;
+}
+
+.po-search input::placeholder {
+    color: #939d99;
+}
+
+.po-filter-buttons {
+    display: flex;
+
+    gap: 6px;
+}
+
+.po-filter-button {
+    height: 36px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d7dfdc;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #59676c;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.po-filter-button:hover {
+    background: #f1f6f4;
+}
+
+.po-filter-button.active {
+    background: #285f4c;
+
+    border-color: #285f4c;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   PO LIST
+========================================================= */
+
+.po-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   PO CARD
+========================================================= */
+
+.po-card {
+    padding: 19px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 2px 6px
+        rgba(25, 55, 45, 0.025);
+}
+
+.po-card-header {
+    margin-bottom: 17px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.po-number-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #78847f;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.7px;
+}
+
+.po-card-header h3 {
+    margin: 0;
+
+    color: #26343a;
+
+    font-size: 16px;
+}
+
+.po-vendor {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #65747a;
+
+    font-size: 10px;
+}
+
+.po-open-status {
+    padding: 5px 9px;
+
+    background: #e6f3ec;
+
+    border-radius: 20px;
+
+    color: #1c7555;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PO PART INFO
+========================================================= */
+
+.po-part-section {
+    margin-bottom: 16px;
+
+    padding: 14px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 0.8fr)
+        minmax(200px, 2fr);
+
+    gap: 20px;
+
+    background: #f8faf9;
+
+    border: 1px solid #e5eae8;
+
+    border-radius: 7px;
+}
+
+.po-part-section > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.po-section-label {
+    margin-bottom: 5px;
+
+    color: #7d8884;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.po-part-section strong {
+    color: #2a373d;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PO QUANTITY GRID
+========================================================= */
+
+.po-quantity-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    border: 1px solid #e1e7e4;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+}
+
+.po-quantity-grid > div {
+    min-height: 64px;
+
+    padding: 13px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    border-right: 1px solid #e1e7e4;
+}
+
+.po-quantity-grid > div:last-child {
+    border-right: none;
+}
+
+.po-quantity-grid span {
+    margin-bottom: 5px;
+
+    color: #77837f;
+
+    font-size: 9px;
+}
+
+.po-quantity-grid strong {
+    color: #26343a;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   RECEIPT STATUS
+========================================================= */
+
+.po-receipt-status {
+    width: max-content;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    font-size: 8px !important;
+}
+
+.po-receipt-status.partial {
+    background: #fff2d4;
+
+    color: #936810;
+}
+
+.po-receipt-status.received {
+    background: #e5f3ec;
+
+    color: #1c7555;
+}
+
+.po-receipt-status.awaiting {
+    background: #eef1f3;
+
+    color: #68757b;
+}
+
+
+/* =========================================================
+   PO FOOTER
+========================================================= */
+
+.po-card-footer {
+    margin-top: 15px;
+
+    padding-top: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid #e7ecea;
+}
+
+.po-card-footer > span {
+    color: #7b8783;
+
+    font-size: 9px;
+}
+
+.po-detail-button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #176c50;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.po-detail-button:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   EMPTY / NO RESULTS
+========================================================= */
+
+.empty-state {
+    padding: 65px 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 48px;
+    height: 48px;
+
+    margin: 0 auto 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e7f2ed;
+
+    border-radius: 50%;
+
+    color: #17664c;
+
+    font-size: 17px;
+}
+
+.empty-state h3 {
+    margin: 0 0 7px;
+
+    font-size: 14px;
+}
+
+.empty-state p {
+    margin: 0;
+
+    color: #748087;
+
+    font-size: 11px;
+}
+
+.po-no-results {
+    display: none;
+
+    padding: 50px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    color: #748087;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   PO RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .po-toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .po-search {
+        width: 100%;
+    }
+
+    .po-quantity-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .po-part-section {
+        grid-template-columns: 1fr;
+    }
+
+    .po-quantity-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .po-quantity-grid > div {
+        border-right: none;
+
+        border-bottom: 1px solid #e1e7e4;
+    }
+
+    .po-quantity-grid > div:last-child {
+        border-bottom: none;
+    }
+
+}
+
+/* =========================================================
+   PURCHASE ORDERS PAGE
+========================================================= */
+
+.po-page-heading {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* =========================================================
+   PURCHASE ORDERS PAGE
+========================================================= */
+
+.po-page-heading {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.po-page-heading h2 {
+    margin: 0 0 5px;
+
+    font-size: 20px;
+}
+
+.po-page-heading p {
+    margin: 0;
+
+    color: #748087;
+
+    font-size: 11px;
+}
+
+.acumatica-source-label {
+    padding: 6px 10px;
+
+    background: #eef4f2;
+
+    border: 1px solid #d7e3df;
+
+    border-radius: 20px;
+
+    color: #3f6759;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PO TOOLBAR
+========================================================= */
+
+.po-toolbar {
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.po-search {
+    width: 390px;
+    height: 43px;
+
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+
+    background: #ffffff;
+
+    border: 1px solid #d8e0dd;
+
+    border-radius: 8px;
+}
+
+.po-search > span {
+    margin-right: 8px;
+
+    color: #71807b;
+
+    font-size: 16px;
+}
+
+.po-search input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #26343a;
+
+    font-size: 12px;
+}
+
+.po-search input::placeholder {
+    color: #939d99;
+}
+
+.po-filter-buttons {
+    display: flex;
+
+    gap: 6px;
+}
+
+.po-filter-button {
+    height: 36px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d7dfdc;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #59676c;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.po-filter-button:hover {
+    background: #f1f6f4;
+}
+
+.po-filter-button.active {
+    background: #285f4c;
+
+    border-color: #285f4c;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   PO LIST
+========================================================= */
+
+.po-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   PO CARD
+========================================================= */
+
+.po-card {
+    padding: 19px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 2px 6px
+        rgba(25, 55, 45, 0.025);
+}
+
+.po-card-header {
+    margin-bottom: 17px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.po-number-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #78847f;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.7px;
+}
+
+.po-card-header h3 {
+    margin: 0;
+
+    color: #26343a;
+
+    font-size: 16px;
+}
+
+.po-vendor {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #65747a;
+
+    font-size: 10px;
+}
+
+.po-open-status {
+    padding: 5px 9px;
+
+    background: #e6f3ec;
+
+    border-radius: 20px;
+
+    color: #1c7555;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PO PART INFO
+========================================================= */
+
+.po-part-section {
+    margin-bottom: 16px;
+
+    padding: 14px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 0.8fr)
+        minmax(200px, 2fr);
+
+    gap: 20px;
+
+    background: #f8faf9;
+
+    border: 1px solid #e5eae8;
+
+    border-radius: 7px;
+}
+
+.po-part-section > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.po-section-label {
+    margin-bottom: 5px;
+
+    color: #7d8884;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.po-part-section strong {
+    color: #2a373d;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PO QUANTITY GRID
+========================================================= */
+
+.po-quantity-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    border: 1px solid #e1e7e4;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+}
+
+.po-quantity-grid > div {
+    min-height: 64px;
+
+    padding: 13px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    border-right: 1px solid #e1e7e4;
+}
+
+.po-quantity-grid > div:last-child {
+    border-right: none;
+}
+
+.po-quantity-grid span {
+    margin-bottom: 5px;
+
+    color: #77837f;
+
+    font-size: 9px;
+}
+
+.po-quantity-grid strong {
+    color: #26343a;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   RECEIPT STATUS
+========================================================= */
+
+.po-receipt-status {
+    width: max-content;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    font-size: 8px !important;
+}
+
+.po-receipt-status.partial {
+    background: #fff2d4;
+
+    color: #936810;
+}
+
+.po-receipt-status.received {
+    background: #e5f3ec;
+
+    color: #1c7555;
+}
+
+.po-receipt-status.awaiting {
+    background: #eef1f3;
+
+    color: #68757b;
+}
+
+
+/* =========================================================
+   PO FOOTER
+========================================================= */
+
+.po-card-footer {
+    margin-top: 15px;
+
+    padding-top: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid #e7ecea;
+}
+
+.po-card-footer > span {
+    color: #7b8783;
+
+    font-size: 9px;
+}
+
+.po-detail-button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #176c50;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.po-detail-button:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+.empty-state {
+    padding: 65px 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 48px;
+    height: 48px;
+
+    margin: 0 auto 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e7f2ed;
+
+    border-radius: 50%;
+
+    color: #17664c;
+
+    font-size: 17px;
+}
+
+.empty-state h3 {
+    margin: 0 0 7px;
+
+    font-size: 14px;
+}
+
+.empty-state p {
+    margin: 0;
+
+    color: #748087;
+
+    font-size: 11px;
+}
+
+.po-no-results {
+    display: none;
+
+    padding: 50px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce4e1;
+
+    border-radius: 9px;
+
+    color: #748087;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE PURCHASE ORDERS
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .po-toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .po-search {
+        width: 100%;
+    }
+
+    .po-quantity-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .po-part-section {
+        grid-template-columns: 1fr;
+    }
+
+    .po-quantity-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .po-quantity-grid > div {
+        border-right: none;
+
+        border-bottom: 1px solid #e1e7e4;
+    }
+
+    .po-quantity-grid > div:last-child {
+        border-bottom: none;
+    }
+
+}
+
+}

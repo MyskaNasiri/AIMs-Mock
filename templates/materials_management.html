@@ -1,0 +1,1796 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .materials-page {
+        padding: 4px 2px 40px;
+    }
+
+    .page-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        color: #68716c;
+        margin-bottom: 8px;
+    }
+
+    .page-title {
+        font-size: 30px;
+        font-weight: 650;
+        color: #202622;
+        margin: 0;
+    }
+
+    .page-subtitle {
+        margin-top: 7px;
+        font-size: 14px;
+        color: #69726c;
+    }
+
+    .sync-panel {
+        margin-top: 26px;
+        background: white;
+        border: 1px solid #e1e5e2;
+        border-radius: 12px;
+        padding: 18px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .sync-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .sync-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        background: #edf4ef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .sync-title {
+        font-size: 14px;
+        font-weight: 650;
+        color: #252b27;
+    }
+
+    .sync-subtitle {
+        font-size: 12px;
+        color: #7a827d;
+        margin-top: 3px;
+    }
+
+    .sync-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #eef5ef;
+        color: #476151;
+        border-radius: 20px;
+        padding: 7px 11px;
+    }
+
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+    }
+
+    .metric-card {
+        background: white;
+        border: 1px solid #e1e5e2;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .metric-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: #7b837e;
+        font-weight: 700;
+    }
+
+    .metric-value {
+        margin-top: 8px;
+        font-size: 25px;
+        font-weight: 650;
+        color: #232a25;
+    }
+
+    .workspace-card {
+        margin-top: 22px;
+        background: white;
+        border: 1px solid #e1e5e2;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .workspace-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e6e9e7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .workspace-title {
+        font-size: 16px;
+        font-weight: 650;
+        color: #242a26;
+    }
+
+    .workspace-description {
+        font-size: 12px;
+        color: #7a817d;
+        margin-top: 4px;
+    }
+
+    .search-box {
+        width: 280px;
+        border: 1px solid #dce1de;
+        border-radius: 8px;
+        padding: 9px 11px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .filters {
+        display: flex;
+        gap: 7px;
+        padding: 12px 20px;
+        border-bottom: 1px solid #edf0ee;
+    }
+
+    .filter-btn {
+        background: #f6f8f6;
+        border: 1px solid #e1e5e2;
+        border-radius: 7px;
+        padding: 7px 11px;
+        font-size: 12px;
+        cursor: pointer;
+        color: #59615c;
+    }
+
+    .filter-btn.active {
+        background: #303a33;
+        border-color: #303a33;
+        color: white;
+    }
+
+    .receipt-list {
+        padding: 14px;
+    }
+
+    .receipt-card {
+        border: 1px solid #e1e5e2;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+
+    .receipt-top {
+        padding: 15px 17px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: #fbfcfb;
+        border-bottom: 1px solid #edf0ee;
+    }
+
+    .receipt-number {
+        font-size: 15px;
+        font-weight: 700;
+        color: #252b27;
+    }
+
+    .receipt-source {
+        font-size: 11px;
+        color: #7c847f;
+        margin-top: 3px;
+    }
+
+    .receipt-body {
+        padding: 16px 17px;
+    }
+
+    .receipt-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+
+    .field-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .65px;
+        font-weight: 700;
+        color: #858d88;
+        margin-bottom: 5px;
+    }
+
+    .field-value {
+        font-size: 13px;
+        color: #303632;
+    }
+
+    .field-value.strong {
+        font-weight: 650;
+    }
+
+    .qty-section {
+        margin-top: 16px;
+        border-top: 1px solid #edf0ee;
+        padding-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+
+    .qty-box {
+        background: #f8faf8;
+        border-radius: 8px;
+        padding: 11px;
+    }
+
+    .qty-number {
+        font-size: 18px;
+        font-weight: 650;
+        color: #262d28;
+    }
+
+    .qty-label {
+        margin-top: 3px;
+        font-size: 10px;
+        color: #7a837d;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .location-list {
+        margin-top: 14px;
+        border-top: 1px solid #edf0ee;
+        padding-top: 14px;
+    }
+
+    .location-row {
+        display: flex;
+        justify-content: space-between;
+        max-width: 430px;
+        padding: 5px 0;
+        font-size: 12px;
+    }
+
+    .location-name {
+        color: #4f5852;
+    }
+
+    .location-qty {
+        font-weight: 650;
+    }
+
+    .receipt-footer {
+        margin-top: 16px;
+        border-top: 1px solid #edf0ee;
+        padding-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 18px;
+    }
+
+    .timestamps {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+    }
+
+    .timestamp-value {
+        font-size: 12px;
+        color: #424a45;
+        margin-top: 3px;
+    }
+
+    .status-pill {
+        display: inline-block;
+        border-radius: 18px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    .status-awaiting {
+        background: #f6f0df;
+        color: #776129;
+    }
+
+    .status-partial {
+        background: #edf1f5;
+        color: #546574;
+    }
+
+    .status-complete {
+        background: #e9f3ec;
+        color: #486452;
+    }
+
+    .stage-btn {
+        border: none;
+        border-radius: 7px;
+        background: #303a33;
+        color: white;
+        padding: 9px 13px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .stage-btn:disabled {
+        background: #b9c0bc;
+        cursor: default;
+    }
+
+    .history-section {
+        margin-top: 14px;
+        border-top: 1px solid #edf0ee;
+        padding-top: 14px;
+    }
+
+    .history-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        color: #7a837d;
+        margin-bottom: 9px;
+    }
+
+    .history-entry {
+        display: grid;
+        grid-template-columns: 145px 90px 1fr 130px;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f2f1;
+        font-size: 12px;
+        color: #515954;
+    }
+
+    .history-entry:last-child {
+        border-bottom: none;
+    }
+
+    .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(24, 30, 26, .34);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-backdrop.open {
+        display: flex;
+    }
+
+    .stage-modal {
+        width: 520px;
+        max-width: calc(100vw - 30px);
+        background: white;
+        border-radius: 13px;
+        box-shadow: 0 22px 60px rgba(0, 0, 0, .18);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e9e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 17px;
+        font-weight: 650;
+    }
+
+    .close-btn {
+        border: none;
+        background: none;
+        font-size: 22px;
+        color: #727a75;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-material {
+        background: #f7f9f7;
+        border-radius: 9px;
+        padding: 13px;
+        margin-bottom: 17px;
+    }
+
+    .modal-material strong {
+        font-size: 14px;
+    }
+
+    .modal-material div {
+        font-size: 12px;
+        color: #737b76;
+        margin-top: 4px;
+    }
+
+    .form-row {
+        margin-bottom: 15px;
+    }
+
+    .form-row label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: .6px;
+        color: #747c77;
+        margin-bottom: 6px;
+    }
+
+    .form-row input,
+    .form-row select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d9dfdb;
+        border-radius: 7px;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .available-note {
+        font-size: 12px;
+        color: #737b76;
+        margin-top: 5px;
+    }
+
+    .validation-message {
+        display: none;
+        color: #9a4d48;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .success-message {
+        display: none;
+        color: #496553;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .modal-footer {
+        padding: 14px 20px;
+        border-top: 1px solid #e5e9e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .secondary-btn {
+        border: 1px solid #d7ddda;
+        background: white;
+        border-radius: 7px;
+        padding: 9px 13px;
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="materials-page">
+
+    <div class="page-eyebrow">
+        MATERIALS MANAGEMENT
+    </div>
+
+    <h1 class="page-title">
+        Receiving &amp; Staging
+    </h1>
+
+    <div class="page-subtitle">
+        Review released Acumatica receipts and stage received project material into Tech Center storage locations.
+    </div>
+
+
+    <div class="sync-panel">
+
+        <div class="sync-left">
+
+            <div class="sync-icon">
+                ↻
+            </div>
+
+            <div>
+                <div class="sync-title">
+                    Acumatica Receipt Source
+                </div>
+
+                <div class="sync-subtitle">
+                    Proposed receipt synchronization for Tech Center material staging.
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="sync-badge">
+                ● Demo Sync
+            </div>
+
+            <div class="sync-subtitle">
+                Last checked Sep 03, 2026 · 9:35 AM
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="metric-grid">
+
+        <div class="metric-card">
+            <div class="metric-label">
+                Recent Receipts
+            </div>
+
+            <div
+                id="metricRecent"
+                class="metric-value"
+            >
+                {{ receipts|length }}
+            </div>
+        </div>
+
+
+        <div class="metric-card">
+            <div class="metric-label">
+                Awaiting Staging
+            </div>
+
+            <div
+                id="metricAwaiting"
+                class="metric-value"
+            >
+                {{ receipts | selectattr("staging_status", "equalto", "Awaiting Staging") | list | length }}
+            </div>
+        </div>
+
+
+        <div class="metric-card">
+            <div class="metric-label">
+                Partially Staged
+            </div>
+
+            <div
+                id="metricPartial"
+                class="metric-value"
+            >
+                {{ receipts | selectattr("staging_status", "equalto", "Partially Staged") | list | length }}
+            </div>
+        </div>
+
+
+        <div class="metric-card">
+            <div class="metric-label">
+                Fully Staged
+            </div>
+
+            <div
+                id="metricComplete"
+                class="metric-value"
+            >
+                {{ receipts | selectattr("staging_status", "equalto", "Fully Staged") | list | length }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="workspace-card">
+
+        <div class="workspace-header">
+
+            <div>
+                <div class="workspace-title">
+                    Recent Acumatica Receipts
+                </div>
+
+                <div class="workspace-description">
+                    Released receipt quantities available for AIMS staging.
+                </div>
+            </div>
+
+            <input
+                id="receiptSearch"
+                class="search-box"
+                type="text"
+                placeholder="Search receipt, PO, project, vendor, part"
+            >
+
+        </div>
+
+
+        <div class="filters">
+
+            <button
+                class="filter-btn active"
+                type="button"
+                data-filter="All"
+            >
+                All
+            </button>
+
+            <button
+                class="filter-btn"
+                type="button"
+                data-filter="Awaiting Staging"
+            >
+                Awaiting Staging
+            </button>
+
+            <button
+                class="filter-btn"
+                type="button"
+                data-filter="Partially Staged"
+            >
+                Partially Staged
+            </button>
+
+            <button
+                class="filter-btn"
+                type="button"
+                data-filter="Fully Staged"
+            >
+                Fully Staged
+            </button>
+
+        </div>
+
+
+        <div class="receipt-list">
+
+            {% for receipt in receipts %}
+
+            <div
+                class="receipt-card"
+                data-status="{{ receipt.staging_status }}"
+                data-receipt="{{ receipt.receipt_nbr }}"
+                data-search="{{ receipt.receipt_nbr }} {{ receipt.po_nbr }} {{ receipt.project }} {{ receipt.vendor }} {{ receipt.inventory_id }} {{ receipt.description }}"
+            >
+
+                <div class="receipt-top">
+
+                    <div>
+
+                        <div class="receipt-number">
+                            {{ receipt.receipt_nbr }}
+                        </div>
+
+                        <div class="receipt-source">
+                            Acumatica Purchase Receipt · {{ receipt.status }}
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="status-container"
+                        data-receipt="{{ receipt.receipt_nbr }}"
+                    >
+
+                        {% if receipt.staging_status == "Awaiting Staging" %}
+
+                            <span class="status-pill status-awaiting">
+                                {{ receipt.staging_status }}
+                            </span>
+
+                        {% elif receipt.staging_status == "Partially Staged" %}
+
+                            <span class="status-pill status-partial">
+                                {{ receipt.staging_status }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-pill status-complete">
+                                {{ receipt.staging_status }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="receipt-body">
+
+                    <div class="receipt-grid">
+
+                        <div>
+                            <div class="field-label">
+                                Project
+                            </div>
+
+                            <div class="field-value strong">
+                                {{ receipt.project }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                PO Nbr.
+                            </div>
+
+                            <div class="field-value">
+                                {{ receipt.po_nbr }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Vendor
+                            </div>
+
+                            <div class="field-value">
+                                {{ receipt.vendor }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Receipt Date
+                            </div>
+
+                            <div class="field-value">
+                                {{ receipt.receipt_date }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Inventory ID
+                            </div>
+
+                            <div class="field-value strong">
+                                {{ receipt.inventory_id }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Description
+                            </div>
+
+                            <div class="field-value">
+                                {{ receipt.description }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Acumatica Warehouse
+                            </div>
+
+                            <div class="field-value">
+                                {{ receipt.warehouse }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="field-label">
+                                Tech Center Location
+                            </div>
+
+                            <div
+                                class="field-value strong current-location"
+                                data-receipt="{{ receipt.receipt_nbr }}"
+                            >
+                                {{ receipt.storage_location }}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="qty-section">
+
+                        <div class="qty-box">
+
+                            <div class="qty-number">
+                                {{ receipt.ordered_qty }}
+                            </div>
+
+                            <div class="qty-label">
+                                Ordered Qty.
+                            </div>
+
+                        </div>
+
+
+                        <div class="qty-box">
+
+                            <div class="qty-number">
+                                {{ receipt.receipt_qty }}
+                            </div>
+
+                            <div class="qty-label">
+                                Receipt Qty.
+                            </div>
+
+                        </div>
+
+
+                        <div class="qty-box">
+
+                            <div
+                                class="qty-number staged-qty"
+                                data-receipt="{{ receipt.receipt_nbr }}"
+                            >
+                                {{ receipt.staged_qty }}
+                            </div>
+
+                            <div class="qty-label">
+                                Staged Qty.
+                            </div>
+
+                        </div>
+
+
+                        <div class="qty-box">
+
+                            <div
+                                class="qty-number remaining-qty"
+                                data-receipt="{{ receipt.receipt_nbr }}"
+                            >
+                                {{ receipt.remaining_to_stage }}
+                            </div>
+
+                            <div class="qty-label">
+                                Remaining to Stage
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="location-list"
+                        data-receipt="{{ receipt.receipt_nbr }}"
+                    >
+
+                        <div class="field-label">
+                            Tech Center Location Breakdown
+                        </div>
+
+                        <div class="location-items">
+
+                            {% if receipt.locations %}
+
+                                {% for location, quantity in receipt.locations.items() %}
+
+                                    <div class="location-row">
+                                        <span class="location-name">
+                                            {{ location }}
+                                        </span>
+
+                                        <span class="location-qty">
+                                            {{ quantity }} {{ receipt.uom }}
+                                        </span>
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="location-row">
+                                    <span class="location-name">
+                                        No material staged yet
+                                    </span>
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="receipt-footer">
+
+                        <div class="timestamps">
+
+                            <div>
+
+                                <div class="field-label">
+                                    Acumatica Updated
+                                </div>
+
+                                <div class="timestamp-value">
+                                    {{ receipt.acumatica_updated }}
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <div class="field-label">
+                                    Pulled into AIMS
+                                </div>
+
+                                <div class="timestamp-value">
+                                    {{ receipt.aims_pulled_at }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="receipt-actions"
+                            data-receipt="{{ receipt.receipt_nbr }}"
+                        >
+
+                            {% if receipt.remaining_to_stage > 0 %}
+
+                                <button
+                                    type="button"
+                                    class="stage-btn open-stage-btn"
+                                    data-receipt="{{ receipt.receipt_nbr }}"
+                                    data-part="{{ receipt.inventory_id }}"
+                                    data-description="{{ receipt.description }}"
+                                    data-received="{{ receipt.receipt_qty }}"
+                                    data-staged="{{ receipt.staged_qty }}"
+                                    data-remaining="{{ receipt.remaining_to_stage }}"
+                                >
+                                    Stage Material
+                                </button>
+
+                            {% else %}
+
+                                <button
+                                    type="button"
+                                    class="stage-btn"
+                                    disabled
+                                >
+                                    Fully Staged
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="history-section"
+                        data-receipt="{{ receipt.receipt_nbr }}"
+                    >
+
+                        <div class="history-title">
+                            Staging History
+                        </div>
+
+                        <div class="history-items">
+
+                            {% if receipt.staging_history %}
+
+                                {% for entry in receipt.staging_history %}
+
+                                    <div class="history-entry">
+
+                                        <span>
+                                            {{ entry.time }}
+                                        </span>
+
+                                        <span>
+                                            {{ entry.quantity }} {{ entry.uom }}
+                                        </span>
+
+                                        <span>
+                                            {{ entry.location }}
+                                        </span>
+
+                                        <span>
+                                            {{ entry.user }}
+                                        </span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="history-entry">
+                                    <span>No staging activity yet.</span>
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div
+    id="stageModalBackdrop"
+    class="modal-backdrop"
+>
+
+    <div class="stage-modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Stage Material
+            </div>
+
+            <button
+                id="closeStageModalButton"
+                class="close-btn"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="modal-material">
+
+                <strong id="modalPart"></strong>
+
+                <div id="modalDescription"></div>
+
+                <div id="modalReceipt"></div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="materialBarcode">
+                    Scan Material Barcode
+                </label>
+
+                <input
+                    id="materialBarcode"
+                    type="text"
+                    placeholder="Scan or enter material barcode"
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="storageLocation">
+                    Scan / Select Storage Location
+                </label>
+
+                <select id="storageLocation">
+
+                    <option value="">
+                        Select rack / shelf
+                    </option>
+
+                    <option value="Rack 1 / Shelf A">
+                        Rack 1 / Shelf A
+                    </option>
+
+                    <option value="Rack 1 / Shelf B">
+                        Rack 1 / Shelf B
+                    </option>
+
+                    <option value="Rack 2 / Shelf A">
+                        Rack 2 / Shelf A
+                    </option>
+
+                    <option value="Rack 2 / Shelf B">
+                        Rack 2 / Shelf B
+                    </option>
+
+                    <option value="Fabrication Floor">
+                        Fabrication Floor
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="stageQty">
+                    Quantity to Stage
+                </label>
+
+                <input
+                    id="stageQty"
+                    type="number"
+                    min="1"
+                    step="1"
+                >
+
+                <div
+                    id="availableNote"
+                    class="available-note"
+                ></div>
+
+                <div
+                    id="validationMessage"
+                    class="validation-message"
+                ></div>
+
+                <div
+                    id="successMessage"
+                    class="success-message"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                id="cancelStageButton"
+                class="secondary-btn"
+                type="button"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                id="confirmStageButton"
+                class="stage-btn"
+                type="button"
+            >
+                Confirm Staging
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    let activeFilter = "All";
+
+    let modalRemainingQty = 0;
+
+    let activeReceiptNbr = "";
+
+    const searchInput =
+        document.getElementById("receiptSearch");
+
+    const receiptCards =
+        document.querySelectorAll(".receipt-card");
+
+    const filterButtons =
+        document.querySelectorAll(".filter-btn");
+
+    const modalBackdrop =
+        document.getElementById("stageModalBackdrop");
+
+    const closeStageModalButton =
+        document.getElementById("closeStageModalButton");
+
+    const cancelStageButton =
+        document.getElementById("cancelStageButton");
+
+    const confirmStageButton =
+        document.getElementById("confirmStageButton");
+
+
+    function updateReceiptVisibility() {
+
+        const searchTerm =
+            searchInput.value.toLowerCase().trim();
+
+        receiptCards.forEach(function(card) {
+
+            const status =
+                card.dataset.status;
+
+            const searchData =
+                card.dataset.search.toLowerCase();
+
+            const statusMatches =
+                activeFilter === "All" ||
+                status === activeFilter;
+
+            const searchMatches =
+                searchData.includes(searchTerm);
+
+            card.style.display =
+                statusMatches && searchMatches
+                    ? ""
+                    : "none";
+        });
+    }
+
+
+    function connectStageButtons() {
+
+        const buttons =
+            document.querySelectorAll(".open-stage-btn");
+
+        buttons.forEach(function(button) {
+
+            button.onclick = function() {
+
+                activeReceiptNbr =
+                    button.dataset.receipt;
+
+                modalRemainingQty =
+                    Number(button.dataset.remaining);
+
+                document.getElementById(
+                    "modalPart"
+                ).textContent =
+                    button.dataset.part;
+
+                document.getElementById(
+                    "modalDescription"
+                ).textContent =
+                    button.dataset.description;
+
+                document.getElementById(
+                    "modalReceipt"
+                ).textContent =
+                    "Receipt " + button.dataset.receipt;
+
+                document.getElementById(
+                    "stageQty"
+                ).value =
+                    button.dataset.remaining;
+
+                document.getElementById(
+                    "storageLocation"
+                ).value = "";
+
+                document.getElementById(
+                    "materialBarcode"
+                ).value = "";
+
+                document.getElementById(
+                    "availableNote"
+                ).textContent =
+                    "Receipt Qty: " +
+                    button.dataset.received +
+                    " · Already Staged: " +
+                    button.dataset.staged +
+                    " · Remaining: " +
+                    button.dataset.remaining;
+
+                document.getElementById(
+                    "validationMessage"
+                ).style.display = "none";
+
+                document.getElementById(
+                    "successMessage"
+                ).style.display = "none";
+
+                modalBackdrop.classList.add("open");
+            };
+
+        });
+    }
+
+
+    function closeStageModal() {
+        modalBackdrop.classList.remove("open");
+    }
+
+
+    function getStatusClass(status) {
+
+        if (status === "Awaiting Staging") {
+            return "status-awaiting";
+        }
+
+        if (status === "Partially Staged") {
+            return "status-partial";
+        }
+
+        return "status-complete";
+    }
+
+
+    function updateMetrics() {
+
+        let awaiting = 0;
+        let partial = 0;
+        let complete = 0;
+
+        receiptCards.forEach(function(card) {
+
+            if (card.dataset.status === "Awaiting Staging") {
+                awaiting += 1;
+            }
+
+            if (card.dataset.status === "Partially Staged") {
+                partial += 1;
+            }
+
+            if (card.dataset.status === "Fully Staged") {
+                complete += 1;
+            }
+
+        });
+
+        document.getElementById(
+            "metricAwaiting"
+        ).textContent = awaiting;
+
+        document.getElementById(
+            "metricPartial"
+        ).textContent = partial;
+
+        document.getElementById(
+            "metricComplete"
+        ).textContent = complete;
+    }
+
+
+    function renderLocations(receiptNbr, locations) {
+
+        const container =
+            document.querySelector(
+                '.location-list[data-receipt="' +
+                receiptNbr +
+                '"] .location-items'
+            );
+
+        container.innerHTML = "";
+
+        if (locations.length === 0) {
+
+            container.innerHTML =
+                '<div class="location-row">' +
+                '<span class="location-name">' +
+                'No material staged yet' +
+                '</span>' +
+                '</div>';
+
+            return;
+        }
+
+        locations.forEach(function(item) {
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "location-row";
+
+            row.innerHTML =
+                '<span class="location-name">' +
+                item.location +
+                '</span>' +
+                '<span class="location-qty">' +
+                item.quantity +
+                ' EA</span>';
+
+            container.appendChild(row);
+        });
+    }
+
+
+    function renderHistory(receiptNbr, history) {
+
+        const container =
+            document.querySelector(
+                '.history-section[data-receipt="' +
+                receiptNbr +
+                '"] .history-items'
+            );
+
+        container.innerHTML = "";
+
+        history.forEach(function(entry) {
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "history-entry";
+
+            row.innerHTML =
+                "<span>" +
+                entry.time +
+                "</span>" +
+
+                "<span>" +
+                entry.quantity +
+                " " +
+                entry.uom +
+                "</span>" +
+
+                "<span>" +
+                entry.location +
+                "</span>" +
+
+                "<span>" +
+                entry.user +
+                "</span>";
+
+            container.appendChild(row);
+        });
+    }
+
+
+    function updateReceiptCard(data) {
+
+        const receiptNbr =
+            data.receipt_nbr;
+
+        const card =
+            document.querySelector(
+                '.receipt-card[data-receipt="' +
+                receiptNbr +
+                '"]'
+            );
+
+        card.dataset.status =
+            data.staging_status;
+
+
+        document.querySelector(
+            '.staged-qty[data-receipt="' +
+            receiptNbr +
+            '"]'
+        ).textContent =
+            data.staged_qty;
+
+
+        document.querySelector(
+            '.remaining-qty[data-receipt="' +
+            receiptNbr +
+            '"]'
+        ).textContent =
+            data.remaining_to_stage;
+
+
+        document.querySelector(
+            '.current-location[data-receipt="' +
+            receiptNbr +
+            '"]'
+        ).textContent =
+            data.storage_location;
+
+
+        const statusContainer =
+            document.querySelector(
+                '.status-container[data-receipt="' +
+                receiptNbr +
+                '"]'
+            );
+
+        statusContainer.innerHTML =
+            '<span class="status-pill ' +
+            getStatusClass(data.staging_status) +
+            '">' +
+            data.staging_status +
+            '</span>';
+
+
+        const actionContainer =
+            document.querySelector(
+                '.receipt-actions[data-receipt="' +
+                receiptNbr +
+                '"]'
+            );
+
+
+        if (data.remaining_to_stage === 0) {
+
+            actionContainer.innerHTML =
+                '<button ' +
+                'type="button" ' +
+                'class="stage-btn" ' +
+                'disabled>' +
+                'Fully Staged' +
+                '</button>';
+
+        } else {
+
+            const oldButton =
+                actionContainer.querySelector(
+                    ".open-stage-btn"
+                );
+
+            if (oldButton) {
+
+                oldButton.dataset.staged =
+                    data.staged_qty;
+
+                oldButton.dataset.remaining =
+                    data.remaining_to_stage;
+
+            }
+        }
+
+
+        renderLocations(
+            receiptNbr,
+            data.locations
+        );
+
+
+        renderHistory(
+            receiptNbr,
+            data.history
+        );
+
+
+        updateMetrics();
+
+        updateReceiptVisibility();
+
+        connectStageButtons();
+    }
+
+
+    async function submitStaging() {
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "stageQty"
+                ).value
+            );
+
+        const location =
+            document.getElementById(
+                "storageLocation"
+            ).value;
+
+        const validationMessage =
+            document.getElementById(
+                "validationMessage"
+            );
+
+        const successMessage =
+            document.getElementById(
+                "successMessage"
+            );
+
+
+        validationMessage.style.display =
+            "none";
+
+        successMessage.style.display =
+            "none";
+
+
+        if (!location) {
+
+            validationMessage.textContent =
+                "Select a Tech Center storage location.";
+
+            validationMessage.style.display =
+                "block";
+
+            return;
+        }
+
+
+        if (
+            quantity <= 0 ||
+            quantity > modalRemainingQty
+        ) {
+
+            validationMessage.textContent =
+                "Staging quantity cannot exceed the quantity remaining from this receipt.";
+
+            validationMessage.style.display =
+                "block";
+
+            return;
+        }
+
+
+        confirmStageButton.disabled =
+            true;
+
+        confirmStageButton.textContent =
+            "Saving...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/materials/stage",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            receipt_nbr:
+                                activeReceiptNbr,
+
+                            quantity:
+                                quantity,
+
+                            location:
+                                location
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                validationMessage.textContent =
+                    data.message;
+
+                validationMessage.style.display =
+                    "block";
+
+                return;
+            }
+
+
+            updateReceiptCard(data);
+
+
+            successMessage.textContent =
+                "Material staged successfully.";
+
+            successMessage.style.display =
+                "block";
+
+
+            setTimeout(function() {
+                closeStageModal();
+            }, 700);
+
+        } catch (error) {
+
+            validationMessage.textContent =
+                "Unable to save staging activity.";
+
+            validationMessage.style.display =
+                "block";
+
+        } finally {
+
+            confirmStageButton.disabled =
+                false;
+
+            confirmStageButton.textContent =
+                "Confirm Staging";
+        }
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        updateReceiptVisibility
+    );
+
+
+    filterButtons.forEach(function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                filterButtons.forEach(
+                    function(otherButton) {
+                        otherButton.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+                button.classList.add(
+                    "active"
+                );
+
+                activeFilter =
+                    button.dataset.filter;
+
+                updateReceiptVisibility();
+            }
+        );
+
+    });
+
+
+    closeStageModalButton.addEventListener(
+        "click",
+        closeStageModal
+    );
+
+
+    cancelStageButton.addEventListener(
+        "click",
+        closeStageModal
+    );
+
+
+    confirmStageButton.addEventListener(
+        "click",
+        submitStaging
+    );
+
+
+    modalBackdrop.addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === modalBackdrop) {
+                closeStageModal();
+            }
+
+        }
+    );
+
+
+    connectStageButtons();
+</script>
+
+{% endblock %}
