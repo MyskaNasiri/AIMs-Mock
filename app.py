@@ -11,8 +11,12 @@ from flask import (
 from database import (
     initialize_database,
     get_all_receipts,
+    get_receipt_groups,
     get_receipts_by_project,
-    stage_receipt_material
+    stage_receipt_material,
+    get_warehouse_materials,
+    get_material_detail,
+    move_material
 )
 
 
@@ -20,7 +24,7 @@ app = Flask(__name__)
 
 
 # ============================================================
-# INITIALIZE SQLITE DATABASE
+# INITIALIZE DATABASE
 # ============================================================
 
 initialize_database()
@@ -120,8 +124,6 @@ PROJECTS = {
 
 # ============================================================
 # PURCHASE ORDERS
-#
-# Demo procurement data.
 # ============================================================
 
 PURCHASE_ORDERS = {
@@ -290,8 +292,7 @@ PROJECT_SCHEDULES = {
                     "target": "Complete"
                 },
                 {
-                    "activity":
-                        "Fabrication - Phase 1 Stage 2 Chem-Inject/IJB",
+                    "activity": "Fabrication - Phase 1 Stage 2 Chem-Inject/IJB",
                     "percent": 50,
                     "status": "Behind",
                     "target": "09/04/26*"
@@ -309,8 +310,7 @@ PROJECT_SCHEDULES = {
                     "target": "07/07/26"
                 },
                 {
-                    "activity":
-                        "Internal FAT - Phase 1 Stage 2 Chem-Inject/IJB",
+                    "activity": "Internal FAT - Phase 1 Stage 2 Chem-Inject/IJB",
                     "percent": 0,
                     "status": "Behind",
                     "target": "09/08/26*"
@@ -328,8 +328,7 @@ PROJECT_SCHEDULES = {
                     "target": "07/08/26"
                 },
                 {
-                    "activity":
-                        "Client FAT - Phase 1 Stage 2 Chem-Inject/IJB",
+                    "activity": "Client FAT - Phase 1 Stage 2 Chem-Inject/IJB",
                     "percent": 0,
                     "status": "Behind",
                     "target": "09/11/26*"
@@ -347,8 +346,7 @@ PROJECT_SCHEDULES = {
                     "target": "08/07/26"
                 },
                 {
-                    "activity":
-                        "Punchlist - Phase 1 Stage 2 Chem-Inject/IJB",
+                    "activity": "Punchlist - Phase 1 Stage 2 Chem-Inject/IJB",
                     "percent": 0,
                     "status": "Behind",
                     "target": "09/16/26*"
@@ -967,24 +965,78 @@ def tech_center_home():
 # ============================================================
 # MATERIALS MANAGEMENT
 #
-# READS DIRECTLY FROM SQLITE.
+# IMPORTANT:
+# Receiving & Staging now receives GROUPED receipt data.
+#
+# This allows:
+#
+# POR00004330
+#    Line 1
+#    Line 2
+#    Line 3
+#    Line 4
+#
+# to appear as ONE Acumatica receipt.
 # ============================================================
 
 @app.route("/materials")
 def materials():
 
-    receipts = get_all_receipts()
+    all_receipt_groups = get_receipt_groups()
+
+    # --------------------------------------------------------
+    # Receiving & Staging
+    #
+    # Keep the earlier POR-DEMO-* warehouse-only records out
+    # of the Acumatica receipt area.
+    #
+    # The new seeded POR00004323+ examples are intentionally
+    # allowed because they are being used to demonstrate the
+    # proposed receiving workflow.
+    # --------------------------------------------------------
+
+    receipt_groups = [
+        receipt
+        for receipt in all_receipt_groups
+        if not receipt["receipt_nbr"].startswith("POR-DEMO-")
+    ]
+
+
+    # --------------------------------------------------------
+    # Warehouse Materials
+    #
+    # This remains line-level because each material must retain
+    # traceability to its receipt + receipt line.
+    # --------------------------------------------------------
+
+    warehouse_materials = (
+        get_warehouse_materials()
+    )
+
 
     return render_template(
         "materials_management.html",
-        receipts=receipts
+
+        receipt_groups=receipt_groups,
+
+        # Temporary compatibility variable.
+        # We can remove this once the new template is installed.
+        receipts=get_all_receipts(),
+
+        warehouse_materials=
+            warehouse_materials
     )
 
 
 # ============================================================
-# STAGE MATERIAL
+# STAGE RECEIPT LINE
 #
-# WRITES DIRECTLY TO SQLITE.
+# We now send BOTH:
+#
+# receipt_nbr
+# receipt_line_id
+#
+# receipt_line_id is the important identifier.
 # ============================================================
 
 @app.route(
@@ -996,6 +1048,7 @@ def stage_material():
     data = request.get_json(
         silent=True
     )
+
 
     if not data:
 
@@ -1014,6 +1067,13 @@ def stage_material():
     ).strip()
 
 
+    receipt_line_id = (
+        data.get(
+            "receipt_line_id"
+        )
+    )
+
+
     location = str(
         data.get(
             "location",
@@ -1021,6 +1081,41 @@ def stage_material():
         )
     ).strip()
 
+
+    # --------------------------------------------------------
+    # Validate receipt line ID
+    # --------------------------------------------------------
+
+    if receipt_line_id not in (
+        None,
+        ""
+    ):
+
+        try:
+
+            receipt_line_id = int(
+                receipt_line_id
+            )
+
+        except (
+            TypeError,
+            ValueError
+        ):
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Invalid receipt line."
+            }), 400
+
+    else:
+
+        receipt_line_id = None
+
+
+    # --------------------------------------------------------
+    # Validate quantity
+    # --------------------------------------------------------
 
     try:
 
@@ -1039,24 +1134,302 @@ def stage_material():
         quantity = 0
 
 
+    # --------------------------------------------------------
+    # Save staging
+    # --------------------------------------------------------
+
     result = stage_receipt_material(
-        receipt_nbr=receipt_nbr,
-        quantity=quantity,
-        location=location,
-        staged_by="Myska Nasiri"
+
+        receipt_nbr=
+            receipt_nbr,
+
+        receipt_line_id=
+            receipt_line_id,
+
+        quantity=
+            quantity,
+
+        location=
+            location,
+
+        staged_by=
+            "Myska Nasiri"
     )
 
 
     if not result["success"]:
 
+        message = result.get(
+            "message",
+            ""
+        )
+
+
         if (
-            result["message"]
-            == "Receipt was not found."
+            "not found"
+            in message.lower()
         ):
 
             return jsonify(
                 result
             ), 404
+
+
+        return jsonify(
+            result
+        ), 400
+
+
+    return jsonify(
+        result
+    ), 200
+
+
+# ============================================================
+# MATERIAL DETAIL BY RECEIPT LINE
+#
+# This is the preferred route now.
+#
+# Example:
+# /materials/line/14
+# ============================================================
+
+@app.route(
+    "/materials/line/<int:receipt_line_id>"
+)
+def material_line_detail(
+    receipt_line_id
+):
+
+    material = get_material_detail(
+        receipt_line_id=
+            receipt_line_id
+    )
+
+
+    if not material:
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Material line was not found."
+        }), 404
+
+
+    return jsonify({
+        "success": True,
+        "material": material
+    }), 200
+
+
+# ============================================================
+# LEGACY MATERIAL DETAIL ROUTE
+#
+# This still works for receipts containing ONE line.
+#
+# For a multi-line receipt like POR00004330, the UI should use
+# /materials/line/<receipt_line_id> instead.
+# ============================================================
+
+@app.route(
+    "/materials/<receipt_nbr>"
+)
+def material_detail(
+    receipt_nbr
+):
+
+    material = get_material_detail(
+        receipt_nbr=
+            receipt_nbr
+    )
+
+
+    if not material:
+
+        return jsonify({
+            "success": False,
+
+            "message":
+                (
+                    "This receipt either was not found or contains "
+                    "multiple material lines. Select a specific "
+                    "receipt line."
+                )
+        }), 404
+
+
+    return jsonify({
+        "success": True,
+        "material": material
+    }), 200
+
+
+# ============================================================
+# MOVE / RESTAGE MATERIAL
+#
+# This changes the AIMS physical location.
+#
+# IMPORTANT:
+# It does NOT change the official Acumatica receipt quantity.
+# ============================================================
+
+@app.route(
+    "/materials/move",
+    methods=["POST"]
+)
+def move_warehouse_material():
+
+    data = request.get_json(
+        silent=True
+    )
+
+
+    if not data:
+
+        return jsonify({
+            "success": False,
+            "message":
+                "No material movement data was received."
+        }), 400
+
+
+    receipt_nbr = str(
+        data.get(
+            "receipt_nbr",
+            ""
+        )
+    ).strip()
+
+
+    receipt_line_id = (
+        data.get(
+            "receipt_line_id"
+        )
+    )
+
+
+    from_location = str(
+        data.get(
+            "from_location",
+            ""
+        )
+    ).strip()
+
+
+    to_location = str(
+        data.get(
+            "to_location",
+            ""
+        )
+    ).strip()
+
+
+    notes = str(
+        data.get(
+            "notes",
+            ""
+        )
+    ).strip()
+
+
+    # --------------------------------------------------------
+    # Validate receipt line ID
+    # --------------------------------------------------------
+
+    if receipt_line_id not in (
+        None,
+        ""
+    ):
+
+        try:
+
+            receipt_line_id = int(
+                receipt_line_id
+            )
+
+        except (
+            TypeError,
+            ValueError
+        ):
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Invalid receipt line."
+            }), 400
+
+    else:
+
+        receipt_line_id = None
+
+
+    # --------------------------------------------------------
+    # Validate quantity
+    # --------------------------------------------------------
+
+    try:
+
+        quantity = int(
+            data.get(
+                "quantity",
+                0
+            )
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        quantity = 0
+
+
+    # --------------------------------------------------------
+    # Perform movement
+    # --------------------------------------------------------
+
+    result = move_material(
+
+        receipt_nbr=
+            receipt_nbr,
+
+        receipt_line_id=
+            receipt_line_id,
+
+        from_location=
+            from_location,
+
+        to_location=
+            to_location,
+
+        quantity=
+            quantity,
+
+        moved_by=
+            "Myska Nasiri",
+
+        notes=
+            notes
+    )
+
+
+    if not result["success"]:
+
+        message = result.get(
+            "message",
+            ""
+        )
+
+
+        if (
+            "not found"
+            in message.lower()
+        ):
+
+            return jsonify(
+                result
+            ), 404
+
 
         return jsonify(
             result
@@ -1087,13 +1460,17 @@ def projects():
 @app.route(
     "/projects/<project_slug>"
 )
-def project_dashboard(project_slug):
+def project_dashboard(
+    project_slug
+):
 
     project = PROJECTS.get(
         project_slug
     )
 
+
     if not project:
+
         abort(404)
 
 
@@ -1123,8 +1500,11 @@ def project_dashboard(project_slug):
     return render_template(
         "project_dashboard.html",
 
-        project=project,
-        project_slug=project_slug,
+        project=
+            project,
+
+        project_slug=
+            project_slug,
 
         purchase_orders=
             purchase_orders,
@@ -1144,13 +1524,17 @@ def project_dashboard(project_slug):
 @app.route(
     "/projects/<project_slug>/purchase-orders"
 )
-def project_purchase_orders(project_slug):
+def project_purchase_orders(
+    project_slug
+):
 
     project = PROJECTS.get(
         project_slug
     )
 
+
     if not project:
+
         abort(404)
 
 
@@ -1165,7 +1549,8 @@ def project_purchase_orders(project_slug):
     return render_template(
         "project_purchase_orders.html",
 
-        project=project,
+        project=
+            project,
 
         project_slug=
             project_slug,
@@ -1182,13 +1567,17 @@ def project_purchase_orders(project_slug):
 @app.route(
     "/projects/<project_slug>/schedule"
 )
-def project_schedule(project_slug):
+def project_schedule(
+    project_slug
+):
 
     project = PROJECTS.get(
         project_slug
     )
 
+
     if not project:
+
         abort(404)
 
 
@@ -1203,7 +1592,8 @@ def project_schedule(project_slug):
     return render_template(
         "project_schedule.html",
 
-        project=project,
+        project=
+            project,
 
         project_slug=
             project_slug,
@@ -1215,20 +1605,22 @@ def project_schedule(project_slug):
 
 # ============================================================
 # PROJECT MATERIALS
-#
-# THIS NOW READS FROM THE SAME SQLITE DATABASE TOO.
 # ============================================================
 
 @app.route(
     "/projects/<project_slug>/materials"
 )
-def project_materials(project_slug):
+def project_materials(
+    project_slug
+):
 
     project = PROJECTS.get(
         project_slug
     )
 
+
     if not project:
+
         abort(404)
 
 
@@ -1239,48 +1631,87 @@ def project_materials(project_slug):
     )
 
 
-    # Convert the SQLite receipt structure into the field
-    # names expected by the existing project_materials.html
-    # template.
-
     materials_data = []
+
 
     for receipt in receipt_rows:
 
         materials_data.append({
+
+            # NEW
+            "receipt_line_id":
+                receipt[
+                    "receipt_line_id"
+                ],
+
+            "line_nbr":
+                receipt[
+                    "line_nbr"
+                ],
+
+
             "receipt":
-                receipt["receipt_nbr"],
+                receipt[
+                    "receipt_nbr"
+                ],
 
             "po":
-                receipt["po_nbr"],
+                receipt[
+                    "po_nbr"
+                ],
 
             "part":
-                receipt["inventory_id"],
+                receipt[
+                    "inventory_id"
+                ],
 
             "description":
-                receipt["description"],
+                receipt[
+                    "description"
+                ],
+
+            "package":
+                receipt[
+                    "package_name"
+                ],
+
+            "project_number":
+                receipt[
+                    "project_number"
+                ],
 
             "received":
-                receipt["receipt_qty"],
+                receipt[
+                    "receipt_qty"
+                ],
 
             "staged":
-                receipt["staged_qty"],
+                receipt[
+                    "staged_qty"
+                ],
 
             "remaining":
-                receipt["remaining_to_stage"],
+                receipt[
+                    "remaining_to_stage"
+                ],
 
             "location":
-                receipt["storage_location"],
+                receipt[
+                    "storage_location"
+                ],
 
             "status":
-                receipt["staging_status"]
+                receipt[
+                    "staging_status"
+                ]
         })
 
 
     return render_template(
         "project_materials.html",
 
-        project=project,
+        project=
+            project,
 
         project_slug=
             project_slug,
