@@ -1,0 +1,1818 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% set data = report.report_data or {} %}
+{% set project_client = "" %}
+
+{% if project %}
+    {% set project_client = project.client %}
+{% endif %}
+
+<style>
+    .ncr-page {
+        padding: 5px 2px 40px;
+    }
+
+    .ncr-shell {
+        background: white;
+        border: 1px solid #dde2df;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .ncr-header {
+        padding: 24px 26px;
+        border-bottom: 1px solid #e4e8e5;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+    .ncr-eyebrow {
+        font-size: 11px;
+        color: #df702e;
+        letter-spacing: 1.1px;
+        font-weight: 750;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .ncr-title {
+        font-size: 25px;
+        font-weight: 700;
+        color: #182c3c;
+        margin: 0;
+    }
+
+    .ncr-subtitle {
+        margin-top: 6px;
+        color: #727b75;
+        font-size: 13px;
+    }
+
+    .ncr-header-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .save-btn,
+    .submit-btn,
+    .back-btn {
+        border-radius: 6px;
+        padding: 10px 16px;
+        min-height: 40px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .back-btn {
+        border: 1px solid #d7ddda;
+        background: white;
+        color: #505b54;
+    }
+
+    .save-btn {
+        border: 1px solid #dd753a;
+        background: white;
+        color: #d6652d;
+    }
+
+    .submit-btn {
+        border: 1px solid #df7639;
+        background: #df7639;
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background: #cf672f;
+    }
+
+    .report-meta-bar {
+        padding: 13px 26px;
+        background: #fafbfa;
+        border-bottom: 1px solid #e7ebe8;
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .report-meta-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        color: #858d88;
+    }
+
+    .report-meta-value {
+        margin-top: 3px;
+        font-size: 12px;
+        font-weight: 650;
+        color: #3a453f;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        padding: 5px 10px;
+        border-radius: 15px;
+        background: #eef1f3;
+        color: #59656e;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .status-submitted {
+        background: #e8f3eb;
+        color: #456b50;
+    }
+
+    .ncr-form {
+        padding: 24px 26px 30px;
+    }
+
+    .section-card {
+        border: 1px solid #dfe4e1;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .section-header {
+        background: #f7f9f7;
+        border-bottom: 1px solid #e1e6e3;
+        padding: 13px 17px;
+        font-size: 11px;
+        font-weight: 750;
+        color: #36443c;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+    }
+
+    .section-body {
+        padding: 18px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px 22px;
+    }
+
+    .field {
+        min-width: 0;
+    }
+
+    .field.full {
+        grid-column: 1 / -1;
+    }
+
+    .field label {
+        display: block;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: .65px;
+        color: #747e78;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d7ddda;
+        border-radius: 6px;
+        padding: 9px 10px;
+        background: white;
+        font-size: 12px;
+        color: #354039;
+        font-family: inherit;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        outline: none;
+        border-color: #879990;
+    }
+
+    .field textarea {
+        min-height: 105px;
+        resize: vertical;
+    }
+
+    .large-textarea textarea {
+        min-height: 145px;
+    }
+
+    .readonly {
+        background: #f7f9f7 !important;
+        color: #666f69 !important;
+    }
+
+    .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px 18px;
+    }
+
+    .choice-row {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .choice-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        color: #3d4842;
+    }
+
+    .choice-item input {
+        width: auto;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 24px;
+    }
+
+    .save-message {
+        display: none;
+        margin-bottom: 15px;
+        padding: 11px 14px;
+        border-radius: 7px;
+        font-size: 12px;
+    }
+
+    .save-message.success {
+        display: block;
+        background: #e9f4eb;
+        color: #486752;
+    }
+
+    .save-message.error {
+        display: block;
+        background: #faece9;
+        color: #985349;
+    }
+
+    .prototype-note {
+        margin-top: 7px;
+        color: #7e8781;
+        font-size: 10px;
+    }
+
+    @media (max-width: 850px) {
+        .form-grid,
+        .choice-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ncr-header {
+            flex-direction: column;
+        }
+    }
+</style>
+
+
+<div
+    class="ncr-page"
+    id="ncrPage"
+    data-report-id="{{ report.id }}"
+>
+
+    <div class="ncr-shell">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="ncr-header">
+
+            <div>
+
+                <div class="ncr-eyebrow">
+                    Reporting
+                </div>
+
+                <h1 class="ncr-title">
+                    Nonconformance Report (NCR)
+                </h1>
+
+                <div class="ncr-subtitle">
+                    Digital prototype based on Audubon form SFM-IS-0202.
+                </div>
+
+            </div>
+
+
+            <div class="ncr-header-actions">
+
+                <button
+                    id="backButton"
+                    type="button"
+                    class="back-btn"
+                >
+                    BACK TO REPORTING
+                </button>
+
+                <button
+                    id="headerSaveButton"
+                    type="button"
+                    class="save-btn"
+                >
+                    SAVE DRAFT
+                </button>
+
+                <button
+                    id="headerSubmitButton"
+                    type="button"
+                    class="submit-btn"
+                >
+                    SUBMIT REPORT
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             REPORT META
+        ================================================== -->
+
+        <div class="report-meta-bar">
+
+            <div>
+                <div class="report-meta-label">
+                    Report No.
+                </div>
+
+                <div class="report-meta-value">
+                    {{ report.report_number }}
+                </div>
+            </div>
+
+
+            <div>
+                <div class="report-meta-label">
+                    Project
+                </div>
+
+                <div class="report-meta-value">
+                    {{ report.project_name }}
+                </div>
+            </div>
+
+
+            <div>
+                <div class="report-meta-label">
+                    Package / Section
+                </div>
+
+                <div class="report-meta-value">
+                    {{ report.package_name or "Not Assigned" }}
+                </div>
+            </div>
+
+
+            <div>
+                <div class="report-meta-label">
+                    Created By
+                </div>
+
+                <div class="report-meta-value">
+                    {{ report.created_by }}
+                </div>
+            </div>
+
+
+            <div>
+                <div class="report-meta-label">
+                    Status
+                </div>
+
+                <div class="report-meta-value">
+
+                    {% if report.status == "Submitted" %}
+
+                    <span class="status-pill status-submitted">
+                        {{ report.status }}
+                    </span>
+
+                    {% else %}
+
+                    <span class="status-pill">
+                        {{ report.status }}
+                    </span>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <div class="ncr-form">
+
+            <div
+                id="saveMessage"
+                class="save-message"
+            ></div>
+
+
+            <!-- =================================================
+                 GENERAL INFORMATION
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    General Information
+                </div>
+
+                <div class="section-body">
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label for="date">
+                                Date
+                            </label>
+
+                            <input
+                                id="date"
+                                type="date"
+                                value="{{ data.get('date', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                NCR No.
+                            </label>
+
+                            <input
+                                class="readonly"
+                                type="text"
+                                value="{{ report.report_number }}"
+                                readonly
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Project
+                            </label>
+
+                            <input
+                                class="readonly"
+                                type="text"
+                                value="{{ report.project_name }}"
+                                readonly
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="client">
+                                Client
+                            </label>
+
+                            <input
+                                id="client"
+                                type="text"
+                                value="{{ data.get('client', project_client) }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="po_number">
+                                P.O. No.
+                            </label>
+
+                            <input
+                                id="po_number"
+                                type="text"
+                                value="{{ data.get('po_number', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="vendor">
+                                Vendor
+                            </label>
+
+                            <input
+                                id="vendor"
+                                type="text"
+                                value="{{ data.get('vendor', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="item_number">
+                                Item No.
+                            </label>
+
+                            <input
+                                id="item_number"
+                                type="text"
+                                value="{{ data.get('item_number', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="location">
+                                Location
+                            </label>
+
+                            <input
+                                id="location"
+                                type="text"
+                                value="{{ data.get('location', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="tag_number">
+                                Tag No.
+                            </label>
+
+                            <input
+                                id="tag_number"
+                                type="text"
+                                value="{{ data.get('tag_number', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="contact">
+                                Contact
+                            </label>
+
+                            <input
+                                id="contact"
+                                type="text"
+                                value="{{ data.get('contact', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <input
+                                id="description"
+                                type="text"
+                                value="{{ data.get('description', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="phone">
+                                Phone No.
+                            </label>
+
+                            <input
+                                id="phone"
+                                type="text"
+                                value="{{ data.get('phone', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="specification">
+                                Specification
+                            </label>
+
+                            <input
+                                id="specification"
+                                type="text"
+                                value="{{ data.get('specification', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="drawing">
+                                Drawing
+                            </label>
+
+                            <input
+                                id="drawing"
+                                type="text"
+                                value="{{ data.get('drawing', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="code">
+                                Code
+                            </label>
+
+                            <input
+                                id="code"
+                                type="text"
+                                value="{{ data.get('code', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="attachments">
+                                Attachments
+                            </label>
+
+                            <select id="attachments">
+
+                                <option value="">
+                                    Select
+                                </option>
+
+                                <option
+                                    value="Yes"
+                                    {% if data.get("attachments") == "Yes" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Yes
+                                </option>
+
+                                <option
+                                    value="No"
+                                    {% if data.get("attachments") == "No" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    No
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NON-CONFORMANCE DESCRIPTION
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Describe Non-Conformance
+                </div>
+
+                <div class="section-body">
+
+                    <div class="field full large-textarea">
+
+                        <label for="nonconformance_description">
+                            Description of Non-Conformance
+                        </label>
+
+                        <textarea
+                            id="nonconformance_description"
+                            placeholder="Include document and paragraph. Attach sketch or supporting data if necessary."
+                        >{{ data.get("nonconformance_description", "") }}</textarea>
+
+                    </div>
+
+
+                    <div
+                        class="form-grid"
+                        style="margin-top: 16px;"
+                    >
+
+                        <div class="field">
+
+                            <label for="issuer">
+                                Issuer
+                            </label>
+
+                            <input
+                                id="issuer"
+                                type="text"
+                                value="{{ data.get('issuer', report.created_by) }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="issue_date">
+                                Issue Date
+                            </label>
+
+                            <input
+                                id="issue_date"
+                                type="date"
+                                value="{{ data.get('issue_date', '') }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEVERITY
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Severity Level
+                </div>
+
+                <div class="section-body">
+
+                    <div class="choice-row">
+
+                        <label class="choice-item">
+
+                            <input
+                                type="radio"
+                                name="severity"
+                                value="Minor"
+                                {% if data.get("severity") == "Minor" %}
+                                checked
+                                {% endif %}
+                            >
+
+                            Minor
+
+                        </label>
+
+
+                        <label class="choice-item">
+
+                            <input
+                                type="radio"
+                                name="severity"
+                                value="Major"
+                                {% if data.get("severity") == "Major" %}
+                                checked
+                                {% endif %}
+                            >
+
+                            Major
+                            (Cost / Schedule / Major Rework Impact)
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CAUSE / TYPE
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Cause / Type of Non-Conformance
+                </div>
+
+                <div class="section-body">
+
+                    {% set causes = data.get("causes", []) %}
+
+                    <div class="choice-grid">
+
+                        {% for cause in [
+                            "Specification Violation",
+                            "Code Violation",
+                            "Fabrication Error",
+                            "Test Failure",
+                            "Material Defect",
+                            "Major Weld Repair",
+                            "Dimensional Error",
+                            "Procedural Violation",
+                            "Documentation Error",
+                            "Missing Items / Parts",
+                            "Damaged Items / Parts",
+                            "Other"
+                        ] %}
+
+                        <label class="choice-item">
+
+                            <input
+                                class="cause-checkbox"
+                                type="checkbox"
+                                value="{{ cause }}"
+                                {% if cause in causes %}
+                                checked
+                                {% endif %}
+                            >
+
+                            {{ cause }}
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="field full"
+                        style="margin-top: 15px;"
+                    >
+
+                        <label for="cause_other">
+                            Other / Additional Detail
+                        </label>
+
+                        <input
+                            id="cause_other"
+                            type="text"
+                            value="{{ data.get('cause_other', '') }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CORRECTIVE ACTION
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Proposed Corrective Action
+                </div>
+
+                <div class="section-body">
+
+                    <div class="choice-row">
+
+                        {% for action in [
+                            "Use As Is",
+                            "Rework",
+                            "Replace",
+                            "Re-Test"
+                        ] %}
+
+                        <label class="choice-item">
+
+                            <input
+                                type="radio"
+                                name="corrective_action"
+                                value="{{ action }}"
+                                {% if data.get("corrective_action") == action %}
+                                checked
+                                {% endif %}
+                            >
+
+                            {{ action }}
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="field full"
+                        style="margin-top: 15px;"
+                    >
+
+                        <label for="corrective_comments">
+                            Comments
+                        </label>
+
+                        <textarea id="corrective_comments">{{ data.get("corrective_comments", "") }}</textarea>
+
+                    </div>
+
+
+                    <div
+                        class="form-grid"
+                        style="margin-top: 15px;"
+                    >
+
+                        <div class="field">
+
+                            <label for="corrective_vendor">
+                                Vendor
+                            </label>
+
+                            <input
+                                id="corrective_vendor"
+                                type="text"
+                                value="{{ data.get('corrective_vendor', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="corrective_date">
+                                Date
+                            </label>
+
+                            <input
+                                id="corrective_date"
+                                type="date"
+                                value="{{ data.get('corrective_date', '') }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DISPOSITION
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Disposition
+                </div>
+
+                <div class="section-body">
+
+                    <div class="choice-row">
+
+                        {% for action in [
+                            "Use As Is",
+                            "Rework",
+                            "Replace",
+                            "Re-Test"
+                        ] %}
+
+                        <label class="choice-item">
+
+                            <input
+                                type="radio"
+                                name="disposition"
+                                value="{{ action }}"
+                                {% if data.get("disposition") == action %}
+                                checked
+                                {% endif %}
+                            >
+
+                            {{ action }}
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="field full"
+                        style="margin-top: 15px;"
+                    >
+
+                        <label for="disposition_comments">
+                            Comments
+                        </label>
+
+                        <textarea id="disposition_comments">{{ data.get("disposition_comments", "") }}</textarea>
+
+                    </div>
+
+
+                    <div
+                        class="form-grid"
+                        style="margin-top: 15px;"
+                    >
+
+                        <div class="field">
+
+                            <label for="approval">
+                                Approval
+                            </label>
+
+                            <input
+                                id="approval"
+                                type="text"
+                                value="{{ data.get('approval', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="approval_date">
+                                Approval Date
+                            </label>
+
+                            <input
+                                id="approval_date"
+                                type="date"
+                                value="{{ data.get('approval_date', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="client_approval">
+                                Client Approval
+                            </label>
+
+                            <input
+                                id="client_approval"
+                                type="text"
+                                value="{{ data.get('client_approval', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="client_approval_date">
+                                Client Approval Date
+                            </label>
+
+                            <input
+                                id="client_approval_date"
+                                type="date"
+                                value="{{ data.get('client_approval_date', '') }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CLOSURE
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Closure
+                </div>
+
+                <div class="section-body">
+
+                    <div class="field full large-textarea">
+
+                        <label for="closure">
+                            Verification / Closure Description
+                        </label>
+
+                        <textarea id="closure">{{ data.get("closure", "") }}</textarea>
+
+                    </div>
+
+
+                    <div style="margin-top: 16px;">
+
+                        <div class="report-meta-label">
+                            Follow-up Inspection Required
+                        </div>
+
+
+                        <div
+                            class="choice-row"
+                            style="margin-top: 8px;"
+                        >
+
+                            {% for option in [
+                                "Yes",
+                                "No",
+                                "N/A"
+                            ] %}
+
+                            <label class="choice-item">
+
+                                <input
+                                    type="radio"
+                                    name="follow_up"
+                                    value="{{ option }}"
+                                    {% if data.get("follow_up") == option %}
+                                    checked
+                                    {% endif %}
+                                >
+
+                                {{ option }}
+
+                            </label>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="form-grid"
+                        style="margin-top: 18px;"
+                    >
+
+                        <div class="field">
+
+                            <label for="inspector">
+                                Inspector
+                            </label>
+
+                            <input
+                                id="inspector"
+                                type="text"
+                                value="{{ data.get('inspector', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="inspection_date">
+                                Inspection Date
+                            </label>
+
+                            <input
+                                id="inspection_date"
+                                type="date"
+                                value="{{ data.get('inspection_date', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="client_representative">
+                                Client Representative
+                            </label>
+
+                            <input
+                                id="client_representative"
+                                type="text"
+                                value="{{ data.get('client_representative', '') }}"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="client_representative_date">
+                                Client Representative Date
+                            </label>
+
+                            <input
+                                id="client_representative_date"
+                                type="date"
+                                value="{{ data.get('client_representative_date', '') }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DISTRIBUTION
+            ================================================== -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+                    Distribution
+                </div>
+
+                <div class="section-body">
+
+                    {% set distribution = data.get("distribution", []) %}
+
+                    <div class="choice-grid">
+
+                        {% for recipient in [
+                            "Vendor",
+                            "Engineering",
+                            "Purchasing",
+                            "Expediting",
+                            "Inspection",
+                            "Job Site",
+                            "Client"
+                        ] %}
+
+                        <label class="choice-item">
+
+                            <input
+                                class="distribution-checkbox"
+                                type="checkbox"
+                                value="{{ recipient }}"
+                                {% if recipient in distribution %}
+                                checked
+                                {% endif %}
+                            >
+
+                            {{ recipient }}
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="prototype-note">
+                PM notification is not activated yet. We will only add it
+                once the existing AIMS notification capability is confirmed.
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    id="saveButton"
+                    type="button"
+                    class="save-btn"
+                >
+                    SAVE DRAFT
+                </button>
+
+                <button
+                    id="submitButton"
+                    type="button"
+                    class="submit-btn"
+                >
+                    SUBMIT REPORT
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    const ncrPage =
+        document.getElementById(
+            "ncrPage"
+        );
+
+
+    const reportId =
+        Number(
+            ncrPage.dataset.reportId
+        );
+
+
+    function getRadioValue(name) {
+
+        const selected =
+            document.querySelector(
+                'input[name="' +
+                name +
+                '"]:checked'
+            );
+
+        return selected
+            ? selected.value
+            : "";
+    }
+
+
+    function getCheckedValues(className) {
+
+        return Array.from(
+            document.querySelectorAll(
+                "." +
+                className +
+                ":checked"
+            )
+        )
+        .map(
+            function(input) {
+
+                return input.value;
+
+            }
+        );
+    }
+
+
+    function valueOf(id) {
+
+        const element =
+            document.getElementById(
+                id
+            );
+
+        return element
+            ? element.value
+            : "";
+    }
+
+
+    function collectFormData() {
+
+        return {
+
+            date:
+                valueOf("date"),
+
+            client:
+                valueOf("client"),
+
+            po_number:
+                valueOf("po_number"),
+
+            vendor:
+                valueOf("vendor"),
+
+            item_number:
+                valueOf("item_number"),
+
+            location:
+                valueOf("location"),
+
+            tag_number:
+                valueOf("tag_number"),
+
+            contact:
+                valueOf("contact"),
+
+            description:
+                valueOf("description"),
+
+            phone:
+                valueOf("phone"),
+
+            specification:
+                valueOf("specification"),
+
+            drawing:
+                valueOf("drawing"),
+
+            code:
+                valueOf("code"),
+
+            attachments:
+                valueOf("attachments"),
+
+            nonconformance_description:
+                valueOf(
+                    "nonconformance_description"
+                ),
+
+            issuer:
+                valueOf("issuer"),
+
+            issue_date:
+                valueOf("issue_date"),
+
+            severity:
+                getRadioValue(
+                    "severity"
+                ),
+
+            causes:
+                getCheckedValues(
+                    "cause-checkbox"
+                ),
+
+            cause_other:
+                valueOf(
+                    "cause_other"
+                ),
+
+            corrective_action:
+                getRadioValue(
+                    "corrective_action"
+                ),
+
+            corrective_comments:
+                valueOf(
+                    "corrective_comments"
+                ),
+
+            corrective_vendor:
+                valueOf(
+                    "corrective_vendor"
+                ),
+
+            corrective_date:
+                valueOf(
+                    "corrective_date"
+                ),
+
+            disposition:
+                getRadioValue(
+                    "disposition"
+                ),
+
+            disposition_comments:
+                valueOf(
+                    "disposition_comments"
+                ),
+
+            approval:
+                valueOf(
+                    "approval"
+                ),
+
+            approval_date:
+                valueOf(
+                    "approval_date"
+                ),
+
+            client_approval:
+                valueOf(
+                    "client_approval"
+                ),
+
+            client_approval_date:
+                valueOf(
+                    "client_approval_date"
+                ),
+
+            closure:
+                valueOf(
+                    "closure"
+                ),
+
+            follow_up:
+                getRadioValue(
+                    "follow_up"
+                ),
+
+            inspector:
+                valueOf(
+                    "inspector"
+                ),
+
+            inspection_date:
+                valueOf(
+                    "inspection_date"
+                ),
+
+            client_representative:
+                valueOf(
+                    "client_representative"
+                ),
+
+            client_representative_date:
+                valueOf(
+                    "client_representative_date"
+                ),
+
+            distribution:
+                getCheckedValues(
+                    "distribution-checkbox"
+                )
+
+        };
+    }
+
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        const message =
+            document.getElementById(
+                "saveMessage"
+            );
+
+        message.className =
+            "save-message " +
+            type;
+
+        message.textContent =
+            text;
+    }
+
+
+    async function saveDraft() {
+
+        const reportData =
+            collectFormData();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/reporting/ncr/" +
+                    reportId +
+                    "/save",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                reportData
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                showMessage(
+                    result.message ||
+                    "Unable to save draft.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            showMessage(
+                "Draft saved successfully.",
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+            showMessage(
+                "Unable to save draft.",
+                "error"
+            );
+        }
+    }
+
+
+    async function submitReport() {
+
+        const reportData =
+            collectFormData();
+
+
+        if (!reportData.date) {
+
+            showMessage(
+                "Enter the report date before submitting.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            !reportData
+                .nonconformance_description
+        ) {
+
+            showMessage(
+                "Describe the non-conformance before submitting.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const confirmed =
+            window.confirm(
+                "Submit this NCR?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/reporting/ncr/" +
+                    reportId +
+                    "/submit",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                reportData
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                showMessage(
+                    result.message ||
+                    "Unable to submit report.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            showMessage(
+                "NCR submitted successfully.",
+                "success"
+            );
+
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "/reporting";
+
+                },
+                900
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+            showMessage(
+                "Unable to submit report.",
+                "error"
+            );
+        }
+    }
+
+
+    document.getElementById(
+        "backButton"
+    ).addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "/reporting";
+
+        }
+    );
+
+
+    document.getElementById(
+        "saveButton"
+    ).addEventListener(
+        "click",
+        saveDraft
+    );
+
+
+    document.getElementById(
+        "headerSaveButton"
+    ).addEventListener(
+        "click",
+        saveDraft
+    );
+
+
+    document.getElementById(
+        "submitButton"
+    ).addEventListener(
+        "click",
+        submitReport
+    );
+
+
+    document.getElementById(
+        "headerSubmitButton"
+    ).addEventListener(
+        "click",
+        submitReport
+    );
+</script>
+
+{% endblock %}

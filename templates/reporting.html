@@ -1,0 +1,2400 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .reporting-page {
+        padding: 4px 2px 40px;
+    }
+
+    /* =====================================================
+       PAGE HEADER
+    ===================================================== */
+
+    .reporting-shell {
+        background: #ffffff;
+        border: 1px solid #dde2df;
+        border-radius: 15px;
+        padding: 24px;
+    }
+
+    .report-eyebrow {
+        color: #e77a2c;
+        font-size: 11px;
+        letter-spacing: 1.2px;
+        font-weight: 750;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .report-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1f2b36;
+        margin: 0;
+    }
+
+    .report-subtitle {
+        margin-top: 6px;
+        font-size: 14px;
+        color: #717a75;
+        max-width: 800px;
+    }
+
+    .report-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 22px;
+    }
+
+    .report-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .orange-outline-btn,
+    .teal-btn {
+        min-height: 45px;
+        padding: 0 18px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .35px;
+        cursor: pointer;
+    }
+
+    .orange-outline-btn {
+        border: 1px solid #ed7c42;
+        background: white;
+        color: #dd6429;
+    }
+
+    .orange-outline-btn:hover {
+        background: #fff7f2;
+    }
+
+    .teal-btn {
+        border: 1px solid #379c9b;
+        background: #379c9b;
+        color: white;
+    }
+
+    .teal-btn:hover {
+        background: #328c8b;
+    }
+
+    .live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #66a277;
+        background: #f2faf4;
+        color: #244b30;
+        border-radius: 22px;
+        padding: 8px 14px;
+        margin-top: 13px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .4px;
+    }
+
+    .live-dot {
+        width: 7px;
+        height: 7px;
+        background: #54a26b;
+        border-radius: 50%;
+    }
+
+
+    /* =====================================================
+       REPORTING SUB NAV
+    ===================================================== */
+
+    .report-subnav {
+        margin-top: 22px;
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid #e1e5e2;
+    }
+
+    .report-nav-btn {
+        border: none;
+        background: transparent;
+        color: #717974;
+        padding: 11px 16px;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .report-nav-btn.active {
+        color: #27342d;
+        border-bottom-color: #e77832;
+    }
+
+    .report-nav-btn:hover {
+        color: #26322c;
+    }
+
+
+    /* =====================================================
+       METRIC CARDS
+    ===================================================== */
+
+    .report-metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+    }
+
+    .report-metric-card {
+        border: 1px solid #dfe4e1;
+        border-radius: 14px;
+        min-height: 145px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .025);
+    }
+
+    .report-metric-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 4px;
+        background: #389c9c;
+    }
+
+    .report-metric-card.orange::before {
+        background: #e77832;
+    }
+
+    .report-metric-card.green::before {
+        background: #62a776;
+    }
+
+    .report-metric-card.blue::before {
+        background: #4a91c3;
+    }
+
+    .report-metric-label {
+        color: #737b76;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 650;
+    }
+
+    .report-metric-number {
+        margin-top: 10px;
+        font-size: 31px;
+        font-weight: 700;
+        color: #142a3b;
+    }
+
+    .report-metric-note {
+        margin-top: 7px;
+        font-size: 12px;
+        color: #818883;
+    }
+
+    .report-metric-icon {
+        position: absolute;
+        top: 19px;
+        right: 19px;
+        font-size: 18px;
+        color: #678178;
+    }
+
+
+    /* =====================================================
+       TOOLBAR
+    ===================================================== */
+
+    .report-toolbar {
+        margin-top: 23px;
+        border: 1px solid #dfe4e1;
+        border-radius: 13px;
+        min-height: 62px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 18px;
+        gap: 20px;
+        background: white;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-label {
+        font-size: 12px;
+        font-weight: 650;
+        color: #44504a;
+        margin-right: 5px;
+    }
+
+    .view-toggle {
+        display: inline-flex;
+        border: 1px solid #df7542;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .view-toggle button {
+        border: none;
+        padding: 7px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        background: white;
+        color: #df6530;
+    }
+
+    .view-toggle button.active {
+        background: #369998;
+        color: white;
+    }
+
+    .report-select {
+        border: 1px solid #d8dedb;
+        background: white;
+        border-radius: 8px;
+        padding: 9px 35px 9px 11px;
+        min-width: 170px;
+        color: #48514c;
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       REPORT TABLE
+    ===================================================== */
+
+    .report-table-card {
+        margin-top: 26px;
+        border: 1px solid #dfe4e1;
+        border-radius: 14px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .report-table-header {
+        padding: 17px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #e3e7e4;
+    }
+
+    .report-table-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .table-icon {
+        width: 31px;
+        height: 31px;
+        border-radius: 7px;
+        background: #e4f4f0;
+        color: #268a80;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    .report-table-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #24332b;
+    }
+
+    .record-count {
+        color: #737c76;
+        font-size: 11px;
+    }
+
+    .table-command-bar {
+        min-height: 45px;
+        padding: 0 18px;
+        border-bottom: 1px solid #e5e9e6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .table-command-left,
+    .table-command-right {
+        display: flex;
+        gap: 17px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .table-command {
+        border: none;
+        background: none;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        color: #515b55;
+        cursor: pointer;
+        padding: 4px 0;
+    }
+
+    .table-command:hover {
+        color: #dc6f32;
+    }
+
+    .report-search {
+        padding: 11px 18px;
+        border-bottom: 1px solid #edf0ee;
+    }
+
+    .report-search input {
+        width: 100%;
+        max-width: 420px;
+        border: 1px solid #dce1de;
+        border-radius: 7px;
+        padding: 9px 11px;
+        font-size: 12px;
+        outline: none;
+    }
+
+    .report-search input:focus {
+        border-color: #899990;
+    }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .reports-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .reports-table th {
+        padding: 11px 13px;
+        background: #f7f9f7;
+        border-bottom: 1px solid #dfe4e1;
+        color: #69726c;
+        text-align: left;
+        font-size: 10px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .reports-table td {
+        padding: 13px;
+        border-bottom: 1px solid #edf0ee;
+        font-size: 12px;
+        color: #36413b;
+        vertical-align: middle;
+    }
+
+    .reports-table tbody tr:hover {
+        background: #fafcfa;
+    }
+
+    .report-number {
+        border: none;
+        background: none;
+        padding: 0;
+        font-size: 12px;
+        font-weight: 700;
+        color: #337466;
+        cursor: pointer;
+    }
+
+    .report-number:hover {
+        text-decoration: underline;
+    }
+
+    .view-report-btn {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 14px;
+        color: #53635b;
+    }
+
+    .status {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-open {
+        background: #fff0e8;
+        color: #a8542c;
+    }
+
+    .status-draft {
+        background: #eef1f3;
+        color: #5d6870;
+    }
+
+    .status-review {
+        background: #fff5d9;
+        color: #7c6322;
+    }
+
+    .status-complete {
+        background: #e7f3ea;
+        color: #416d4c;
+    }
+
+    .demo-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        margin-left: 5px;
+        background: #f4f1e7;
+        color: #746842;
+        border-radius: 8px;
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+
+    /* =====================================================
+       CHART PLACEHOLDER
+    ===================================================== */
+
+    .chart-placeholder {
+        display: none;
+        padding: 60px 30px;
+        text-align: center;
+        color: #818a84;
+        font-size: 13px;
+    }
+
+    .chart-placeholder.visible {
+        display: block;
+    }
+
+    .table-wrap.hidden {
+        display: none;
+    }
+
+
+    /* =====================================================
+       NEW REPORT MODAL
+    ===================================================== */
+
+    .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 28, 24, .4);
+        z-index: 1200;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-backdrop.open {
+        display: flex;
+    }
+
+    .new-report-modal {
+        width: 560px;
+        max-width: calc(100vw - 30px);
+        background: white;
+        border-radius: 13px;
+        box-shadow: 0 24px 65px rgba(0, 0, 0, .2);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e4e8e5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #27322c;
+    }
+
+    .modal-close {
+        border: none;
+        background: none;
+        font-size: 21px;
+        color: #707972;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .form-row {
+        margin-bottom: 16px;
+    }
+
+    .form-row label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .65px;
+        font-weight: 700;
+        color: #737d76;
+    }
+
+    .form-row select {
+        width: 100%;
+        border: 1px solid #d7ddda;
+        border-radius: 7px;
+        padding: 10px;
+        font-size: 13px;
+        background: white;
+    }
+
+    .modal-footer {
+        padding: 14px 20px;
+        border-top: 1px solid #e5e9e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .secondary-btn {
+        border: 1px solid #d7ddda;
+        background: white;
+        border-radius: 6px;
+        padding: 9px 14px;
+        cursor: pointer;
+        font-size: 12px;
+        color: #4c5751;
+    }
+
+    .primary-orange-btn {
+        border: none;
+        background: #e77939;
+        color: white;
+        border-radius: 6px;
+        padding: 9px 14px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .primary-orange-btn:hover {
+        background: #d9692f;
+    }
+
+    .primary-orange-btn:disabled {
+        background: #c7c7c7;
+        cursor: default;
+    }
+
+    .modal-note {
+        margin-top: 8px;
+        font-size: 11px;
+        color: #838b86;
+    }
+
+
+    @media (max-width: 1000px) {
+
+        .report-metric-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .report-header-row {
+            flex-direction: column;
+        }
+
+        .report-toolbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+
+    @media (max-width: 600px) {
+
+        .report-metric-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .reporting-shell {
+            padding: 16px;
+        }
+    }
+</style>
+
+
+<div class="reporting-page">
+
+    <div class="reporting-shell">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="report-header-row">
+
+            <div>
+
+                <div class="report-eyebrow">
+                    Reporting
+                </div>
+
+                <h1 class="report-title">
+                    Report Dashboard
+                </h1>
+
+                <div class="report-subtitle">
+                    Track Tech Center inspections, quality reports,
+                    material issues, and completed project documentation.
+                </div>
+
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    PROTOTYPE DATA
+                </div>
+
+            </div>
+
+
+            <div class="report-header-actions">
+
+                <button
+                    id="openReportsButton"
+                    class="teal-btn"
+                    type="button"
+                >
+                    OPEN REPORTS
+                </button>
+
+                <button
+                    id="newReportButton"
+                    class="orange-outline-btn"
+                    type="button"
+                >
+                    NEW REPORT
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SUB NAVIGATION
+        ================================================== -->
+
+        <div class="report-subnav">
+
+            <button
+                type="button"
+                class="report-nav-btn active"
+            >
+                Dashboard
+            </button>
+
+            <button
+                type="button"
+                class="report-nav-btn"
+                id="reportsNavButton"
+            >
+                Reports
+            </button>
+
+            <button
+                type="button"
+                class="report-nav-btn"
+                id="summaryNavButton"
+            >
+                Summary Report
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             METRICS
+        ================================================== -->
+
+        <div class="report-metric-grid">
+
+            <div class="report-metric-card blue">
+
+                <div class="report-metric-label">
+                    Open Reports
+                </div>
+
+                <div class="report-metric-number">
+                    4
+                </div>
+
+                <div class="report-metric-note">
+                    Reports currently requiring action
+                </div>
+
+                <div class="report-metric-icon">
+                    ◫
+                </div>
+
+            </div>
+
+
+            <div class="report-metric-card orange">
+
+                <div class="report-metric-label">
+                    Open NCRs
+                </div>
+
+                <div class="report-metric-number">
+                    2
+                </div>
+
+                <div class="report-metric-note">
+                    1 awaiting corrective action
+                </div>
+
+                <div class="report-metric-icon">
+                    ⚠
+                </div>
+
+            </div>
+
+
+            <div class="report-metric-card">
+
+                <div class="report-metric-label">
+                    Pending Review
+                </div>
+
+                <div class="report-metric-number">
+                    1
+                </div>
+
+                <div class="report-metric-note">
+                    Awaiting PM or quality review
+                </div>
+
+                <div class="report-metric-icon">
+                    ✓
+                </div>
+
+            </div>
+
+
+            <div class="report-metric-card green">
+
+                <div class="report-metric-label">
+                    Completed
+                </div>
+
+                <div class="report-metric-number">
+                    18
+                </div>
+
+                <div class="report-metric-note">
+                    Completed project reports
+                </div>
+
+                <div class="report-metric-icon">
+                    ◉
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FILTER / VIEW TOOLBAR
+        ================================================== -->
+
+        <div class="report-toolbar">
+
+            <div class="toolbar-left">
+
+                <div class="toolbar-label">
+                    ⚱ Filters
+                </div>
+
+                <div class="view-toggle">
+
+                    <button
+                        id="chartViewButton"
+                        type="button"
+                    >
+                        CHART
+                    </button>
+
+                    <button
+                        id="tableViewButton"
+                        type="button"
+                        class="active"
+                    >
+                        TABLE
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar-right">
+
+                <select
+                    id="projectFilter"
+                    class="report-select"
+                >
+                    <option value="All">
+                        All Projects
+                    </option>
+
+                    <option value="Williams Aquila">
+                        Williams Aquila
+                    </option>
+
+                    <option value="Targa Butane">
+                        Targa Butane
+                    </option>
+
+                    <option value="BP Kaskida">
+                        BP Kaskida
+                    </option>
+
+                    <option value="SLB HPU Skids">
+                        SLB HPU Skids
+                    </option>
+
+                    <option value="Venture Global">
+                        Venture Global
+                    </option>
+
+                    <option value="Drone in the Box">
+                        Drone in the Box
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="typeFilter"
+                    class="report-select"
+                >
+
+                    <option value="All">
+                        All Report Types
+                    </option>
+
+                    <option value="NCR">
+                        NCR
+                    </option>
+
+                    <option value="Receiving">
+                        Receiving
+                    </option>
+
+                    <option value="QA/QC">
+                        QA/QC
+                    </option>
+
+                    <option value="Shipping">
+                        Shipping
+                    </option>
+
+                    <option value="Quality">
+                        Quality
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLE
+        ================================================== -->
+
+        <div class="report-table-card">
+
+            <div class="report-table-header">
+
+                <div class="report-table-title-wrap">
+
+                    <div class="table-icon">
+                        ▦
+                    </div>
+
+                    <div class="report-table-title">
+                        Tech Center Reports
+                    </div>
+
+                </div>
+
+                <div
+                    id="reportRecordCount"
+                    class="record-count"
+                >
+                    6 records
+                </div>
+
+            </div>
+
+
+            <div class="table-command-bar">
+
+                <div class="table-command-left">
+
+                    <button
+                        type="button"
+                        class="table-command"
+                    >
+                        ◉ FILTER
+                    </button>
+
+                    <button
+                        id="clearFiltersButton"
+                        type="button"
+                        class="table-command"
+                    >
+                        ↻ CLEAR
+                    </button>
+
+                    <button
+                        type="button"
+                        class="table-command"
+                    >
+                        ☷ COLUMNS
+                    </button>
+
+                    <button
+                        type="button"
+                        class="table-command"
+                    >
+                        BEST FIT
+                    </button>
+
+                    <button
+                        type="button"
+                        class="table-command"
+                    >
+                        FILTER ROW
+                    </button>
+
+                </div>
+
+
+                <div class="table-command-right">
+
+                    <button
+                        type="button"
+                        class="table-command"
+                    >
+                        ⇩ EXPORT
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="report-search">
+
+                <input
+                    id="reportSearch"
+                    type="text"
+                    placeholder="Search report, project, package, report type..."
+                >
+
+            </div>
+
+
+            <div
+                id="chartPlaceholder"
+                class="chart-placeholder"
+            >
+                Chart view will summarize report status and activity
+                once report records are fully connected to the database.
+            </div>
+
+
+            <div
+                id="reportTableWrap"
+                class="table-wrap"
+            >
+
+                <table class="reports-table">
+
+                    <thead>
+
+                        <tr>
+                            <th></th>
+                            <th>Report No.</th>
+                            <th>Report Type</th>
+                            <th>Project</th>
+                            <th>Package / Section</th>
+                            <th>Status</th>
+                            <th>Completed By</th>
+                            <th>Date</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="reportsTableBody">
+
+
+                        <!-- =================================================
+                             DEMO REPORT 1
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="Williams Aquila"
+                            data-type="NCR"
+                            data-status="Open"
+                            data-search="NCR-0001 Nonconformance Report Williams Aquila PLC Panels Open"
+                        >
+
+                            <td>
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    NCR-0001
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Nonconformance Report
+                            </td>
+
+                            <td>
+                                Williams Aquila
+                            </td>
+
+                            <td>
+                                PLC Panels
+                            </td>
+
+                            <td>
+                                <span class="status status-open">
+                                    Open
+                                </span>
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 8, 2026
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =================================================
+                             DEMO REPORT 2
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="BP Kaskida"
+                            data-type="Receiving"
+                            data-status="Complete"
+                            data-search="RI-0004 Receiving Inspection BP Kaskida Chem-Inject IJB Complete"
+                        >
+
+                            <td>
+
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    RI-0004
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Receiving Inspection
+                            </td>
+
+                            <td>
+                                BP Kaskida
+                            </td>
+
+                            <td>
+                                Chem-Inject / IJB
+                            </td>
+
+                            <td>
+
+                                <span class="status status-complete">
+                                    Completed
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 7, 2026
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =================================================
+                             DEMO REPORT 3
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="Targa Butane"
+                            data-type="QA/QC"
+                            data-status="Draft"
+                            data-search="QC-0003 QA QC Inspection Targa Butane MCC Building Draft"
+                        >
+
+                            <td>
+
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    QC-0003
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                QA/QC Inspection
+                            </td>
+
+                            <td>
+                                Targa Butane
+                            </td>
+
+                            <td>
+                                MCC Building
+                            </td>
+
+                            <td>
+
+                                <span class="status status-draft">
+                                    Draft
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 8, 2026
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =================================================
+                             DEMO REPORT 4
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="SLB HPU Skids"
+                            data-type="Shipping"
+                            data-status="Review"
+                            data-search="SI-0002 Shipment Inspection SLB HPU Skids HPU Skids Pending Review"
+                        >
+
+                            <td>
+
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    SI-0002
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Shipment Inspection
+                            </td>
+
+                            <td>
+                                SLB HPU Skids
+                            </td>
+
+                            <td>
+                                HPU Skids
+                            </td>
+
+                            <td>
+
+                                <span class="status status-review">
+                                    Pending Review
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 8, 2026
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =================================================
+                             DEMO REPORT 5
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="Venture Global"
+                            data-type="NCR"
+                            data-status="Open"
+                            data-search="NCR-0002 Nonconformance Report Venture Global HIPS Open"
+                        >
+
+                            <td>
+
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    NCR-0002
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Nonconformance Report
+                            </td>
+
+                            <td>
+                                Venture Global
+                            </td>
+
+                            <td>
+                                HIPS
+                            </td>
+
+                            <td>
+
+                                <span class="status status-open">
+                                    Open
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 6, 2026
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =================================================
+                             DEMO REPORT 6
+                        ================================================== -->
+
+                        <tr
+                            class="report-row"
+                            data-project="Williams Aquila"
+                            data-type="Quality"
+                            data-status="Complete"
+                            data-search="CSS-0001 Client Satisfaction Survey Williams Aquila BESS Complete"
+                        >
+
+                            <td>
+
+                                <button
+                                    class="view-report-btn demo-report-btn"
+                                    type="button"
+                                >
+                                    ◉
+                                </button>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="report-number demo-report-btn"
+                                    type="button"
+                                >
+                                    CSS-0001
+                                </button>
+
+                                <span class="demo-badge">
+                                    Demo
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Client Satisfaction Survey
+                            </td>
+
+                            <td>
+                                Williams Aquila
+                            </td>
+
+                            <td>
+                                BESS
+                            </td>
+
+                            <td>
+
+                                <span class="status status-complete">
+                                    Completed
+                                </span>
+
+                            </td>
+
+                            <td>
+                                Myska Nasiri
+                            </td>
+
+                            <td>
+                                Sep 5, 2026
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     NEW REPORT MODAL
+====================================================== -->
+
+<div
+    id="newReportBackdrop"
+    class="modal-backdrop"
+>
+
+    <div class="new-report-modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Create New Report
+            </div>
+
+            <button
+                id="closeNewReportButton"
+                class="modal-close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="form-row">
+
+                <label for="newReportProject">
+                    Project
+                </label>
+
+                <select id="newReportProject">
+
+                    <option value="">
+                        Select project
+                    </option>
+
+                    <option value="williams-aquila">
+                        Williams Aquila
+                    </option>
+
+                    <option value="targa-butane">
+                        Targa Butane
+                    </option>
+
+                    <option value="bp-kaskida">
+                        BP Kaskida
+                    </option>
+
+                    <option value="slb-hpu-skids">
+                        SLB HPU Skids
+                    </option>
+
+                    <option value="venture-global">
+                        Venture Global
+                    </option>
+
+                    <option value="drone-in-the-box">
+                        Drone in the Box
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="newReportPackage">
+                    Package / Section
+                </label>
+
+                <select id="newReportPackage">
+
+                    <option value="">
+                        Select package / section
+                    </option>
+
+                    <option value="PLC Panels">
+                        PLC Panels
+                    </option>
+
+                    <option value="BESS">
+                        BESS
+                    </option>
+
+                    <option value="Server">
+                        Server
+                    </option>
+
+                    <option value="FNE">
+                        FNE
+                    </option>
+
+                    <option value="MCC Building">
+                        MCC Building
+                    </option>
+
+                    <option value="Chem-Inject / IJB">
+                        Chem-Inject / IJB
+                    </option>
+
+                    <option value="HPU Skids">
+                        HPU Skids
+                    </option>
+
+                    <option value="HIPS">
+                        HIPS
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="newReportType">
+                    Report Type
+                </label>
+
+                <select id="newReportType">
+
+                    <option value="">
+                        Select report type
+                    </option>
+
+                    <option value="ncr">
+                        Nonconformance Report (NCR)
+                    </option>
+
+                    <option value="client-satisfaction">
+                        Client Satisfaction Survey
+                    </option>
+
+                    <option value="receiving">
+                        Receiving Inspection
+                    </option>
+
+                    <option value="qa-qc">
+                        QA/QC Inspection
+                    </option>
+
+                    <option value="shipment">
+                        Shipment Inspection
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="modal-note">
+                Report templates shown here are prototype examples.
+                The final available forms should be confirmed with the
+                Tech Center and Quality teams.
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                id="cancelNewReportButton"
+                type="button"
+                class="secondary-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="createReportButton"
+                type="button"
+                class="primary-orange-btn"
+            >
+                Create Report
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       REPORT FILTERING
+    ===================================================== */
+
+    const projectFilter =
+        document.getElementById(
+            "projectFilter"
+        );
+
+    const typeFilter =
+        document.getElementById(
+            "typeFilter"
+        );
+
+    const reportSearch =
+        document.getElementById(
+            "reportSearch"
+        );
+
+    const clearFiltersButton =
+        document.getElementById(
+            "clearFiltersButton"
+        );
+
+
+    function getReportRows() {
+
+        return document.querySelectorAll(
+            ".report-row"
+        );
+    }
+
+
+    function updateReportVisibility() {
+
+        const selectedProject =
+            projectFilter.value;
+
+        const selectedType =
+            typeFilter.value;
+
+        const searchText =
+            reportSearch.value
+                .toLowerCase()
+                .trim();
+
+
+        let visibleCount =
+            0;
+
+
+        getReportRows().forEach(
+            function(row) {
+
+                const projectMatches =
+                    selectedProject === "All" ||
+                    row.dataset.project ===
+                        selectedProject;
+
+
+                const typeMatches =
+                    selectedType === "All" ||
+                    row.dataset.type ===
+                        selectedType;
+
+
+                const searchMatches =
+                    (
+                        row.dataset.search ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(
+                        searchText
+                    );
+
+
+                const visible =
+                    projectMatches &&
+                    typeMatches &&
+                    searchMatches;
+
+
+                row.style.display =
+                    visible
+                        ? ""
+                        : "none";
+
+
+                if (visible) {
+                    visibleCount += 1;
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "reportRecordCount"
+        ).textContent =
+            visibleCount +
+            (
+                visibleCount === 1
+                    ? " record"
+                    : " records"
+            );
+    }
+
+
+    projectFilter.addEventListener(
+        "change",
+        updateReportVisibility
+    );
+
+
+    typeFilter.addEventListener(
+        "change",
+        updateReportVisibility
+    );
+
+
+    reportSearch.addEventListener(
+        "input",
+        updateReportVisibility
+    );
+
+
+    clearFiltersButton.addEventListener(
+        "click",
+        function() {
+
+            projectFilter.value =
+                "All";
+
+            typeFilter.value =
+                "All";
+
+            reportSearch.value =
+                "";
+
+            updateReportVisibility();
+
+        }
+    );
+
+
+    /* =====================================================
+       OPEN REPORTS BUTTON
+    ===================================================== */
+
+    document.getElementById(
+        "openReportsButton"
+    ).addEventListener(
+        "click",
+        function() {
+
+            projectFilter.value =
+                "All";
+
+            typeFilter.value =
+                "All";
+
+            reportSearch.value =
+                "";
+
+
+            let visibleCount =
+                0;
+
+
+            getReportRows().forEach(
+                function(row) {
+
+                    const status =
+                        row.dataset.status;
+
+
+                    const isOpen =
+                        status === "Open" ||
+                        status === "Draft" ||
+                        status === "Review";
+
+
+                    row.style.display =
+                        isOpen
+                            ? ""
+                            : "none";
+
+
+                    if (isOpen) {
+                        visibleCount += 1;
+                    }
+
+                }
+            );
+
+
+            document.getElementById(
+                "reportRecordCount"
+            ).textContent =
+                visibleCount +
+                (
+                    visibleCount === 1
+                        ? " record"
+                        : " records"
+                );
+
+        }
+    );
+
+
+    /* =====================================================
+       TABLE / CHART VIEW
+    ===================================================== */
+
+    const chartViewButton =
+        document.getElementById(
+            "chartViewButton"
+        );
+
+    const tableViewButton =
+        document.getElementById(
+            "tableViewButton"
+        );
+
+    const chartPlaceholder =
+        document.getElementById(
+            "chartPlaceholder"
+        );
+
+    const reportTableWrap =
+        document.getElementById(
+            "reportTableWrap"
+        );
+
+
+    chartViewButton.addEventListener(
+        "click",
+        function() {
+
+            chartViewButton
+                .classList
+                .add(
+                    "active"
+                );
+
+
+            tableViewButton
+                .classList
+                .remove(
+                    "active"
+                );
+
+
+            chartPlaceholder
+                .classList
+                .add(
+                    "visible"
+                );
+
+
+            reportTableWrap
+                .classList
+                .add(
+                    "hidden"
+                );
+
+        }
+    );
+
+
+    tableViewButton.addEventListener(
+        "click",
+        function() {
+
+            tableViewButton
+                .classList
+                .add(
+                    "active"
+                );
+
+
+            chartViewButton
+                .classList
+                .remove(
+                    "active"
+                );
+
+
+            chartPlaceholder
+                .classList
+                .remove(
+                    "visible"
+                );
+
+
+            reportTableWrap
+                .classList
+                .remove(
+                    "hidden"
+                );
+
+        }
+    );
+
+
+    /* =====================================================
+       NEW REPORT MODAL
+    ===================================================== */
+
+    const newReportBackdrop =
+        document.getElementById(
+            "newReportBackdrop"
+        );
+
+    const newReportButton =
+        document.getElementById(
+            "newReportButton"
+        );
+
+    const closeNewReportButton =
+        document.getElementById(
+            "closeNewReportButton"
+        );
+
+    const cancelNewReportButton =
+        document.getElementById(
+            "cancelNewReportButton"
+        );
+
+    const createReportButton =
+        document.getElementById(
+            "createReportButton"
+        );
+
+
+    function openNewReportModal() {
+
+        document.getElementById(
+            "newReportProject"
+        ).value = "";
+
+
+        document.getElementById(
+            "newReportPackage"
+        ).value = "";
+
+
+        document.getElementById(
+            "newReportType"
+        ).value = "";
+
+
+        createReportButton.disabled =
+            false;
+
+
+        createReportButton.textContent =
+            "Create Report";
+
+
+        newReportBackdrop
+            .classList
+            .add(
+                "open"
+            );
+    }
+
+
+    function closeNewReportModal() {
+
+        newReportBackdrop
+            .classList
+            .remove(
+                "open"
+            );
+    }
+
+
+    newReportButton.addEventListener(
+        "click",
+        openNewReportModal
+    );
+
+
+    closeNewReportButton.addEventListener(
+        "click",
+        closeNewReportModal
+    );
+
+
+    cancelNewReportButton.addEventListener(
+        "click",
+        closeNewReportModal
+    );
+
+
+    newReportBackdrop.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                newReportBackdrop
+            ) {
+
+                closeNewReportModal();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CREATE REPORT
+       CORRECTED ASYNC VERSION
+    ===================================================== */
+
+    createReportButton.addEventListener(
+        "click",
+        async function() {
+
+            const project =
+                document.getElementById(
+                    "newReportProject"
+                ).value;
+
+
+            const packageName =
+                document.getElementById(
+                    "newReportPackage"
+                ).value;
+
+
+            const reportType =
+                document.getElementById(
+                    "newReportType"
+                ).value;
+
+
+            if (!project) {
+
+                alert(
+                    "Select a project."
+                );
+
+                return;
+            }
+
+
+            if (!packageName) {
+
+                alert(
+                    "Select a package / section."
+                );
+
+                return;
+            }
+
+
+            if (!reportType) {
+
+                alert(
+                    "Select a report type."
+                );
+
+                return;
+            }
+
+
+            /* ===============================================
+               NCR
+            =============================================== */
+
+            if (
+                reportType === "ncr"
+            ) {
+
+                createReportButton.disabled =
+                    true;
+
+
+                createReportButton.textContent =
+                    "Creating...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/reporting/create",
+                            {
+                                method:
+                                    "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        {
+                                            project_slug:
+                                                project,
+
+                                            package_name:
+                                                packageName,
+
+                                            report_type:
+                                                "NCR"
+                                        }
+                                    )
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        alert(
+                            result.message ||
+                            "Unable to create report."
+                        );
+
+                        return;
+                    }
+
+
+                    if (!result.redirect_url) {
+
+                        alert(
+                            "The report was created, but no report page was returned."
+                        );
+
+                        return;
+                    }
+
+
+                    window.location.href =
+                        result.redirect_url;
+
+
+                    return;
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to create report."
+                    );
+
+
+                } finally {
+
+                    createReportButton.disabled =
+                        false;
+
+
+                    createReportButton.textContent =
+                        "Create Report";
+                }
+
+
+                return;
+            }
+
+
+            /* ===============================================
+               FUTURE REPORT TYPES
+            =============================================== */
+
+            if (
+                reportType ===
+                    "client-satisfaction"
+            ) {
+
+                alert(
+                    "Client Satisfaction Survey will be connected after the NCR workflow."
+                );
+
+                return;
+            }
+
+
+            if (
+                reportType ===
+                    "receiving"
+            ) {
+
+                alert(
+                    "Receiving Inspection will be connected after the NCR workflow."
+                );
+
+                return;
+            }
+
+
+            if (
+                reportType ===
+                    "qa-qc"
+            ) {
+
+                alert(
+                    "QA/QC Inspection will be connected after the NCR workflow."
+                );
+
+                return;
+            }
+
+
+            if (
+                reportType ===
+                    "shipment"
+            ) {
+
+                alert(
+                    "Shipment Inspection will be connected after the NCR workflow."
+                );
+
+                return;
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CURRENT DEMO REPORT ROWS
+    ===================================================== */
+
+    document.querySelectorAll(
+        ".demo-report-btn"
+    ).forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    alert(
+                        "This is a dashboard demo record. Reports created through New Report will be connected to the live prototype database."
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       REPORT NAVIGATION
+    ===================================================== */
+
+    document.getElementById(
+        "reportsNavButton"
+    ).addEventListener(
+        "click",
+        function() {
+
+            document.getElementById(
+                "reportTableWrap"
+            ).scrollIntoView(
+                {
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                }
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "summaryNavButton"
+    ).addEventListener(
+        "click",
+        function() {
+
+            alert(
+                "Summary Report will follow the existing AIMS Chief Report-style workflow."
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
+
+    updateReportVisibility();
+
+</script>
+
+{% endblock %}

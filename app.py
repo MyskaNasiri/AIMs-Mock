@@ -1,11 +1,14 @@
+from io import BytesIO
+
 from flask import (
     Flask,
     render_template,
+    request,
+    jsonify,
     redirect,
     url_for,
-    abort,
-    request,
-    jsonify
+    send_file,
+    Response
 )
 
 from database import (
@@ -19,19 +22,35 @@ from database import (
     move_material
 )
 
+from reporting_db import (
+    initialize_reporting_database,
+    create_report,
+    get_report,
+    get_all_reports,
+    save_report_draft,
+    submit_report
+)
+
+from reporting_pdf import (
+    ncr_template_exists,
+    render_ncr_template_image,
+    generate_completed_ncr_pdf
+)
+
 
 app = Flask(__name__)
 
 
 # ============================================================
-# INITIALIZE DATABASE
+# INITIALIZE DATABASES
 # ============================================================
 
 initialize_database()
+initialize_reporting_database()
 
 
 # ============================================================
-# TECH CENTER PROJECTS
+# PROJECT DATA
 # ============================================================
 
 PROJECTS = {
@@ -39,147 +58,133 @@ PROJECTS = {
     "targa-butane": {
         "name": "Targa Butane Dryer MCC Building",
         "short_name": "Targa Butane",
-        "number": "029434-0001-EFAB",
+        "project_number": "029434-0001-EFAB",
         "client": "Targa",
         "pm": "Leticia Zarpellon",
-        "status": "Active",
-        "initials": "TB",
-        "open_pos": 0,
-        "recent_receipts": 0,
-        "awaiting_staging": 0,
-        "fully_staged": 0
+        "initials": "TB"
     },
 
     "bp-kaskida": {
         "name": "BP Kaskida",
         "short_name": "BP Kaskida",
-        "number": "028710-0001-EFAB",
+        "project_number": "028710-0001-EFAB",
         "client": "BP",
         "pm": "Jie Deng",
-        "status": "Active",
-        "initials": "BP",
-        "open_pos": 0,
-        "recent_receipts": 0,
-        "awaiting_staging": 0,
-        "fully_staged": 0
+        "initials": "BP"
     },
 
     "slb-hpu-skids": {
         "name": "SLB HPU Skids",
         "short_name": "SLB HPU Skids",
-        "number": "027682-0003",
+        "project_number": "027682-0003",
         "client": "SLB",
         "pm": "Jorge R. Molano",
-        "status": "Active",
-        "initials": "SL",
-        "open_pos": 0,
-        "recent_receipts": 0,
-        "awaiting_staging": 0,
-        "fully_staged": 0
+        "initials": "SL"
     },
 
     "venture-global": {
         "name": "Venture Global LNG Expanders",
         "short_name": "Venture Global",
-        "number": "030458-0001",
+        "project_number": "030458-0001",
         "client": "Venture Global",
         "pm": "Jorge R. Molano",
-        "status": "Active",
-        "initials": "VG",
-        "open_pos": 0,
-        "recent_receipts": 0,
-        "awaiting_staging": 0,
-        "fully_staged": 0
+        "initials": "VG"
     },
 
     "williams-aquila": {
         "name": "Williams Aquila",
         "short_name": "Williams Aquila",
-        "number": "Williams Aquila",
+        "project_number": "Williams Aquila",
         "client": "Williams",
         "pm": "Gina Meins",
-        "status": "Active",
         "initials": "WA",
-        "open_pos": 9,
-        "recent_receipts": 4,
-        "awaiting_staging": 3,
-        "fully_staged": 18
+
+        "packages": [
+            {
+                "name": "BESS",
+                "project_number": "031674-0001"
+            },
+            {
+                "name": "PLC Panels",
+                "project_number": "031689-0001"
+            },
+            {
+                "name": "Server",
+                "project_number": "031687-0001"
+            },
+            {
+                "name": "FNE",
+                "project_number": "031791-0001"
+            }
+        ]
     },
 
     "drone-in-the-box": {
         "name": "Drone in the Box",
         "short_name": "Drone in the Box",
-        "number": "030443-0003-EFAB",
+        "project_number": "030443-0003-EFAB",
         "client": "Shell",
         "pm": "Lezan",
-        "status": "Active",
-        "initials": "DB",
-        "open_pos": 0,
-        "recent_receipts": 0,
-        "awaiting_staging": 0,
-        "fully_staged": 0
+        "initials": "DB"
     }
+
 }
 
 
 # ============================================================
-# PURCHASE ORDERS
+# PURCHASE ORDER DEMO DATA
 # ============================================================
 
 PURCHASE_ORDERS = {
 
-    "targa-butane": [],
-    "bp-kaskida": [],
-    "slb-hpu-skids": [],
-    "venture-global": [],
-    "drone-in-the-box": [],
-
     "williams-aquila": [
 
         {
-            "po": "45001842",
+            "po_number": "45001842",
             "vendor": "Graybar",
-            "part": "5094-IB32",
+            "part_number": "5094-IB32",
             "description": "Digital Input Module",
-            "ordered": 20,
-            "received": 10,
-            "remaining": 10,
+            "ordered_qty": 20,
+            "received_qty": 10,
+            "remaining_qty": 10,
             "status": "Partial Receipt"
         },
 
         {
-            "po": "45001857",
+            "po_number": "45001857",
             "vendor": "SCP",
-            "part": "5094-IF8IH",
+            "part_number": "5094-IF8IH",
             "description": "Analog Input Module",
-            "ordered": 8,
-            "received": 8,
-            "remaining": 0,
+            "ordered_qty": 8,
+            "received_qty": 8,
+            "remaining_qty": 0,
             "status": "Received"
         },
 
         {
-            "po": "45001863",
+            "po_number": "45001863",
             "vendor": "Lonestar",
-            "part": "5094-OB16",
+            "part_number": "5094-OB16",
             "description": "Digital Output Module",
-            "ordered": 12,
-            "received": 0,
-            "remaining": 12,
+            "ordered_qty": 12,
+            "received_qty": 0,
+            "remaining_qty": 12,
             "status": "Awaiting Receipt"
         },
 
         {
-            "po": "45001871",
+            "po_number": "45001871",
             "vendor": "Reynolds",
-            "part": "1783-SFP1GLX",
+            "part_number": "1783-SFP1GLX",
             "description": "Fiber Transceiver",
-            "ordered": 6,
-            "received": 3,
-            "remaining": 3,
+            "ordered_qty": 6,
+            "received_qty": 3,
+            "remaining_qty": 3,
             "status": "Partial Receipt"
         }
+
     ]
+
 }
 
 
@@ -189,748 +194,894 @@ PURCHASE_ORDERS = {
 
 PROJECT_SCHEDULES = {
 
-    "targa-butane": [
-        {
-            "package": "Targa Butane Dryer MCC Building",
-            "number": "029434-0001-EFAB",
-            "pm": "Leticia Zarpellon",
+    "targa-butane": {
 
-            "risk": (
-                "Review loadout and lifting plan. "
-                "UL field certification delays, exterior lights, "
-                "and NCR review remain items to monitor."
-            ),
+        "risks": [
+            "Review loadout and lifting requirements.",
+            "Monitor potential UL field certification delays.",
+            "Exterior lights and NCR items remain under review."
+        ],
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "12/11/25"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "02/16/26"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "04/24/26"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "05/20/26"
-                },
-                {
-                    "activity": "Fabrication - Building",
-                    "percent": 98,
-                    "status": "On Track",
-                    "target": "08/28/26*"
-                },
-                {
-                    "activity": "Fabrication - Panels",
-                    "percent": 99,
-                    "status": "On Track",
-                    "target": "08/28/26*"
-                },
-                {
-                    "activity": "TRA Mechanical Inspection",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "08/05/26"
-                },
-                {
-                    "activity": "Internal FAT - TRA Witness",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/03/26*"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": None,
-                    "status": "On Track",
-                    "target": "09/14/26"
-                },
-                {
-                    "activity": "Shipment",
-                    "percent": None,
-                    "status": "On Track",
-                    "target": "09/24/26*"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": None,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        }
-    ],
+        "milestones": [
 
-    "bp-kaskida": [
-        {
-            "package": "BP Kaskida",
-            "number": "028710-0001-EFAB",
-            "pm": "Jie Deng",
+            {
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "12/11/25"
+            },
 
-            "risk": (
-                "Review drawings at the UL508A level prior to "
-                "construction. Intertek sticker relocation "
-                "may slow production."
-            ),
+            {
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "02/16/26"
+            },
 
-            "milestones": [
-                {
-                    "activity": "Procurement - Project",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Fabrication - Phase 1 Stage 2 Chem-Inject/IJB",
-                    "percent": 50,
-                    "status": "Behind",
-                    "target": "09/04/26*"
-                },
-                {
-                    "activity": "Fabrication - Project",
-                    "percent": 10,
-                    "status": "Behind",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Internal FAT - Phase 1 Stage 2 MCC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "07/07/26"
-                },
-                {
-                    "activity": "Internal FAT - Phase 1 Stage 2 Chem-Inject/IJB",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/08/26*"
-                },
-                {
-                    "activity": "Internal FAT - Project",
-                    "percent": 5,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Client FAT - Phase 1 Stage 2 MCC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "07/08/26"
-                },
-                {
-                    "activity": "Client FAT - Phase 1 Stage 2 Chem-Inject/IJB",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/11/26*"
-                },
-                {
-                    "activity": "Client FAT - Project",
-                    "percent": 5,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Punchlist - Phase 1 Stage 2 MCC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "08/07/26"
-                },
-                {
-                    "activity": "Punchlist - Phase 1 Stage 2 Chem-Inject/IJB",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/16/26*"
-                },
-                {
-                    "activity": "Drawings As-Built - Phase 1 Stage 1",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings As-Built - Phase 1 Stage 2 MCC",
-                    "percent": 75,
-                    "status": "Behind",
-                    "target": "08/31/26*"
-                },
-                {
-                    "activity": "Shipment Inspection - Phase 1 Stage 2 MCC",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/14/26"
-                }
-            ]
-        }
-    ],
+            {
+                "activity": "IFC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "04/24/26"
+            },
 
-    "slb-hpu-skids": [
-        {
-            "package": "SLB HPU Skids",
-            "number": "027682-0003",
-            "pm": "Jorge R. Molano",
+            {
+                "activity": "Procurement",
+                "progress": 100,
+                "status": "Complete",
+                "date": "05/20/26"
+            },
 
-            "risk": (
-                "Verify missing materials, review SLB FAT procedure, "
-                "and determine whether onsite inspections are required. "
-                "Partial internal QC remains a schedule risk."
-            ),
+            {
+                "activity": "Fabrication Building",
+                "progress": 98,
+                "status": "On Track",
+                "date": "08/28/26*"
+            },
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 98,
-                    "status": "Behind",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Fabrication",
-                    "percent": 90,
-                    "status": "Behind",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Internal FAT",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/04/26*"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/09/26*"
-                },
-                {
-                    "activity": "Shipment Inspection",
-                    "percent": 0,
-                    "status": "Behind",
-                    "target": "09/14/26*"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/18/26"
-                }
-            ]
-        }
-    ],
+            {
+                "activity": "Fabrication Panels",
+                "progress": 99,
+                "status": "On Track",
+                "date": "08/28/26*"
+            },
 
-    "venture-global": [
-        {
-            "package": "Venture Global LNG Expanders",
-            "number": "030458-0001",
-            "pm": "Jorge R. Molano",
+            {
+                "activity": "TRA Mechanical Inspection",
+                "progress": 100,
+                "status": "Complete",
+                "date": "08/05/26"
+            },
 
-            "risk": "Coordinate potential inventory shift with BP.",
+            {
+                "activity": "Internal FAT TRA Witness",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/03/26*"
+            },
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Procurement - BPCS/SIS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "04/27/26"
-                },
-                {
-                    "activity": "Procurement - HIPS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "05/15/26"
-                },
-                {
-                    "activity": "Fabrication - BPCS/SIS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "09/04/26"
-                },
-                {
-                    "activity": "Fabrication - HIPS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "09/04/26"
-                },
-                {
-                    "activity": "Internal FAT - BPCS/SIS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "07/14/26"
-                },
-                {
-                    "activity": "Internal FAT - HIPS",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "07/14/26"
-                },
-                {
-                    "activity": "Client FAT - Project",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "07/27/26"
-                },
-                {
-                    "activity": "Punchlist Inspection",
-                    "percent": 95,
-                    "status": "On Track",
-                    "target": "09/04/26*"
-                },
-                {
-                    "activity": "Shipment",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/10/26*"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        }
-    ],
+            {
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/14/26"
+            },
 
-    "williams-aquila": [
+            {
+                "activity": "Shipment",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/24/26*"
+            },
 
-        {
-            "package": "BESS Cabinets",
-            "number": "031674-0001",
-            "pm": "Gina Meins",
-            "risk": "Scope change. Update Williams drawings.",
+            {
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            }
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "05/22/26"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 75,
-                    "status": "On Track",
-                    "target": "09/11/26"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/03/26"
-                },
-                {
-                    "activity": "Fabrication",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "10/02/26*"
-                },
-                {
-                    "activity": "Internal FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "10/09/26*"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "10/13/26*"
-                },
-                {
-                    "activity": "Shipment Inspection",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "10/16/26*"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        },
+        ]
+    },
 
-        {
-            "package": "PLC Panels",
-            "number": "031689-0001",
-            "pm": "Gina Meins",
 
-            "risk": (
-                "Long lead items may affect the schedule. "
-                "Review change order. Redesign is in progress."
-            ),
+    "bp-kaskida": {
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "05/22/26"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/15/26"
-                },
-                {
-                    "activity": "Drawings IFP - RIOs Package",
-                    "percent": 50,
-                    "status": "On Track",
-                    "target": "09/04/26"
-                },
-                {
-                    "activity": "Procurement - RIOs x2",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/03/26"
-                },
-                {
-                    "activity": "Procurement - RIOs x9",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "06/29/26"
-                },
-                {
-                    "activity": "Procurement - SCP",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/03/26"
-                },
-                {
-                    "activity": "Procurement - ESD",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/03/26"
-                },
-                {
-                    "activity": "Fabrication - RIOs x2",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "08/17/26"
-                },
-                {
-                    "activity": "Fabrication - Project",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Internal FAT - RIOs x2",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/14/26"
-                },
-                {
-                    "activity": "Client FAT - RIOs x2",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/22/26*"
-                },
-                {
-                    "activity": "Shipment Inspection - RIOs x2",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/30/26*"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        },
+        "risks": [
+            "UL508A drawing requirements remain under review.",
+            "Intertek sticker relocation requires coordination."
+        ],
 
-        {
-            "package": "Server Cabinets",
-            "number": "031687-0001",
-            "pm": "Gina Meins",
-            "risk": "Scope change.",
+        "milestones": [
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "05/22/26"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "08/04/26"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 100,
-                    "status": "On Track",
-                    "target": "08/04/26"
-                },
-                {
-                    "activity": "Procurement - Long Lead",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "06/03/26"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 85,
-                    "status": "On Track",
-                    "target": "09/02/26"
-                },
-                {
-                    "activity": "Fabrication",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "10/15/26"
-                },
-                {
-                    "activity": "Internal FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "11/07/26"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "11/15/26"
-                },
-                {
-                    "activity": "Shipment Inspection",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "11/18/26"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "N/A"
-                }
-            ]
-        },
+            {
+                "activity": "Procurement Project",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
 
-        {
-            "package": "FNE Cabinets",
-            "number": "031791-0001",
-            "pm": "Gina Meins",
+            {
+                "activity": "Fabrication Phase 1 Stage 2 Chem-Inject / IJB",
+                "progress": 50,
+                "status": "Behind",
+                "date": "09/04/26*"
+            },
 
-            "risk": (
-                "Approved drawings needed. Allocate resource "
-                "and time for review."
-            ),
+            {
+                "activity": "Fabrication Project",
+                "progress": 10,
+                "status": "Behind",
+                "date": "TBD"
+            },
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 50,
-                    "status": "On Track",
-                    "target": "09/08/26"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/23/26"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 95,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Fabrication",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/23/26*"
-                },
-                {
-                    "activity": "Internal FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Shipment Inspection",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        }
-    ],
+            {
+                "activity": "Internal FAT Phase 1 Stage 2 MCC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "07/07/26"
+            },
 
-    "drone-in-the-box": [
-        {
-            "package": "Drone in the Box",
-            "number": "030443-0003-EFAB",
-            "pm": "Lezan",
+            {
+                "activity": "Internal FAT Phase 1 Stage 2 Chem-Inject / IJB",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/08/26*"
+            },
 
-            "risk": (
-                "Coordinate heavy forklift alignment with skid arrival. "
-                "Update drawings and review conduit fittings. Inspection "
-                "should occur before blast and painting."
-            ),
+            {
+                "activity": "Internal FAT Project",
+                "progress": 5,
+                "status": "On Track",
+                "date": "TBD"
+            },
 
-            "milestones": [
-                {
-                    "activity": "Project Initiated",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFA",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Drawings IFC",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Procurement - Long Lead",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Procurement",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "Complete"
-                },
-                {
-                    "activity": "Skid Inspection at Manufacturer",
-                    "percent": 100,
-                    "status": "Complete",
-                    "target": "08/26/26"
-                },
-                {
-                    "activity": "Receipt of Skid",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/02/26*"
-                },
-                {
-                    "activity": "Receipt of Enclosure",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/02/26"
-                },
-                {
-                    "activity": "Fabrication",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/03/26"
-                },
-                {
-                    "activity": "Internal FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/21/26"
-                },
-                {
-                    "activity": "Client FAT",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/28/26"
-                },
-                {
-                    "activity": "Shipment Inspection",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "09/30/26"
-                },
-                {
-                    "activity": "Drawings As-Built",
-                    "percent": 0,
-                    "status": "On Track",
-                    "target": "TBD"
-                }
-            ]
-        }
-    ]
+            {
+                "activity": "Client FAT Phase 1 Stage 2 MCC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "07/08/26"
+            },
+
+            {
+                "activity": "Client FAT Phase 1 Stage 2 Chem-Inject / IJB",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/11/26*"
+            },
+
+            {
+                "activity": "Client FAT Project",
+                "progress": 5,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "activity": "Punchlist Phase 1 Stage 2 MCC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "08/07/26"
+            },
+
+            {
+                "activity": "Punchlist Phase 1 Stage 2 Chem-Inject / IJB",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/16/26*"
+            },
+
+            {
+                "activity": "As-Built Phase 1 Stage 1",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "As-Built Phase 1 Stage 2 MCC",
+                "progress": 75,
+                "status": "Behind",
+                "date": "08/31/26*"
+            },
+
+            {
+                "activity": "Shipment Inspection Phase 1 Stage 2 MCC",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/14/26"
+            }
+
+        ]
+    },
+
+
+    "slb-hpu-skids": {
+
+        "risks": [
+            "Missing materials may affect fabrication.",
+            "FAT procedure still requires coordination.",
+            "Onsite inspections and partial QC remain under review."
+        ],
+
+        "milestones": [
+
+            {
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "Procurement",
+                "progress": 98,
+                "status": "Behind",
+                "date": "TBD"
+            },
+
+            {
+                "activity": "Fabrication",
+                "progress": 90,
+                "status": "Behind",
+                "date": "TBD"
+            },
+
+            {
+                "activity": "Internal FAT",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/04/26*"
+            },
+
+            {
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/09/26*"
+            },
+
+            {
+                "activity": "Shipment Inspection",
+                "progress": 0,
+                "status": "Behind",
+                "date": "09/14/26*"
+            },
+
+            {
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/18/26"
+            }
+
+        ]
+    },
+
+
+    "venture-global": {
+
+        "risks": [
+            "Inventory timing may shift due to BP fabrication priorities."
+        ],
+
+        "milestones": [
+
+            {
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "Procurement BPCS / SIS",
+                "progress": 100,
+                "status": "Complete",
+                "date": "04/27/26"
+            },
+
+            {
+                "activity": "Procurement HIPS",
+                "progress": 100,
+                "status": "Complete",
+                "date": "05/15/26"
+            },
+
+            {
+                "activity": "Fabrication BPCS / SIS",
+                "progress": 100,
+                "status": "Complete",
+                "date": "09/04/26"
+            },
+
+            {
+                "activity": "Fabrication HIPS",
+                "progress": 100,
+                "status": "Complete",
+                "date": "09/04/26"
+            },
+
+            {
+                "activity": "Internal FAT BPCS / SIS / HIPS",
+                "progress": 100,
+                "status": "Complete",
+                "date": "07/14/26"
+            },
+
+            {
+                "activity": "Client FAT Project",
+                "progress": 100,
+                "status": "Complete",
+                "date": "07/27/26"
+            },
+
+            {
+                "activity": "Punchlist",
+                "progress": 95,
+                "status": "On Track",
+                "date": "09/04/26*"
+            },
+
+            {
+                "activity": "Shipment",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/10/26*"
+            },
+
+            {
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            }
+
+        ]
+    },
+
+
+    "williams-aquila": {
+
+        "risks": [
+            "BESS scope changes may require drawing updates.",
+            "PLC package includes long-lead items and redesign risk.",
+            "Server scope changes remain under review.",
+            "FNE approved drawings and resource review remain open."
+        ],
+
+        "milestones": [
+
+            # =================================================
+            # BESS
+            # =================================================
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "05/22/26"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "IFC",
+                "progress": 75,
+                "status": "On Track",
+                "date": "09/11/26"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Procurement",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/03/26"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Fabrication",
+                "progress": 0,
+                "status": "On Track",
+                "date": "10/02/26*"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Internal FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "10/09/26*"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "10/13/26*"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "Shipment Inspection",
+                "progress": 0,
+                "status": "On Track",
+                "date": "10/16/26*"
+            },
+
+            {
+                "package": "BESS",
+                "project_number": "031674-0001",
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+
+            # =================================================
+            # PLC PANELS
+            # =================================================
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "05/22/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/15/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "IFP RIOs Package",
+                "progress": 50,
+                "status": "On Track",
+                "date": "09/04/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Procurement RIOs x2",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/03/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Procurement RIOs x9",
+                "progress": 0,
+                "status": "On Track",
+                "date": "06/29/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Procurement SCP",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/03/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Procurement ESD",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/03/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Fabrication RIOs x2",
+                "progress": 100,
+                "status": "Complete",
+                "date": "08/17/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Fabrication Project",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Internal FAT RIOs x2",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/14/26"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Client FAT RIOs x2",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/22/26*"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "Shipment Inspection RIOs x2",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/30/26*"
+            },
+
+            {
+                "package": "PLC Panels",
+                "project_number": "031689-0001",
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+
+            # =================================================
+            # SERVER
+            # =================================================
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "05/22/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "08/04/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "IFC",
+                "progress": 100,
+                "status": "On Track",
+                "date": "08/04/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Procurement Long Lead",
+                "progress": 100,
+                "status": "Complete",
+                "date": "06/03/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Procurement",
+                "progress": 85,
+                "status": "On Track",
+                "date": "09/02/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Fabrication",
+                "progress": 0,
+                "status": "On Track",
+                "date": "10/15/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Internal FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "11/07/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "11/15/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "Shipment Inspection",
+                "progress": 0,
+                "status": "On Track",
+                "date": "11/18/26"
+            },
+
+            {
+                "package": "Server",
+                "project_number": "031687-0001",
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "N/A"
+            },
+
+
+            # =================================================
+            # FNE
+            # =================================================
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "IFA",
+                "progress": 50,
+                "status": "On Track",
+                "date": "09/08/26"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "IFC",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/23/26"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Procurement",
+                "progress": 95,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Fabrication",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/23/26*"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Internal FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "Shipment",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            },
+
+            {
+                "package": "FNE",
+                "project_number": "031791-0001",
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            }
+
+        ]
+    },
+
+
+    "drone-in-the-box": {
+
+        "risks": [
+            "Forklift and skid arrival timing may affect fabrication.",
+            "Update drawings as field conditions change.",
+            "Conduit fittings remain under review.",
+            "Inspect enclosure before blast and paint."
+        ],
+
+        "milestones": [
+
+            {
+                "activity": "Initiated",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFA",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "IFC",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "Procurement Long Lead",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "Procurement",
+                "progress": 100,
+                "status": "Complete",
+                "date": "Complete"
+            },
+
+            {
+                "activity": "Skid Inspection Manufacturer",
+                "progress": 100,
+                "status": "Complete",
+                "date": "08/26/26"
+            },
+
+            {
+                "activity": "Receipt Skid",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/02/26*"
+            },
+
+            {
+                "activity": "Receipt Enclosure",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/02/26"
+            },
+
+            {
+                "activity": "Fabrication",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/03/26"
+            },
+
+            {
+                "activity": "Internal FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/21/26"
+            },
+
+            {
+                "activity": "Client FAT",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/28/26"
+            },
+
+            {
+                "activity": "Shipment Inspection",
+                "progress": 0,
+                "status": "On Track",
+                "date": "09/30/26"
+            },
+
+            {
+                "activity": "As-Built",
+                "progress": 0,
+                "status": "On Track",
+                "date": "TBD"
+            }
+
+        ]
+    }
+
 }
 
 
 # ============================================================
-# PROJECT MENU
+# GLOBAL PROJECT MENU
 # ============================================================
 
 @app.context_processor
@@ -942,72 +1093,59 @@ def inject_projects_menu():
 
 
 # ============================================================
-# HOME
+# ROOT
 # ============================================================
 
 @app.route("/")
 def index():
 
     return redirect(
-        url_for("tech_center_home")
+        url_for(
+            "tech_center_home"
+        )
     )
 
+
+# ============================================================
+# TECH CENTER HOME
+# ============================================================
 
 @app.route("/tech-center")
 def tech_center_home():
 
     return render_template(
         "tech_center_home.html",
-        projects=PROJECTS
+        projects=PROJECTS,
+        schedules=PROJECT_SCHEDULES
     )
 
 
 # ============================================================
 # MATERIALS MANAGEMENT
-#
-# IMPORTANT:
-# Receiving & Staging now receives GROUPED receipt data.
-#
-# This allows:
-#
-# POR00004330
-#    Line 1
-#    Line 2
-#    Line 3
-#    Line 4
-#
-# to appear as ONE Acumatica receipt.
 # ============================================================
 
 @app.route("/materials")
 def materials():
 
-    all_receipt_groups = get_receipt_groups()
+    all_receipt_groups = (
+        get_receipt_groups()
+    )
 
-    # --------------------------------------------------------
-    # Receiving & Staging
-    #
-    # Keep the earlier POR-DEMO-* warehouse-only records out
-    # of the Acumatica receipt area.
-    #
-    # The new seeded POR00004323+ examples are intentionally
-    # allowed because they are being used to demonstrate the
-    # proposed receiving workflow.
-    # --------------------------------------------------------
 
     receipt_groups = [
+
         receipt
-        for receipt in all_receipt_groups
-        if not receipt["receipt_nbr"].startswith("POR-DEMO-")
+
+        for receipt
+        in all_receipt_groups
+
+        if not
+        receipt["receipt_nbr"]
+        .startswith(
+            "POR-DEMO-"
+        )
     ]
 
-
-    # --------------------------------------------------------
-    # Warehouse Materials
-    #
-    # This remains line-level because each material must retain
-    # traceability to its receipt + receipt line.
-    # --------------------------------------------------------
 
     warehouse_materials = (
         get_warehouse_materials()
@@ -1015,13 +1153,14 @@ def materials():
 
 
     return render_template(
+
         "materials_management.html",
 
-        receipt_groups=receipt_groups,
+        receipt_groups=
+            receipt_groups,
 
-        # Temporary compatibility variable.
-        # We can remove this once the new template is installed.
-        receipts=get_all_receipts(),
+        receipts=
+            get_all_receipts(),
 
         warehouse_materials=
             warehouse_materials
@@ -1029,14 +1168,7 @@ def materials():
 
 
 # ============================================================
-# STAGE RECEIPT LINE
-#
-# We now send BOTH:
-#
-# receipt_nbr
-# receipt_line_id
-#
-# receipt_line_id is the important identifier.
+# STAGE RECEIPT MATERIAL
 # ============================================================
 
 @app.route(
@@ -1045,26 +1177,19 @@ def materials():
 )
 def stage_material():
 
-    data = request.get_json(
-        silent=True
+    data = (
+        request.get_json(
+            silent=True
+        )
+        or {}
     )
 
 
-    if not data:
-
-        return jsonify({
-            "success": False,
-            "message":
-                "No staging data was received."
-        }), 400
-
-
-    receipt_nbr = str(
+    receipt_nbr = (
         data.get(
-            "receipt_nbr",
-            ""
+            "receipt_nbr"
         )
-    ).strip()
+    )
 
 
     receipt_line_id = (
@@ -1074,56 +1199,48 @@ def stage_material():
     )
 
 
-    location = str(
+    location = (
         data.get(
-            "location",
-            ""
+            "location"
         )
-    ).strip()
+    )
 
 
-    # --------------------------------------------------------
-    # Validate receipt line ID
-    # --------------------------------------------------------
-
-    if receipt_line_id not in (
-        None,
-        ""
-    ):
-
-        try:
-
-            receipt_line_id = int(
-                receipt_line_id
-            )
-
-        except (
-            TypeError,
-            ValueError
-        ):
-
-            return jsonify({
-                "success": False,
-                "message":
-                    "Invalid receipt line."
-            }), 400
-
-    else:
-
-        receipt_line_id = None
+    quantity = (
+        data.get(
+            "quantity"
+        )
+    )
 
 
-    # --------------------------------------------------------
-    # Validate quantity
-    # --------------------------------------------------------
+    if not receipt_nbr:
+
+        return jsonify({
+            "message":
+                "Receipt number is required."
+        }), 400
+
+
+    if not receipt_line_id:
+
+        return jsonify({
+            "message":
+                "Receipt line is required."
+        }), 400
+
+
+    if not location:
+
+        return jsonify({
+            "message":
+                "Storage location is required."
+        }), 400
+
 
     try:
 
-        quantity = int(
-            data.get(
-                "quantity",
-                0
-            )
+        quantity = float(
+            quantity
         )
 
     except (
@@ -1131,49 +1248,36 @@ def stage_material():
         ValueError
     ):
 
-        quantity = 0
+        return jsonify({
+            "message":
+                "Enter a valid staging quantity."
+        }), 400
 
 
-    # --------------------------------------------------------
-    # Save staging
-    # --------------------------------------------------------
+    result = (
+        stage_receipt_material(
 
-    result = stage_receipt_material(
+            receipt_nbr=
+                receipt_nbr,
 
-        receipt_nbr=
-            receipt_nbr,
+            receipt_line_id=
+                receipt_line_id,
 
-        receipt_line_id=
-            receipt_line_id,
+            quantity=
+                quantity,
 
-        quantity=
-            quantity,
+            location=
+                location,
 
-        location=
-            location,
-
-        staged_by=
-            "Myska Nasiri"
+            staged_by=
+                "Myska Nasiri"
+        )
     )
 
 
-    if not result["success"]:
-
-        message = result.get(
-            "message",
-            ""
-        )
-
-
-        if (
-            "not found"
-            in message.lower()
-        ):
-
-            return jsonify(
-                result
-            ), 404
-
+    if not result.get(
+        "success"
+    ):
 
         return jsonify(
             result
@@ -1182,16 +1286,11 @@ def stage_material():
 
     return jsonify(
         result
-    ), 200
+    )
 
 
 # ============================================================
 # MATERIAL DETAIL BY RECEIPT LINE
-#
-# This is the preferred route now.
-#
-# Example:
-# /materials/line/14
 # ============================================================
 
 @app.route(
@@ -1201,34 +1300,30 @@ def material_line_detail(
     receipt_line_id
 ):
 
-    material = get_material_detail(
-        receipt_line_id=
-            receipt_line_id
+    material = (
+        get_material_detail(
+            receipt_line_id=
+                receipt_line_id
+        )
     )
 
 
     if not material:
 
         return jsonify({
-            "success": False,
             "message":
                 "Material line was not found."
         }), 404
 
 
     return jsonify({
-        "success": True,
-        "material": material
-    }), 200
+        "material":
+            material
+    })
 
 
 # ============================================================
-# LEGACY MATERIAL DETAIL ROUTE
-#
-# This still works for receipts containing ONE line.
-#
-# For a multi-line receipt like POR00004330, the UI should use
-# /materials/line/<receipt_line_id> instead.
+# LEGACY MATERIAL DETAIL BY RECEIPT
 # ============================================================
 
 @app.route(
@@ -1238,67 +1333,53 @@ def material_detail(
     receipt_nbr
 ):
 
-    material = get_material_detail(
-        receipt_nbr=
-            receipt_nbr
+    material = (
+        get_material_detail(
+            receipt_nbr=
+                receipt_nbr
+        )
     )
 
 
     if not material:
 
         return jsonify({
-            "success": False,
-
             "message":
-                (
-                    "This receipt either was not found or contains "
-                    "multiple material lines. Select a specific "
-                    "receipt line."
-                )
+                "This receipt either was not found or contains "
+                "multiple material lines. Select an individual "
+                "receipt line instead."
         }), 404
 
 
     return jsonify({
-        "success": True,
-        "material": material
-    }), 200
+        "material":
+            material
+    })
 
 
 # ============================================================
 # MOVE / RESTAGE MATERIAL
-#
-# This changes the AIMS physical location.
-#
-# IMPORTANT:
-# It does NOT change the official Acumatica receipt quantity.
 # ============================================================
 
 @app.route(
     "/materials/move",
     methods=["POST"]
 )
-def move_warehouse_material():
+def move_material_route():
 
-    data = request.get_json(
-        silent=True
+    data = (
+        request.get_json(
+            silent=True
+        )
+        or {}
     )
 
 
-    if not data:
-
-        return jsonify({
-            "success": False,
-            "message":
-                "No material movement data was received."
-        }), 400
-
-
-    receipt_nbr = str(
+    receipt_nbr = (
         data.get(
-            "receipt_nbr",
-            ""
+            "receipt_nbr"
         )
-    ).strip()
+    )
 
 
     receipt_line_id = (
@@ -1308,72 +1389,64 @@ def move_warehouse_material():
     )
 
 
-    from_location = str(
+    from_location = (
         data.get(
-            "from_location",
-            ""
+            "from_location"
         )
-    ).strip()
+    )
 
 
-    to_location = str(
+    to_location = (
         data.get(
-            "to_location",
-            ""
+            "to_location"
         )
-    ).strip()
+    )
 
 
-    notes = str(
+    quantity = (
+        data.get(
+            "quantity"
+        )
+    )
+
+
+    notes = (
         data.get(
             "notes",
             ""
         )
-    ).strip()
+        or ""
+    )
 
 
-    # --------------------------------------------------------
-    # Validate receipt line ID
-    # --------------------------------------------------------
+    if not receipt_line_id:
 
-    if receipt_line_id not in (
-        None,
-        ""
-    ):
-
-        try:
-
-            receipt_line_id = int(
-                receipt_line_id
-            )
-
-        except (
-            TypeError,
-            ValueError
-        ):
-
-            return jsonify({
-                "success": False,
-                "message":
-                    "Invalid receipt line."
-            }), 400
-
-    else:
-
-        receipt_line_id = None
+        return jsonify({
+            "message":
+                "Receipt line is required."
+        }), 400
 
 
-    # --------------------------------------------------------
-    # Validate quantity
-    # --------------------------------------------------------
+    if not from_location:
+
+        return jsonify({
+            "message":
+                "Current location is required."
+        }), 400
+
+
+    if not to_location:
+
+        return jsonify({
+            "message":
+                "Destination location is required."
+        }), 400
+
 
     try:
 
-        quantity = int(
-            data.get(
-                "quantity",
-                0
-            )
+        quantity = float(
+            quantity
         )
 
     except (
@@ -1381,55 +1454,42 @@ def move_warehouse_material():
         ValueError
     ):
 
-        quantity = 0
+        return jsonify({
+            "message":
+                "Enter a valid movement quantity."
+        }), 400
 
 
-    # --------------------------------------------------------
-    # Perform movement
-    # --------------------------------------------------------
+    result = (
+        move_material(
 
-    result = move_material(
+            receipt_nbr=
+                receipt_nbr,
 
-        receipt_nbr=
-            receipt_nbr,
+            receipt_line_id=
+                receipt_line_id,
 
-        receipt_line_id=
-            receipt_line_id,
+            from_location=
+                from_location,
 
-        from_location=
-            from_location,
+            to_location=
+                to_location,
 
-        to_location=
-            to_location,
+            quantity=
+                quantity,
 
-        quantity=
-            quantity,
+            moved_by=
+                "Myska Nasiri",
 
-        moved_by=
-            "Myska Nasiri",
-
-        notes=
-            notes
+            notes=
+                notes
+        )
     )
 
 
-    if not result["success"]:
-
-        message = result.get(
-            "message",
-            ""
-        )
-
-
-        if (
-            "not found"
-            in message.lower()
-        ):
-
-            return jsonify(
-                result
-            ), 404
-
+    if not result.get(
+        "success"
+    ):
 
         return jsonify(
             result
@@ -1438,18 +1498,19 @@ def move_warehouse_material():
 
     return jsonify(
         result
-    ), 200
+    )
 
 
 # ============================================================
-# PROJECTS COMPATIBILITY ROUTE
+# PROJECT HELPER
 # ============================================================
 
-@app.route("/projects")
-def projects():
+def get_project_or_404(
+    project_slug
+):
 
-    return redirect(
-        url_for("tech_center_home")
+    return PROJECTS.get(
+        project_slug
     )
 
 
@@ -1464,33 +1525,30 @@ def project_dashboard(
     project_slug
 ):
 
-    project = PROJECTS.get(
-        project_slug
+    project = (
+        get_project_or_404(
+            project_slug
+        )
     )
 
 
     if not project:
 
-        abort(404)
-
-
-    purchase_orders = (
-        PURCHASE_ORDERS.get(
-            project_slug,
-            []
+        return (
+            "Project not found",
+            404
         )
-    )
 
 
     schedule = (
         PROJECT_SCHEDULES.get(
             project_slug,
-            []
+            {}
         )
     )
 
 
-    materials_data = (
+    receipts = (
         get_receipts_by_project(
             project_slug
         )
@@ -1498,6 +1556,7 @@ def project_dashboard(
 
 
     return render_template(
+
         "project_dashboard.html",
 
         project=
@@ -1506,14 +1565,11 @@ def project_dashboard(
         project_slug=
             project_slug,
 
-        purchase_orders=
-            purchase_orders,
-
-        materials=
-            materials_data,
-
         schedule=
-            schedule
+            schedule,
+
+        receipts=
+            receipts
     )
 
 
@@ -1528,14 +1584,19 @@ def project_purchase_orders(
     project_slug
 ):
 
-    project = PROJECTS.get(
-        project_slug
+    project = (
+        get_project_or_404(
+            project_slug
+        )
     )
 
 
     if not project:
 
-        abort(404)
+        return (
+            "Project not found",
+            404
+        )
 
 
     purchase_orders = (
@@ -1547,6 +1608,7 @@ def project_purchase_orders(
 
 
     return render_template(
+
         "project_purchase_orders.html",
 
         project=
@@ -1571,25 +1633,34 @@ def project_schedule(
     project_slug
 ):
 
-    project = PROJECTS.get(
-        project_slug
+    project = (
+        get_project_or_404(
+            project_slug
+        )
     )
 
 
     if not project:
 
-        abort(404)
+        return (
+            "Project not found",
+            404
+        )
 
 
     schedule = (
         PROJECT_SCHEDULES.get(
             project_slug,
-            []
+            {
+                "risks": [],
+                "milestones": []
+            }
         )
     )
 
 
     return render_template(
+
         "project_schedule.html",
 
         project=
@@ -1614,100 +1685,127 @@ def project_materials(
     project_slug
 ):
 
-    project = PROJECTS.get(
-        project_slug
+    project = (
+        get_project_or_404(
+            project_slug
+        )
     )
 
 
     if not project:
 
-        abort(404)
+        return (
+            "Project not found",
+            404
+        )
 
 
-    receipt_rows = (
+    receipts = (
         get_receipts_by_project(
             project_slug
         )
     )
 
 
-    materials_data = []
+    materials = []
 
 
-    for receipt in receipt_rows:
+    for receipt in receipts:
 
-        materials_data.append({
+        materials.append({
 
-            # NEW
             "receipt_line_id":
-                receipt[
+                receipt.get(
                     "receipt_line_id"
-                ],
+                ),
 
             "line_nbr":
-                receipt[
+                receipt.get(
                     "line_nbr"
-                ],
+                ),
 
-
-            "receipt":
-                receipt[
+            "receipt_nbr":
+                receipt.get(
                     "receipt_nbr"
-                ],
+                ),
 
-            "po":
-                receipt[
+            "po_nbr":
+                receipt.get(
                     "po_nbr"
-                ],
+                ),
 
-            "part":
-                receipt[
+            "inventory_id":
+                receipt.get(
                     "inventory_id"
-                ],
+                ),
 
             "description":
-                receipt[
+                receipt.get(
                     "description"
-                ],
+                ),
 
-            "package":
-                receipt[
+            "package_name":
+                receipt.get(
                     "package_name"
-                ],
+                ),
 
             "project_number":
-                receipt[
+                receipt.get(
                     "project_number"
-                ],
+                ),
 
-            "received":
-                receipt[
-                    "receipt_qty"
-                ],
+            "receipt_qty":
+                receipt.get(
+                    "receipt_qty",
+                    0
+                ),
 
-            "staged":
-                receipt[
-                    "staged_qty"
-                ],
+            "staged_qty":
+                receipt.get(
+                    "staged_qty",
+                    0
+                ),
 
-            "remaining":
-                receipt[
-                    "remaining_to_stage"
-                ],
+            "remaining_to_stage":
+                receipt.get(
+                    "remaining_to_stage",
+                    0
+                ),
 
-            "location":
-                receipt[
-                    "storage_location"
-                ],
-
-            "status":
-                receipt[
+            "staging_status":
+                receipt.get(
                     "staging_status"
-                ]
+                ),
+
+            "storage_location":
+                receipt.get(
+                    "storage_location",
+                    "Not Staged"
+                ),
+
+            "locations":
+                receipt.get(
+                    "location_list",
+                    []
+                ),
+
+            "uom":
+                receipt.get(
+                    "uom",
+                    "EA"
+                ),
+
+            "is_demo":
+                receipt.get(
+                    "is_demo",
+                    0
+                )
+
         })
 
 
     return render_template(
+
         "project_materials.html",
 
         project=
@@ -1717,28 +1815,531 @@ def project_materials(
             project_slug,
 
         materials=
-            materials_data
+            materials
     )
 
 
 # ============================================================
-# REPORTING
+# REPORTING DASHBOARD
 # ============================================================
 
-@app.route("/reporting")
+@app.route(
+    "/reporting"
+)
 def reporting():
 
-    return """
-        <h2>Reporting</h2>
+    reports = (
+        get_all_reports()
+    )
 
-        <p>
-            Tech Center reporting workspace coming next.
-        </p>
-    """
+
+    return render_template(
+
+        "reporting.html",
+
+        reports=
+            reports
+    )
 
 
 # ============================================================
-# RUN FLASK
+# CREATE NEW REPORT
+# ============================================================
+
+@app.route(
+    "/reporting/create",
+    methods=["POST"]
+)
+def create_reporting_record():
+
+    data = (
+        request.get_json(
+            silent=True
+        )
+        or {}
+    )
+
+
+    project_slug = (
+        data.get(
+            "project_slug"
+        )
+    )
+
+
+    package_name = (
+        data.get(
+            "package_name"
+        )
+    )
+
+
+    report_type = (
+        data.get(
+            "report_type"
+        )
+    )
+
+
+    if not project_slug:
+
+        return jsonify({
+            "message":
+                "Project is required."
+        }), 400
+
+
+    if not package_name:
+
+        return jsonify({
+            "message":
+                "Package / section is required."
+        }), 400
+
+
+    if not report_type:
+
+        return jsonify({
+            "message":
+                "Report type is required."
+        }), 400
+
+
+    project = (
+        PROJECTS.get(
+            project_slug
+        )
+    )
+
+
+    if not project:
+
+        return jsonify({
+            "message":
+                "Project was not found."
+        }), 404
+
+
+    if report_type != "NCR":
+
+        return jsonify({
+            "message":
+                "Only the NCR template is connected "
+                "in this prototype."
+        }), 400
+
+
+    try:
+
+        result = (
+            create_report(
+
+                report_type=
+                    report_type,
+
+                project_slug=
+                    project_slug,
+
+                project_name=
+                    project["short_name"],
+
+                package_name=
+                    package_name,
+
+                created_by=
+                    "Myska Nasiri"
+            )
+        )
+
+    except Exception as error:
+
+        print(
+            "REPORT CREATE ERROR:",
+            error
+        )
+
+        return jsonify({
+            "message":
+                "Unable to create report."
+        }), 500
+
+
+    return jsonify({
+
+        "success":
+            True,
+
+        "report_id":
+            result["id"],
+
+        "report_number":
+            result["report_number"],
+
+        "redirect_url":
+            url_for(
+                "ncr_report",
+                report_id=
+                    result["id"]
+            )
+    })
+
+
+# ============================================================
+# NCR DIGITAL REPORT
+# ============================================================
+
+@app.route(
+    "/reporting/ncr/<int:report_id>"
+)
+def ncr_report(
+    report_id
+):
+
+    report = (
+        get_report(
+            report_id
+        )
+    )
+
+
+    if not report:
+
+        return (
+            "Report not found",
+            404
+        )
+
+
+    if (
+        report.get(
+            "report_type"
+        )
+        != "NCR"
+    ):
+
+        return (
+            "This report is not an NCR.",
+            400
+        )
+
+
+    project = (
+        PROJECTS.get(
+            report.get(
+                "project_slug"
+            )
+        )
+    )
+
+
+    return render_template(
+
+        "ncr_report.html",
+
+        report=
+            report,
+
+        project=
+            project,
+
+        project_slug=
+            report.get(
+                "project_slug"
+            )
+    )
+
+
+# ============================================================
+# SAVE NCR DRAFT
+# ============================================================
+
+@app.route(
+    "/reporting/ncr/<int:report_id>/save",
+    methods=["POST"]
+)
+def save_ncr_report(
+    report_id
+):
+
+    report = (
+        get_report(
+            report_id
+        )
+    )
+
+
+    if not report:
+
+        return jsonify({
+            "message":
+                "Report was not found."
+        }), 404
+
+
+    data = (
+        request.get_json(
+            silent=True
+        )
+        or {}
+    )
+
+
+    try:
+
+        save_report_draft(
+            report_id,
+            data
+        )
+
+    except Exception as error:
+
+        print(
+            "REPORT SAVE ERROR:",
+            error
+        )
+
+        return jsonify({
+            "message":
+                "Unable to save draft."
+        }), 500
+
+
+    return jsonify({
+
+        "success":
+            True,
+
+        "message":
+            "Draft saved successfully."
+    })
+
+
+# ============================================================
+# SUBMIT NCR
+# ============================================================
+
+@app.route(
+    "/reporting/ncr/<int:report_id>/submit",
+    methods=["POST"]
+)
+def submit_ncr_report(
+    report_id
+):
+
+    report = (
+        get_report(
+            report_id
+        )
+    )
+
+
+    if not report:
+
+        return jsonify({
+            "message":
+                "Report was not found."
+        }), 404
+
+
+    data = (
+        request.get_json(
+            silent=True
+        )
+        or {}
+    )
+
+
+    if not data.get(
+        "date"
+    ):
+
+        return jsonify({
+            "message":
+                "Report date is required."
+        }), 400
+
+
+    if not data.get(
+        "nonconformance_description"
+    ):
+
+        return jsonify({
+            "message":
+                "Description of the non-conformance is required."
+        }), 400
+
+
+    try:
+
+        submit_report(
+            report_id,
+            data
+        )
+
+    except Exception as error:
+
+        print(
+            "REPORT SUBMIT ERROR:",
+            error
+        )
+
+        return jsonify({
+            "message":
+                "Unable to submit report."
+        }), 500
+
+
+    return jsonify({
+
+        "success":
+            True,
+
+        "message":
+            "Report submitted successfully."
+    })
+
+
+# ============================================================
+# NCR TEMPLATE IMAGE
+#
+# Converts the actual NCR PDF template to an image so it can
+# appear as the background of the fillable browser page.
+# ============================================================
+
+@app.route(
+    "/reporting/ncr/template-image"
+)
+def ncr_template_image():
+
+    if not ncr_template_exists():
+
+        return (
+            "NCR template PDF not found.",
+            404
+        )
+
+
+    try:
+
+        image_bytes = (
+            render_ncr_template_image()
+        )
+
+    except Exception as error:
+
+        print(
+            "NCR TEMPLATE IMAGE ERROR:",
+            error
+        )
+
+        return (
+            "Unable to render NCR template.",
+            500
+        )
+
+
+    return Response(
+        image_bytes,
+        mimetype=
+            "image/png"
+    )
+
+
+# ============================================================
+# GENERATED COMPLETED NCR PDF
+#
+# Writes the saved report information onto a copy of the
+# original Audubon NCR template.
+# ============================================================
+
+@app.route(
+    "/reporting/ncr/<int:report_id>/pdf"
+)
+def download_ncr_pdf(
+    report_id
+):
+
+    report = (
+        get_report(
+            report_id
+        )
+    )
+
+
+    if not report:
+
+        return (
+            "Report not found.",
+            404
+        )
+
+
+    if (
+        report.get(
+            "report_type"
+        )
+        != "NCR"
+    ):
+
+        return (
+            "This report is not an NCR.",
+            400
+        )
+
+
+    if not ncr_template_exists():
+
+        return (
+            "NCR template PDF not found.",
+            404
+        )
+
+
+    try:
+
+        pdf_bytes = (
+            generate_completed_ncr_pdf(
+                report
+            )
+        )
+
+    except Exception as error:
+
+        print(
+            "NCR PDF ERROR:",
+            error
+        )
+
+        return (
+            "Unable to generate NCR PDF.",
+            500
+        )
+
+
+    return send_file(
+
+        BytesIO(
+            pdf_bytes
+        ),
+
+        mimetype=
+            "application/pdf",
+
+        as_attachment=
+            False,
+
+        download_name=
+            (
+                report[
+                    "report_number"
+                ]
+                + ".pdf"
+            )
+    )
+
+
+# ============================================================
+# RUN APP
 # ============================================================
 
 if __name__ == "__main__":
