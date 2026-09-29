@@ -1,2602 +1,869 @@
 {% extends "base.html" %}
 
+{% block title %}Material Management | AIMS{% endblock %}
+
 {% block content %}
 
 <style>
     .materials-page {
-        padding: 4px 2px 40px;
+        padding: 28px 30px 40px;
+        max-width: 1500px;
+        margin: 0 auto;
     }
 
     .page-eyebrow {
+        color: #567064;
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 1.4px;
-        color: #68716c;
-        margin-bottom: 8px;
-    }
-
-    .page-title {
-        font-size: 30px;
-        font-weight: 650;
-        color: #202622;
-        margin: 0;
-    }
-
-    .page-subtitle {
-        margin-top: 7px;
-        font-size: 14px;
-        color: #69726c;
-    }
-
-    /* ======================================================
-       MAIN TABS
-    ====================================================== */
-
-    .materials-tabs {
-        display: flex;
-        gap: 6px;
-        margin-top: 24px;
-        border-bottom: 1px solid #dde2df;
-    }
-
-    .materials-tab {
-        border: none;
-        background: transparent;
-        padding: 12px 16px;
-        font-size: 13px;
-        font-weight: 650;
-        color: #737b76;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-    }
-
-    .materials-tab:hover {
-        color: #303a33;
-    }
-
-    .materials-tab.active {
-        color: #303a33;
-        border-bottom-color: #303a33;
-    }
-
-    .tab-panel {
-        display: none;
-    }
-
-    .tab-panel.active {
-        display: block;
-    }
-
-    /* ======================================================
-       SHARED
-    ====================================================== */
-
-    .sync-panel {
-        margin-top: 22px;
-        background: white;
-        border: 1px solid #e1e5e2;
-        border-radius: 12px;
-        padding: 18px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .sync-left {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .sync-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 9px;
-        background: #edf4ef;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .sync-title {
-        font-size: 14px;
-        font-weight: 650;
-        color: #252b27;
-    }
-
-    .sync-subtitle {
-        font-size: 12px;
-        color: #7a827d;
-        margin-top: 3px;
-    }
-
-    .sync-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        background: #eef5ef;
-        color: #476151;
-        border-radius: 20px;
-        padding: 7px 11px;
-    }
-
-    .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 18px;
-    }
-
-    .warehouse-summary {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 22px;
-    }
-
-    .metric-card {
-        background: white;
-        border: 1px solid #e1e5e2;
-        border-radius: 12px;
-        padding: 18px;
-    }
-
-    .metric-label {
-        font-size: 11px;
+        letter-spacing: 1.2px;
         text-transform: uppercase;
-        letter-spacing: .8px;
-        color: #7b837e;
-        font-weight: 700;
-    }
-
-    .metric-value {
-        margin-top: 8px;
-        font-size: 25px;
-        font-weight: 650;
-        color: #232a25;
-    }
-
-    .workspace-card {
-        margin-top: 22px;
-        background: white;
-        border: 1px solid #e1e5e2;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .workspace-header {
-        padding: 18px 20px;
-        border-bottom: 1px solid #e6e9e7;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 18px;
-    }
-
-    .workspace-title {
-        font-size: 16px;
-        font-weight: 650;
-        color: #242a26;
-    }
-
-    .workspace-description {
-        font-size: 12px;
-        color: #7a817d;
-        margin-top: 4px;
-    }
-
-    .search-box {
-        width: 340px;
-        max-width: 100%;
-        border: 1px solid #dce1de;
-        border-radius: 8px;
-        padding: 9px 11px;
-        font-size: 13px;
-        outline: none;
-        box-sizing: border-box;
-    }
-
-    .search-box:focus,
-    .warehouse-select:focus,
-    .form-row input:focus,
-    .form-row select:focus,
-    .form-row textarea:focus {
-        border-color: #8d9b92;
-        outline: none;
-    }
-
-    .filters {
-        display: flex;
-        gap: 7px;
-        padding: 12px 20px;
-        border-bottom: 1px solid #edf0ee;
-        flex-wrap: wrap;
-    }
-
-    .filter-btn {
-        background: #f6f8f6;
-        border: 1px solid #e1e5e2;
-        border-radius: 7px;
-        padding: 7px 11px;
-        font-size: 12px;
-        cursor: pointer;
-        color: #59615c;
-    }
-
-    .filter-btn.active {
-        background: #303a33;
-        border-color: #303a33;
-        color: white;
-    }
-
-    .field-label {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: .65px;
-        font-weight: 700;
-        color: #858d88;
         margin-bottom: 5px;
     }
 
-    .field-value {
+    .page-title {
+        margin: 0;
+        color: #26352e;
+        font-size: 28px;
+        font-weight: 650;
+        letter-spacing: -0.4px;
+    }
+
+    .page-subtitle {
+        margin-top: 6px;
+        color: #737c77;
         font-size: 13px;
-        color: #303632;
     }
 
-    .field-value.strong {
-        font-weight: 650;
+    /* =========================================
+       SOURCE INFORMATION
+    ========================================= */
+
+    .source-bar {
+        margin-top: 22px;
+        border: 1px solid #dfe5e1;
+        background: #ffffff;
+        padding: 11px 14px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
     }
 
-    .status-pill {
-        display: inline-block;
-        border-radius: 18px;
-        padding: 6px 10px;
+    .source-title {
+        color: #34453c;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .source-note {
+        color: #7a837e;
         font-size: 11px;
-        font-weight: 650;
+        margin-top: 2px;
+    }
+
+    .source-badge {
+        display: inline-flex;
+        align-items: center;
+
         white-space: nowrap;
-    }
 
-    .status-awaiting {
-        background: #f6f0df;
-        color: #776129;
-    }
+        padding: 4px 8px;
 
-    .status-partial {
-        background: #edf1f5;
-        color: #546574;
-    }
+        border-radius: 3px;
 
-    .status-complete {
-        background: #e9f3ec;
-        color: #486452;
-    }
+        background: #eef4f0;
+        color: #486052;
 
-    .stage-btn,
-    .primary-btn {
-        border: none;
-        border-radius: 7px;
-        background: #303a33;
-        color: white;
-        padding: 9px 13px;
-        font-size: 12px;
-        cursor: pointer;
-    }
+        border: 1px solid #d7e2db;
 
-    .stage-btn:hover,
-    .primary-btn:hover {
-        background: #252e28;
-    }
-
-    .stage-btn:disabled,
-    .primary-btn:disabled {
-        background: #b9c0bc;
-        cursor: default;
-    }
-
-    .secondary-btn {
-        border: 1px solid #d7ddda;
-        background: white;
-        border-radius: 7px;
-        padding: 9px 13px;
-        cursor: pointer;
-        color: #4c554f;
-        font-size: 12px;
-    }
-
-    .secondary-btn:hover {
-        background: #f5f7f5;
-    }
-
-    .demo-label {
-        display: inline-block;
-        padding: 3px 7px;
-        background: #f3f1e8;
-        color: #7d7049;
-        border-radius: 10px;
-        font-size: 9px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
-
-    /* ======================================================
-       RECEIVING & STAGING
-    ====================================================== */
-
-    .receipt-list {
-        padding: 14px;
-    }
-
-    .receipt-card {
-        border: 1px solid #e1e5e2;
-        border-radius: 10px;
-        margin-bottom: 14px;
-        overflow: hidden;
-        background: white;
-    }
-
-    .receipt-top {
-        padding: 15px 17px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 18px;
-        background: #fbfcfb;
-        border-bottom: 1px solid #edf0ee;
-    }
-
-    .receipt-number {
-        font-size: 15px;
-        font-weight: 700;
-        color: #252b27;
-    }
-
-    .receipt-source {
-        font-size: 11px;
-        color: #7c847f;
-        margin-top: 3px;
-    }
-
-    .receipt-heading-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
-
-    .receipt-summary {
-        padding: 15px 17px;
-        border-bottom: 1px solid #edf0ee;
-    }
-
-    .receipt-summary-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 18px;
-    }
-
-    .receipt-timestamps {
-        margin-top: 13px;
-        padding-top: 12px;
-        border-top: 1px solid #f0f2f1;
-        display: flex;
-        gap: 35px;
-        flex-wrap: wrap;
-    }
-
-    .timestamp-value {
-        font-size: 12px;
-        color: #424a45;
-        margin-top: 3px;
-    }
-
-    .line-section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 11px 17px;
-        background: #f7f9f7;
-        border-bottom: 1px solid #e7ebe8;
-    }
-
-    .line-section-title {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .7px;
-        color: #707973;
-    }
-
-    .line-count {
-        font-size: 11px;
-        color: #7c847f;
-    }
-
-    .receipt-line {
-        padding: 16px 17px;
-        border-bottom: 1px solid #edf0ee;
-    }
-
-    .receipt-line:last-child {
-        border-bottom: none;
-    }
-
-    .line-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        align-items: flex-start;
-    }
-
-    .line-number {
         font-size: 10px;
         font-weight: 700;
-        color: #8a928d;
+
+        letter-spacing: .35px;
         text-transform: uppercase;
-        letter-spacing: .6px;
-        margin-bottom: 4px;
     }
 
-    .line-part {
-        font-size: 14px;
-        font-weight: 700;
-        color: #2b332e;
+
+    /* =========================================
+       PURCHASE ORDER WORKSPACE
+    ========================================= */
+
+    .workspace {
+        margin-top: 18px;
+
+        border: 1px solid #dfe4e1;
+
+        background: #ffffff;
     }
 
-    .line-description {
-        font-size: 12px;
-        color: #737c76;
-        margin-top: 3px;
-    }
+    .workspace-header {
+        padding: 14px 15px;
 
-    .line-meta-grid {
-        margin-top: 14px;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 1px solid #e2e7e4;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
         gap: 14px;
     }
 
-    .line-qty-grid {
-        margin-top: 14px;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
+    .workspace-title {
+        color: #34433b;
+        font-size: 14px;
+        font-weight: 700;
     }
 
-    .qty-box {
-        background: #f8faf8;
-        border-radius: 8px;
-        padding: 10px 11px;
-    }
-
-    .qty-number {
-        font-size: 17px;
-        font-weight: 650;
-        color: #262d28;
-    }
-
-    .qty-label {
-        margin-top: 3px;
-        font-size: 9px;
-        color: #7a837d;
-        text-transform: uppercase;
-        letter-spacing: .6px;
-    }
-
-    .line-location-area {
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 1px solid #f0f2f1;
-    }
-
-    .line-location-row {
-        display: flex;
-        justify-content: space-between;
-        max-width: 550px;
-        padding: 4px 0;
-        font-size: 12px;
-    }
-
-    .location-name {
-        color: #4f5852;
-    }
-
-    .location-qty {
-        font-weight: 650;
-    }
-
-    .line-bottom {
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 1px solid #f0f2f1;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 20px;
-    }
-
-    .line-history-summary {
+    .workspace-subtitle {
+        color: #7b837f;
         font-size: 11px;
-        color: #7b837e;
+        margin-top: 2px;
     }
 
-    .line-actions {
+
+    /* =========================================
+       SEARCH / FILTERS
+    ========================================= */
+
+    .controls {
         display: flex;
+        align-items: center;
         gap: 8px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
     }
 
-    /* ======================================================
-       WAREHOUSE FILTERS
-    ====================================================== */
+    .search-box,
+    .status-filter {
+        height: 34px;
 
-    .warehouse-filter-row {
-        display: flex;
-        gap: 10px;
-        padding: 12px 20px;
-        border-bottom: 1px solid #edf0ee;
-        flex-wrap: wrap;
-    }
+        box-sizing: border-box;
 
-    .warehouse-select {
-        border: 1px solid #dce1de;
-        border-radius: 8px;
-        padding: 9px 11px;
-        background: white;
+        border: 1px solid #ccd5d0;
+
+        background: #ffffff;
+        color: #34433b;
+
+        font-family: inherit;
         font-size: 12px;
-        color: #535c56;
-        min-width: 180px;
+
+        outline: none;
     }
 
-    /* ======================================================
-       INVENTORY TABLE
-    ====================================================== */
+    .search-box {
+        width: 290px;
+        padding: 0 10px;
+    }
 
-    .inventory-table-wrap {
+    .status-filter {
+        min-width: 155px;
+        padding: 0 9px;
+    }
+
+    .search-box:focus,
+    .status-filter:focus {
+        border-color: #738f7f;
+
+        box-shadow:
+            0 0 0 2px rgba(82, 111, 94, .08);
+    }
+
+
+    /* =========================================
+       AIMS / ACUMATICA STYLE TABLE
+    ========================================= */
+
+    .table-wrap {
         width: 100%;
         overflow-x: auto;
     }
 
-    .inventory-table {
+    .po-table {
         width: 100%;
+
         border-collapse: collapse;
-        min-width: 1320px;
-        background: white;
+
+        min-width: 920px;
+
+        table-layout: auto;
     }
 
-    .inventory-table thead {
-        background: #f5f7f5;
-    }
+    .po-table th {
+        background: #f5f7f6;
 
-    .inventory-table th {
+        color: #5e6963;
+
+        border-bottom: 1px solid #dce2de;
+        border-right: 1px solid #e7ebe8;
+
+        padding: 7px 10px;
+
         text-align: left;
-        padding: 11px 13px;
-        border-bottom: 1px solid #dfe4e1;
+
         font-size: 10px;
+        font-weight: 700;
+
+        letter-spacing: .45px;
         text-transform: uppercase;
-        letter-spacing: .65px;
-        color: #737c76;
-        font-weight: 700;
+
         white-space: nowrap;
     }
 
-    .inventory-table td {
-        padding: 12px 13px;
-        border-bottom: 1px solid #edf0ee;
-        color: #37403a;
+    .po-table td {
+        border-bottom: 1px solid #e8ece9;
+        border-right: 1px solid #eef1ef;
+
+        padding: 7px 10px;
+
+        color: #3f4944;
+
         font-size: 12px;
-        vertical-align: middle;
+        line-height: 1.25;
+
+        white-space: nowrap;
     }
 
-    .inventory-table tbody tr:hover {
-        background: #f8faf8;
+    .po-table th:last-child,
+    .po-table td:last-child {
+        border-right: 0;
     }
 
-    .material-link {
-        border: none;
-        background: none;
-        padding: 0;
-        color: #376956;
-        font-size: 12px;
-        font-weight: 700;
+    .po-row {
         cursor: pointer;
-        text-align: left;
+
+        transition:
+            background .12s ease;
     }
 
-    .material-link:hover {
-        text-decoration: underline;
+    .po-row:hover {
+        background: #f7faf8;
     }
 
-    .number-column {
-        text-align: right !important;
-        white-space: nowrap;
-        font-weight: 650;
+    .po-number {
+        color: #315c46;
+        font-weight: 700;
     }
 
-    .table-location {
-        white-space: nowrap;
-        margin-bottom: 3px;
+    .project-name {
+        color: #4b5751;
     }
 
-    .table-location span {
-        color: #7d857f;
-        font-size: 11px;
+    .qty {
+        text-align: right;
+
+        font-variant-numeric:
+            tabular-nums;
     }
 
-    .table-action-cell {
-        width: 45px;
+    .po-table th.qty {
         text-align: right;
     }
 
-    .table-action-btn {
-        width: 29px;
-        height: 29px;
-        border: 1px solid #d6dcd8;
-        border-radius: 6px;
-        background: white;
-        color: #39443d;
-        font-size: 20px;
-        line-height: 20px;
-        cursor: pointer;
+
+    /* =========================================
+       STATUS COLORS
+    ========================================= */
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+
+        gap: 6px;
+
+        border-radius: 3px;
+
+        padding: 3px 7px;
+
+        font-size: 10px;
+        line-height: 1.2;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        border:
+            1px solid transparent;
     }
 
-    .table-action-btn:hover {
-        background: #edf3ef;
+    .status-pill::before {
+        content: "";
+
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        flex: 0 0 6px;
     }
 
-    .empty-table-message {
+
+    /* BACKORDERED */
+
+    .status-backordered {
+        color: #8b3939;
+
+        background: #fbefef;
+
+        border-color: #efd0d0;
+    }
+
+    .status-backordered::before {
+        background: #b94d4d;
+    }
+
+
+    /* AWAITING RECEIPT */
+
+    .status-awaiting {
+        color: #85651d;
+
+        background: #fff8e5;
+
+        border-color: #eedda8;
+    }
+
+    .status-awaiting::before {
+        background: #c99b2e;
+    }
+
+
+    /* PARTIALLY RECEIVED */
+
+    .status-partial {
+        color: #3c5f7b;
+
+        background: #eef5fa;
+
+        border-color: #cfdfe9;
+    }
+
+    .status-partial::before {
+        background: #5c86a5;
+    }
+
+
+    /* RECEIVED */
+
+    .status-received {
+        color: #3f684e;
+
+        background: #eef7f1;
+
+        border-color: #cfe3d5;
+    }
+
+    .status-received::before {
+        background: #579269;
+    }
+
+
+    .backorder-count {
+        margin-left: 5px;
+
+        color: #9b4545;
+
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================
+       EMPTY STATE
+    ========================================= */
+
+    .empty-state {
+        padding: 42px 20px;
+
         text-align: center;
-        color: #7c847f !important;
-        padding: 40px !important;
+
+        color: #7c8580;
+
+        font-size: 13px;
     }
 
-    /* ======================================================
-       MODALS
-    ====================================================== */
 
-    .modal-backdrop {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(24, 30, 26, .38);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
-        box-sizing: border-box;
-    }
+    /* =========================================
+       TABLE FOOTER
+    ========================================= */
 
-    .modal-backdrop.open {
-        display: flex;
-    }
+    .table-footer {
+        padding: 8px 12px;
 
-    .stage-modal,
-    .material-modal {
-        width: 540px;
-        max-width: calc(100vw - 30px);
-        max-height: calc(100vh - 40px);
-        background: white;
-        border-radius: 13px;
-        box-shadow: 0 22px 60px rgba(0, 0, 0, .18);
-        overflow: auto;
-    }
+        border-top:
+            1px solid #e2e7e4;
 
-    .material-modal {
-        width: 700px;
-    }
+        background: #fafbfa;
 
-    .modal-header {
-        padding: 18px 20px;
-        border-bottom: 1px solid #e5e9e6;
+        color: #7b837f;
+
+        font-size: 10px;
+
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        background: white;
-        z-index: 2;
+
+        gap: 12px;
     }
 
-    .modal-title {
-        font-size: 17px;
-        font-weight: 650;
-        color: #252b27;
-    }
 
-    .close-btn {
-        border: none;
-        background: none;
-        font-size: 22px;
-        color: #727a75;
-        cursor: pointer;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .modal-material {
-        background: #f7f9f7;
-        border-radius: 9px;
-        padding: 13px;
-        margin-bottom: 17px;
-    }
-
-    .modal-material strong {
-        font-size: 14px;
-    }
-
-    .modal-material div {
-        font-size: 12px;
-        color: #737b76;
-        margin-top: 4px;
-    }
-
-    .material-detail-header {
-        padding-bottom: 16px;
-        border-bottom: 1px solid #e9ecea;
-    }
-
-    .material-detail-part {
-        font-size: 21px;
-        font-weight: 700;
-        color: #252b27;
-    }
-
-    .material-detail-description {
-        font-size: 13px;
-        color: #707872;
-        margin-top: 4px;
-    }
-
-    .detail-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 17px;
-        margin-top: 18px;
-    }
-
-    .detail-section {
-        margin-top: 22px;
-        padding-top: 18px;
-        border-top: 1px solid #e9ecea;
-    }
-
-    .detail-section-title {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .8px;
-        color: #747d77;
-        margin-bottom: 10px;
-    }
-
-    .detail-location-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 9px 0;
-        border-bottom: 1px solid #f0f2f1;
-        font-size: 13px;
-    }
-
-    .movement-entry {
-        padding: 11px 0;
-        border-bottom: 1px solid #f0f2f1;
-    }
-
-    .movement-route {
-        font-size: 13px;
-        font-weight: 650;
-        color: #39433d;
-    }
-
-    .movement-meta {
-        font-size: 11px;
-        color: #7b837e;
-        margin-top: 4px;
-    }
-
-    .movement-note {
-        margin-top: 4px;
-        font-size: 11px;
-        color: #68716c;
-    }
-
-    .modal-footer {
-        padding: 14px 20px;
-        border-top: 1px solid #e5e9e6;
-        display: flex;
-        justify-content: flex-end;
-        gap: 9px;
-        position: sticky;
-        bottom: 0;
-        background: white;
-    }
-
-    .form-row {
-        margin-bottom: 15px;
-    }
-
-    .form-row label {
-        display: block;
-        font-size: 11px;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: .6px;
-        color: #747c77;
-        margin-bottom: 6px;
-    }
-
-    .form-row input,
-    .form-row select,
-    .form-row textarea {
-        width: 100%;
-        box-sizing: border-box;
-        border: 1px solid #d9dfdb;
-        border-radius: 7px;
-        padding: 10px;
-        font-size: 13px;
-        font-family: inherit;
-    }
-
-    .form-row textarea {
-        resize: vertical;
-        min-height: 75px;
-    }
-
-    .available-note {
-        font-size: 12px;
-        color: #737b76;
-        margin-top: 5px;
-    }
-
-    .validation-message {
-        display: none;
-        color: #9a4d48;
-        font-size: 12px;
-        margin-top: 6px;
-    }
-
-    .success-message {
-        display: none;
-        color: #496553;
-        font-size: 12px;
-        margin-top: 6px;
-    }
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
 
     @media (max-width: 900px) {
-        .metric-grid,
-        .receipt-summary-grid,
-        .line-meta-grid,
-        .line-qty-grid {
-            grid-template-columns: repeat(2, 1fr);
+
+        .materials-page {
+            padding:
+                22px 18px 35px;
         }
 
+        .source-bar,
         .workspace-header {
-            align-items: flex-start;
-            flex-direction: column;
+            align-items:
+                flex-start;
+
+            flex-direction:
+                column;
+        }
+
+        .controls {
+            width: 100%;
         }
 
         .search-box {
+            flex: 1;
+
+            width: auto;
+        }
+    }
+
+
+    @media (max-width: 620px) {
+
+        .controls {
+            flex-direction:
+                column;
+
+            align-items:
+                stretch;
+        }
+
+        .search-box,
+        .status-filter {
             width: 100%;
         }
     }
 
-    @media (max-width: 620px) {
-        .metric-grid,
-        .warehouse-summary,
-        .receipt-summary-grid,
-        .line-meta-grid,
-        .line-qty-grid,
-        .detail-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .line-top,
-        .line-bottom {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .line-actions {
-            justify-content: flex-start;
-        }
-    }
 </style>
 
 
 <div class="materials-page">
 
+    <!-- =========================================
+         PAGE HEADER
+    ========================================== -->
+
     <div class="page-eyebrow">
-        MATERIALS MANAGEMENT
+        Tech Center
     </div>
+
 
     <h1 class="page-title">
-        Materials Management
+        Material Management
     </h1>
 
+
     <div class="page-subtitle">
-        Manage incoming receipt lines, Tech Center warehouse inventory,
-        staging, and material movement to the assembly area.
+        Review active purchase orders and material
+        availability for Tech Center receiving.
     </div>
 
 
-    <!-- ==================================================
-         MAIN TABS
-    =================================================== -->
+    <!-- =========================================
+         DATA SOURCE
+    ========================================== -->
 
-    <div class="materials-tabs">
+    <div class="source-bar">
 
-        <button
-            id="receivingTabButton"
-            class="materials-tab active"
-            type="button"
-            data-tab="receivingPanel"
-        >
-            Receiving &amp; Staging
-        </button>
+        <div>
 
-        <button
-            id="warehouseTabButton"
-            class="materials-tab"
-            type="button"
-            data-tab="warehousePanel"
-        >
-            Warehouse Materials
-        </button>
-
-    </div>
-
-
-    <!-- ==================================================
-         RECEIVING & STAGING
-    =================================================== -->
-
-    <div
-        id="receivingPanel"
-        class="tab-panel active"
-    >
-
-        <div class="sync-panel">
-
-            <div class="sync-left">
-
-                <div class="sync-icon">
-                    ↻
-                </div>
-
-                <div>
-                    <div class="sync-title">
-                        Proposed Acumatica Receipt Source
-                    </div>
-
-                    <div class="sync-subtitle">
-                        Prototype receipt synchronization for Tech Center
-                        material staging.
-                    </div>
-                </div>
-
+            <div class="source-title">
+                Purchase Order Source
             </div>
+
+            <div class="source-note">
+                Prototype view of purchasing information
+                proposed from Acumatica.
+            </div>
+
+        </div>
+
+
+        <div class="source-badge">
+            Proposed Acumatica Source
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         ACTIVE PURCHASE ORDERS
+    ========================================== -->
+
+    <div class="workspace">
+
+        <div class="workspace-header">
 
             <div>
 
-                <div class="sync-badge">
-                    ● Prototype Sync
+                <div class="workspace-title">
+                    Active Purchase Orders
                 </div>
 
-                <div class="sync-subtitle">
-                    Demo / proposed workflow data
+                <div class="workspace-subtitle">
+                    Select a PO to review its material
+                    line items.
                 </div>
 
             </div>
 
-        </div>
 
-
-        <!-- ==================================================
-             RECEIPT METRICS
-        =================================================== -->
-
-        <div class="metric-grid">
-
-            <div class="metric-card">
-                <div class="metric-label">
-                    Recent Receipts
-                </div>
-
-                <div
-                    id="metricRecent"
-                    class="metric-value"
-                >
-                    {{ receipt_groups|length }}
-                </div>
-            </div>
-
-
-            <div class="metric-card">
-                <div class="metric-label">
-                    Awaiting Staging
-                </div>
-
-                <div
-                    id="metricAwaiting"
-                    class="metric-value"
-                >
-                    {{ receipt_groups | selectattr("staging_status", "equalto", "Awaiting Staging") | list | length }}
-                </div>
-            </div>
-
-
-            <div class="metric-card">
-                <div class="metric-label">
-                    Partially Staged
-                </div>
-
-                <div
-                    id="metricPartial"
-                    class="metric-value"
-                >
-                    {{ receipt_groups | selectattr("staging_status", "equalto", "Partially Staged") | list | length }}
-                </div>
-            </div>
-
-
-            <div class="metric-card">
-                <div class="metric-label">
-                    Fully Staged
-                </div>
-
-                <div
-                    id="metricComplete"
-                    class="metric-value"
-                >
-                    {{ receipt_groups | selectattr("staging_status", "equalto", "Fully Staged") | list | length }}
-                </div>
-            </div>
-
-        </div>
-
-
-        <!-- ==================================================
-             RECEIPT WORKSPACE
-        =================================================== -->
-
-        <div class="workspace-card">
-
-            <div class="workspace-header">
-
-                <div>
-                    <div class="workspace-title">
-                        Recent Acumatica Receipts
-                    </div>
-
-                    <div class="workspace-description">
-                        Each purchase receipt may contain one or more
-                        independently staged material lines.
-                    </div>
-                </div>
+            <div class="controls">
 
                 <input
-                    id="receiptSearch"
+                    id="poSearch"
                     class="search-box"
-                    type="text"
-                    placeholder="Search receipt, PO, project, vendor, material..."
+                    type="search"
+                    placeholder="Search PO, project, vendor..."
+                    autocomplete="off"
                 >
 
-            </div>
 
-
-            <div class="filters">
-
-                <button
-                    class="filter-btn receipt-filter active"
-                    type="button"
-                    data-filter="All"
-                >
-                    All
-                </button>
-
-                <button
-                    class="filter-btn receipt-filter"
-                    type="button"
-                    data-filter="Awaiting Staging"
-                >
-                    Awaiting Staging
-                </button>
-
-                <button
-                    class="filter-btn receipt-filter"
-                    type="button"
-                    data-filter="Partially Staged"
-                >
-                    Partially Staged
-                </button>
-
-                <button
-                    class="filter-btn receipt-filter"
-                    type="button"
-                    data-filter="Fully Staged"
-                >
-                    Fully Staged
-                </button>
-
-            </div>
-
-
-            <div class="receipt-list">
-
-                {% for receipt in receipt_groups %}
-
-                <div
-                    class="receipt-card"
-                    data-status="{{ receipt.staging_status }}"
-                    data-receipt="{{ receipt.receipt_nbr }}"
-                    data-search="
-                        {{ receipt.receipt_nbr }}
-                        {{ receipt.po_nbr }}
-                        {{ receipt.project }}
-                        {{ receipt.vendor }}
-                        {% for line in receipt.lines %}
-                            {{ line.inventory_id }}
-                            {{ line.description }}
-                            {{ line.package_name }}
-                            {{ line.project_number }}
-                        {% endfor %}
-                    "
+                <select
+                    id="statusFilter"
+                    class="status-filter"
                 >
 
-                    <!-- RECEIPT HEADER -->
-
-                    <div class="receipt-top">
-
-                        <div>
-
-                            <div class="receipt-number">
-                                {{ receipt.receipt_nbr }}
-                            </div>
-
-                            <div class="receipt-source">
-                                Purchase Receipt · {{ receipt.status }}
-                            </div>
-
-                        </div>
-
-
-                        <div class="receipt-heading-right">
-
-                            {% if receipt.is_demo %}
-                            <span class="demo-label">
-                                Demo / Proposed
-                            </span>
-                            {% endif %}
-
-
-                            {% if receipt.staging_status == "Awaiting Staging" %}
-
-                            <span class="status-pill status-awaiting">
-                                {{ receipt.staging_status }}
-                            </span>
-
-                            {% elif receipt.staging_status == "Partially Staged" %}
-
-                            <span class="status-pill status-partial">
-                                {{ receipt.staging_status }}
-                            </span>
-
-                            {% else %}
-
-                            <span class="status-pill status-complete">
-                                {{ receipt.staging_status }}
-                            </span>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- RECEIPT-LEVEL INFORMATION -->
-
-                    <div class="receipt-summary">
-
-                        <div class="receipt-summary-grid">
-
-                            <div>
-                                <div class="field-label">
-                                    Project
-                                </div>
-
-                                <div class="field-value strong">
-                                    {{ receipt.project }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    PO Nbr.
-                                </div>
-
-                                <div class="field-value">
-                                    {{ receipt.po_nbr }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Vendor
-                                </div>
-
-                                <div class="field-value">
-                                    {{ receipt.vendor }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Receipt Date
-                                </div>
-
-                                <div class="field-value">
-                                    {{ receipt.receipt_date }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Material Lines
-                                </div>
-
-                                <div class="field-value strong">
-                                    {{ receipt.line_count }}
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        <div class="receipt-timestamps">
-
-                            <div>
-                                <div class="field-label">
-                                    Acumatica Updated
-                                </div>
-
-                                <div class="timestamp-value">
-                                    {{ receipt.acumatica_updated or "Demo value" }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Pulled into AIMS
-                                </div>
-
-                                <div class="timestamp-value">
-                                    {{ receipt.aims_pulled_at or "Demo value" }}
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- MATERIAL LINE HEADING -->
-
-                    <div class="line-section-header">
-
-                        <div class="line-section-title">
-                            Material Lines
-                        </div>
-
-                        <div class="line-count">
-                            {{ receipt.line_count }}
-                            {% if receipt.line_count == 1 %}
-                                line
-                            {% else %}
-                                lines
-                            {% endif %}
-                        </div>
-
-                    </div>
-
-
-                    <!-- ==================================================
-                         INDIVIDUAL MATERIAL LINES
-                    =================================================== -->
-
-                    {% for line in receipt.lines %}
-
-                    <div
-                        class="receipt-line"
-                        data-line-id="{{ line.receipt_line_id }}"
-                    >
-
-                        <div class="line-top">
-
-                            <div>
-
-                                <div class="line-number">
-                                    Line {{ line.line_nbr }}
-                                </div>
-
-                                <div class="line-part">
-                                    {{ line.inventory_id }}
-                                </div>
-
-                                <div class="line-description">
-                                    {{ line.description }}
-                                </div>
-
-                            </div>
-
-
-                            <div>
-
-                                {% if line.staging_status == "Awaiting Staging" %}
-
-                                <span class="status-pill status-awaiting">
-                                    {{ line.staging_status }}
-                                </span>
-
-                                {% elif line.staging_status == "Partially Staged" %}
-
-                                <span class="status-pill status-partial">
-                                    {{ line.staging_status }}
-                                </span>
-
-                                {% else %}
-
-                                <span class="status-pill status-complete">
-                                    {{ line.staging_status }}
-                                </span>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- LINE METADATA -->
-
-                        <div class="line-meta-grid">
-
-                            <div>
-                                <div class="field-label">
-                                    Package / Section
-                                </div>
-
-                                <div class="field-value">
-                                    {{ line.package_name or "Not Assigned" }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Project #
-                                </div>
-
-                                <div class="field-value">
-                                    {{ line.project_number or "—" }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Barcode
-                                </div>
-
-                                <div class="field-value">
-                                    {{ line.barcode or "Not Assigned" }}
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <div class="field-label">
-                                    Current Location
-                                </div>
-
-                                <div class="field-value strong">
-                                    {{ line.storage_location }}
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        <!-- QUANTITIES -->
-
-                        <div class="line-qty-grid">
-
-                            <div class="qty-box">
-
-                                <div class="qty-number">
-                                    {{ line.ordered_qty }}
-                                </div>
-
-                                <div class="qty-label">
-                                    Ordered Qty.
-                                </div>
-
-                            </div>
-
-
-                            <div class="qty-box">
-
-                                <div class="qty-number">
-                                    {{ line.receipt_qty }}
-                                </div>
-
-                                <div class="qty-label">
-                                    Receipt Qty.
-                                </div>
-
-                            </div>
-
-
-                            <div class="qty-box">
-
-                                <div class="qty-number">
-                                    {{ line.staged_qty }}
-                                </div>
-
-                                <div class="qty-label">
-                                    Staged Qty.
-                                </div>
-
-                            </div>
-
-
-                            <div class="qty-box">
-
-                                <div class="qty-number">
-                                    {{ line.remaining_to_stage }}
-                                </div>
-
-                                <div class="qty-label">
-                                    Remaining to Stage
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- LOCATION BREAKDOWN -->
-
-                        <div class="line-location-area">
-
-                            <div class="field-label">
-                                Tech Center Location Breakdown
-                            </div>
-
-
-                            {% if line.location_list %}
-
-                                {% for location in line.location_list %}
-
-                                <div class="line-location-row">
-
-                                    <span class="location-name">
-                                        {{ location.location }}
-                                    </span>
-
-                                    <span class="location-qty">
-                                        {{ location.quantity }}
-                                        {{ line.uom }}
-                                    </span>
-
-                                </div>
-
-                                {% endfor %}
-
-                            {% else %}
-
-                            <div class="line-location-row">
-
-                                <span class="location-name">
-                                    No material staged yet
-                                </span>
-
-                            </div>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- LINE ACTIONS -->
-
-                        <div class="line-bottom">
-
-                            <div class="line-history-summary">
-
-                                {% if line.staging_history %}
-
-                                    {{ line.staging_history|length }}
-                                    staging
-                                    {% if line.staging_history|length == 1 %}
-                                        transaction
-                                    {% else %}
-                                        transactions
-                                    {% endif %}
-
-                                {% else %}
-
-                                    No staging activity yet
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <div class="line-actions">
-
-                                {% if line.remaining_to_stage > 0 %}
-
-                                <button
-                                    type="button"
-                                    class="stage-btn open-stage-btn"
-
-                                    data-line-id="{{ line.receipt_line_id }}"
-                                    data-line-nbr="{{ line.line_nbr }}"
-
-                                    data-receipt="{{ line.receipt_nbr }}"
-
-                                    data-part="{{ line.inventory_id }}"
-                                    data-description="{{ line.description }}"
-
-                                    data-barcode="{{ line.barcode or '' }}"
-
-                                    data-received="{{ line.receipt_qty }}"
-                                    data-staged="{{ line.staged_qty }}"
-                                    data-remaining="{{ line.remaining_to_stage }}"
-                                >
-
-                                    {% if line.staged_qty > 0 %}
-                                        Continue Staging
-                                    {% else %}
-                                        Stage Material
-                                    {% endif %}
-
-                                </button>
-
-                                {% endif %}
-
-
-                                {% if line.staged_qty > 0 %}
-
-                                <button
-                                    type="button"
-                                    class="secondary-btn edit-staging-btn"
-
-                                    data-line-id="{{ line.receipt_line_id }}"
-                                >
-                                    Edit Staging
-                                </button>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-                {% else %}
-
-                <div style="padding: 35px; text-align: center; color: #7c847f;">
-                    No receipt records found.
-                </div>
-
-                {% endfor %}
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ==================================================
-         WAREHOUSE MATERIALS
-    =================================================== -->
-
-    <div
-        id="warehousePanel"
-        class="tab-panel"
-    >
-
-        <div class="warehouse-summary">
-
-            <div class="metric-card">
-
-                <div class="metric-label">
-                    Material Records
-                </div>
-
-                <div
-                    id="warehouseMaterialCount"
-                    class="metric-value"
-                >
-                    {{ warehouse_materials|length }}
-                </div>
-
-            </div>
-
-
-            <div class="metric-card">
-
-                <div class="metric-label">
-                    In Warehouse
-                </div>
-
-                <div
-                    id="warehouseQtyTotal"
-                    class="metric-value"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="metric-card">
-
-                <div class="metric-label">
-                    At Assembly Floor
-                </div>
-
-                <div
-                    id="assemblyQtyTotal"
-                    class="metric-value"
-                >
-                    0
-                </div>
+                    <option value="all">
+                        All Statuses
+                    </option>
+
+                    <option value="Backordered">
+                        Backordered
+                    </option>
+
+                    <option value="Awaiting Receipt">
+                        Awaiting Receipt
+                    </option>
+
+                    <option value="Partially Received">
+                        Partially Received
+                    </option>
+
+                    <option value="Received">
+                        Received
+                    </option>
+
+                </select>
 
             </div>
 
         </div>
 
 
-        <div class="workspace-card">
+        <!-- =====================================
+             PO TABLE
+        ====================================== -->
 
-            <div class="workspace-header">
+        <div class="table-wrap">
 
-                <div>
+            <table class="po-table">
 
-                    <div class="workspace-title">
-                        Warehouse Materials
-                    </div>
+                <thead>
 
-                    <div class="workspace-description">
-                        Search and locate staged material currently
-                        stored throughout the Tech Center.
-                    </div>
+                    <tr>
 
-                </div>
+                        <th>
+                            PO Number
+                        </th>
 
+                        <th>
+                            Project
+                        </th>
 
-                <input
-                    id="warehouseSearch"
-                    class="search-box"
-                    type="text"
-                    placeholder="Search material, project, PO, receipt, barcode..."
-                >
+                        <th>
+                            Vendor
+                        </th>
 
-            </div>
+                        <th class="qty">
+                            Ordered
+                        </th>
 
+                        <th class="qty">
+                            Received
+                        </th>
 
-            <!-- WAREHOUSE FILTERS -->
+                        <th class="qty">
+                            Outstanding
+                        </th>
 
-            <div class="warehouse-filter-row">
+                        <th>
+                            Status
+                        </th>
 
-                <select
-                    id="warehouseProjectFilter"
-                    class="warehouse-select"
-                >
+                    </tr>
 
-                    <option value="All">
-                        All Projects
-                    </option>
+                </thead>
 
 
-                    {% set projects_seen = [] %}
+                <tbody id="poTableBody">
 
-                    {% for material in warehouse_materials %}
+                    {% for po in active_pos %}
 
-                        {% if material.project not in projects_seen %}
 
-                            {% set _ = projects_seen.append(material.project) %}
+                        <!-- =============================
+                             DETERMINE DISPLAY STATUS
+                        ============================== -->
 
-                            <option value="{{ material.project }}">
-                                {{ material.project }}
-                            </option>
+                        {% if po.backordered_items > 0 %}
 
-                        {% endif %}
+                            {% set display_status =
+                                "Backordered"
+                            %}
 
-                    {% endfor %}
 
-                </select>
+                        {% elif po.total_outstanding == 0 %}
 
+                            {% set display_status =
+                                "Received"
+                            %}
 
-                <select
-                    id="warehousePackageFilter"
-                    class="warehouse-select"
-                >
 
-                    <option value="All">
-                        All Packages / Sections
-                    </option>
+                        {% elif po.total_received == 0 %}
 
+                            {% set display_status =
+                                "Awaiting Receipt"
+                            %}
 
-                    {% set packages_seen = [] %}
-
-                    {% for material in warehouse_materials %}
-
-                        {% if material.package_name and material.package_name not in packages_seen %}
-
-                            {% set _ = packages_seen.append(material.package_name) %}
-
-                            <option value="{{ material.package_name }}">
-                                {{ material.package_name }}
-                            </option>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </select>
-
-
-                <select
-                    id="warehouseLocationFilter"
-                    class="warehouse-select"
-                >
-
-                    <option value="All">
-                        All Locations
-                    </option>
-
-                    <option value="Assembly Floor">
-                        Assembly Floor
-                    </option>
-
-                    <option value="Rack 1 / Shelf A">
-                        Rack 1 / Shelf A
-                    </option>
-
-                    <option value="Rack 1 / Shelf B">
-                        Rack 1 / Shelf B
-                    </option>
-
-                    <option value="Rack 2 / Shelf A">
-                        Rack 2 / Shelf A
-                    </option>
-
-                    <option value="Rack 2 / Shelf B">
-                        Rack 2 / Shelf B
-                    </option>
-
-                    <option value="Rack 3 / Shelf A">
-                        Rack 3 / Shelf A
-                    </option>
-
-                    <option value="Rack 3 / Shelf B">
-                        Rack 3 / Shelf B
-                    </option>
-
-                    <option value="Rack 4 / Shelf A">
-                        Rack 4 / Shelf A
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- ==================================================
-                 WAREHOUSE LOOKUP TABLE
-            =================================================== -->
-
-            <div class="inventory-table-wrap">
-
-                <table class="inventory-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Material</th>
-                            <th>Description</th>
-                            <th>Project</th>
-                            <th>Package / Section</th>
-                            <th>Project #</th>
-                            <th>PO Number</th>
-                            <th>Receipt / Line</th>
-                            <th>Location</th>
-
-                            <th class="number-column">
-                                Warehouse
-                            </th>
-
-                            <th class="number-column">
-                                Assembly
-                            </th>
-
-                            <th></th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="warehouseTableBody">
-
-                        {% for material in warehouse_materials %}
-
-                        <tr
-                            class="warehouse-row"
-
-                            data-line-id="{{ material.receipt_line_id }}"
-
-                            data-receipt="{{ material.receipt_nbr }}"
-
-                            data-project="{{ material.project }}"
-
-                            data-package="{{ material.package_name or '' }}"
-
-                            data-locations="
-                                {% for location in material.locations %}
-                                    {{ location.location }}
-                                {% endfor %}
-                            "
-
-                            data-search="
-                                {{ material.inventory_id }}
-                                {{ material.description }}
-                                {{ material.project }}
-                                {{ material.package_name }}
-                                {{ material.project_number }}
-                                {{ material.po_nbr }}
-                                {{ material.receipt_nbr }}
-                                {{ material.line_nbr }}
-                                {{ material.barcode }}
-
-                                {% for location in material.locations %}
-                                    {{ location.location }}
-                                {% endfor %}
-                            "
-                        >
-
-                            <td>
-
-                                <button
-                                    type="button"
-                                    class="material-link view-material-btn"
-
-                                    data-line-id="{{ material.receipt_line_id }}"
-                                >
-                                    {{ material.inventory_id }}
-                                </button>
-
-
-                                {% if material.is_demo %}
-
-                                <div class="demo-label">
-                                    Demo
-                                </div>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <td>
-                                {{ material.description }}
-                            </td>
-
-
-                            <td>
-                                {{ material.project }}
-                            </td>
-
-
-                            <td>
-                                {{ material.package_name or "—" }}
-                            </td>
-
-
-                            <td>
-                                {{ material.project_number or "—" }}
-                            </td>
-
-
-                            <td>
-                                {{ material.po_nbr }}
-                            </td>
-
-
-                            <td>
-
-                                {{ material.receipt_nbr }}
-
-                                <div style="
-                                    margin-top: 3px;
-                                    color: #818983;
-                                    font-size: 10px;
-                                ">
-                                    Line {{ material.line_nbr }}
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                {% if material.locations %}
-
-                                    {% for location in material.locations %}
-
-                                    <div class="table-location">
-
-                                        {{ location.location }}
-
-                                        {% if material.locations|length > 1 %}
-
-                                        <span>
-                                            ({{ location.quantity }} {{ material.uom }})
-                                        </span>
-
-                                        {% endif %}
-
-                                    </div>
-
-                                    {% endfor %}
-
-                                {% else %}
-
-                                    —
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <td
-                                class="number-column warehouse-card-warehouse-qty"
-                                data-value="{{ material.warehouse_qty }}"
-                            >
-                                {{ material.warehouse_qty }}
-                                {{ material.uom }}
-                            </td>
-
-
-                            <td
-                                class="number-column warehouse-card-assembly-qty"
-                                data-value="{{ material.assembly_qty }}"
-                            >
-                                {{ material.assembly_qty }}
-                                {{ material.uom }}
-                            </td>
-
-
-                            <td class="table-action-cell">
-
-                                <button
-                                    type="button"
-                                    class="table-action-btn view-material-btn"
-
-                                    data-line-id="{{ material.receipt_line_id }}"
-
-                                    title="View Material"
-                                >
-                                    ›
-                                </button>
-
-                            </td>
-
-                        </tr>
 
                         {% else %}
 
-                        <tr>
+                            {% set display_status =
+                                "Partially Received"
+                            %}
 
-                            <td
-                                colspan="11"
-                                class="empty-table-message"
-                            >
-                                No warehouse materials found.
+                        {% endif %}
+
+
+                        <!-- =============================
+                             PURCHASE ORDER ROW
+                        ============================== -->
+
+                        <tr
+                            class="po-row"
+                            tabindex="0"
+                            role="link"
+
+                            data-status="{{
+                                display_status
+                            }}"
+
+                            data-search="
+                                {{ po.po_number }}
+                                {{ po.project_name }}
+                                {{ po.vendor }}
+                            "
+
+                            data-url="{{
+                                url_for(
+                                    'materials_purchase_order_detail',
+                                    project_slug=po.project_slug,
+                                    po_number=po.po_number
+                                )
+                            }}"
+                        >
+
+
+                            <!-- PO NUMBER -->
+
+                            <td>
+
+                                <span class="po-number">
+                                    {{ po.po_number }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- PROJECT -->
+
+                            <td class="project-name">
+
+                                {{ po.project_name }}
+
+                            </td>
+
+
+                            <!-- VENDOR -->
+
+                            <td>
+
+                                {{ po.vendor }}
+
+                            </td>
+
+
+                            <!-- ORDERED -->
+
+                            <td class="qty">
+
+                                {{ po.total_ordered }}
+
+                            </td>
+
+
+                            <!-- RECEIVED -->
+
+                            <td class="qty">
+
+                                {{ po.total_received }}
+
+                            </td>
+
+
+                            <!-- OUTSTANDING -->
+
+                            <td class="qty">
+
+                                {{ po.total_outstanding }}
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+
+                                {% if display_status ==
+                                    "Backordered"
+                                %}
+
+                                    <span
+                                        class="
+                                            status-pill
+                                            status-backordered
+                                        "
+                                    >
+                                        Backordered
+                                    </span>
+
+
+                                    {% if
+                                        po.backordered_items > 1
+                                    %}
+
+                                        <span
+                                            class="backorder-count"
+                                        >
+                                            {{
+                                                po.backordered_items
+                                            }}
+                                            items
+                                        </span>
+
+                                    {% endif %}
+
+
+                                {% elif display_status ==
+                                    "Awaiting Receipt"
+                                %}
+
+                                    <span
+                                        class="
+                                            status-pill
+                                            status-awaiting
+                                        "
+                                    >
+                                        Awaiting Receipt
+                                    </span>
+
+
+                                {% elif display_status ==
+                                    "Partially Received"
+                                %}
+
+                                    <span
+                                        class="
+                                            status-pill
+                                            status-partial
+                                        "
+                                    >
+                                        Partially Received
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span
+                                        class="
+                                            status-pill
+                                            status-received
+                                        "
+                                    >
+                                        Received
+                                    </span>
+
+                                {% endif %}
+
                             </td>
 
                         </tr>
 
-                        {% endfor %}
 
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
+                    {% else %}
 
 
-<!-- ========================================================
-     STAGE MATERIAL MODAL
-========================================================= -->
+                        <tr>
 
-<div
-    id="stageModalBackdrop"
-    class="modal-backdrop"
->
+                            <td
+                                colspan="7"
+                                class="empty-state"
+                            >
+                                No active purchase orders
+                                were found.
+                            </td>
 
-    <div class="stage-modal">
+                        </tr>
 
-        <div class="modal-header">
 
-            <div class="modal-title">
-                Stage Material
-            </div>
+                    {% endfor %}
 
-            <button
-                id="closeStageModalButton"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
+                </tbody>
+
+            </table>
 
         </div>
 
 
-        <div class="modal-body">
+        <!-- =====================================
+             TABLE FOOTER
+        ====================================== -->
 
-            <div class="modal-material">
+        <div class="table-footer">
 
-                <strong id="modalPart"></strong>
+            <span id="visibleCount">
 
-                <div id="modalDescription"></div>
+                {{ active_pos|length }}
 
-                <div id="modalReceipt"></div>
+                active purchase order{% if
+                    active_pos|length != 1
+                %}s{% endif %}
 
-                <div id="modalLineNumber"></div>
+            </span>
 
-            </div>
 
-
-            <div class="form-row">
-
-                <label for="materialBarcode">
-                    Scan Material Barcode
-                </label>
-
-                <input
-                    id="materialBarcode"
-                    type="text"
-                    placeholder="Scan or enter material barcode"
-                >
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="storageLocation">
-                    Scan / Select Storage Location
-                </label>
-
-                <select id="storageLocation">
-
-                    <option value="">
-                        Select rack / shelf
-                    </option>
-
-                    <option value="Rack 1 / Shelf A">
-                        Rack 1 / Shelf A
-                    </option>
-
-                    <option value="Rack 1 / Shelf B">
-                        Rack 1 / Shelf B
-                    </option>
-
-                    <option value="Rack 2 / Shelf A">
-                        Rack 2 / Shelf A
-                    </option>
-
-                    <option value="Rack 2 / Shelf B">
-                        Rack 2 / Shelf B
-                    </option>
-
-                    <option value="Rack 3 / Shelf A">
-                        Rack 3 / Shelf A
-                    </option>
-
-                    <option value="Rack 3 / Shelf B">
-                        Rack 3 / Shelf B
-                    </option>
-
-                    <option value="Rack 4 / Shelf A">
-                        Rack 4 / Shelf A
-                    </option>
-
-                    <option value="Assembly Floor">
-                        Assembly Floor
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="stageQty">
-                    Quantity to Stage
-                </label>
-
-                <input
-                    id="stageQty"
-                    type="number"
-                    min="1"
-                    step="1"
-                >
-
-                <div
-                    id="availableNote"
-                    class="available-note"
-                ></div>
-
-                <div
-                    id="validationMessage"
-                    class="validation-message"
-                ></div>
-
-                <div
-                    id="successMessage"
-                    class="success-message"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                id="cancelStageButton"
-                class="secondary-btn"
-                type="button"
-            >
-                Cancel
-            </button>
-
-            <button
-                id="confirmStageButton"
-                class="stage-btn"
-                type="button"
-            >
-                Confirm Staging
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ========================================================
-     MATERIAL DETAIL / EDIT STAGING
-========================================================= -->
-
-<div
-    id="materialDetailBackdrop"
-    class="modal-backdrop"
->
-
-    <div class="material-modal">
-
-        <div class="modal-header">
-
-            <div class="modal-title">
-                Material Details
-            </div>
-
-            <button
-                id="closeMaterialDetailButton"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="modal-body">
-
-            <div class="material-detail-header">
-
-                <div
-                    id="detailPart"
-                    class="material-detail-part"
-                ></div>
-
-                <div
-                    id="detailDescription"
-                    class="material-detail-description"
-                ></div>
-
-            </div>
-
-
-            <div class="detail-grid">
-
-                <div>
-                    <div class="field-label">
-                        Project
-                    </div>
-
-                    <div
-                        id="detailProject"
-                        class="field-value strong"
-                    ></div>
-                </div>
-
-
-                <div>
-                    <div class="field-label">
-                        Package / Section
-                    </div>
-
-                    <div
-                        id="detailPackage"
-                        class="field-value strong"
-                    ></div>
-                </div>
-
-
-                <div>
-                    <div class="field-label">
-                        Project #
-                    </div>
-
-                    <div
-                        id="detailProjectNumber"
-                        class="field-value"
-                    ></div>
-                </div>
-
-
-                <div>
-                    <div class="field-label">
-                        PO
-                    </div>
-
-                    <div
-                        id="detailPO"
-                        class="field-value"
-                    ></div>
-                </div>
-
-
-                <div>
-                    <div class="field-label">
-                        Receipt / Line
-                    </div>
-
-                    <div
-                        id="detailReceipt"
-                        class="field-value"
-                    ></div>
-                </div>
-
-
-                <div>
-                    <div class="field-label">
-                        Barcode
-                    </div>
-
-                    <div
-                        id="detailBarcode"
-                        class="field-value"
-                    ></div>
-                </div>
-
-            </div>
-
-
-            <div class="warehouse-summary">
-
-                <div class="metric-card">
-
-                    <div class="metric-label">
-                        In Warehouse
-                    </div>
-
-                    <div
-                        id="detailWarehouseQty"
-                        class="metric-value"
-                    ></div>
-
-                </div>
-
-
-                <div class="metric-card">
-
-                    <div class="metric-label">
-                        Assembly Floor
-                    </div>
-
-                    <div
-                        id="detailAssemblyQty"
-                        class="metric-value"
-                    ></div>
-
-                </div>
-
-
-                <div class="metric-card">
-
-                    <div class="metric-label">
-                        Total Material
-                    </div>
-
-                    <div
-                        id="detailTotalQty"
-                        class="metric-value"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="detail-section">
-
-                <div class="detail-section-title">
-                    Current Locations
-                </div>
-
-                <div id="detailLocations"></div>
-
-            </div>
-
-
-            <div class="detail-section">
-
-                <div class="detail-section-title">
-                    Movement History
-                </div>
-
-                <div id="detailMovementHistory"></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                id="closeMaterialDetailFooterButton"
-                class="secondary-btn"
-                type="button"
-            >
-                Close
-            </button>
-
-            <button
-                id="openMoveMaterialButton"
-                class="primary-btn"
-                type="button"
-            >
-                Move / Correct Location
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ========================================================
-     MOVE / CORRECT MATERIAL MODAL
-========================================================= -->
-
-<div
-    id="moveMaterialBackdrop"
-    class="modal-backdrop"
->
-
-    <div class="stage-modal">
-
-        <div class="modal-header">
-
-            <div class="modal-title">
-                Move / Correct Material
-            </div>
-
-            <button
-                id="closeMoveMaterialButton"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="modal-body">
-
-            <div class="modal-material">
-
-                <strong id="moveMaterialPart"></strong>
-
-                <div id="moveMaterialDescription"></div>
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="moveFromLocation">
-                    From Location
-                </label>
-
-                <select id="moveFromLocation">
-
-                    <option value="">
-                        Select current location
-                    </option>
-
-                </select>
-
-                <div
-                    id="moveAvailableNote"
-                    class="available-note"
-                ></div>
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="moveToLocation">
-                    Move To
-                </label>
-
-                <select id="moveToLocation">
-
-                    <option value="">
-                        Select destination
-                    </option>
-
-                    <option value="Assembly Floor">
-                        Assembly Floor
-                    </option>
-
-                    <option value="Rack 1 / Shelf A">
-                        Rack 1 / Shelf A
-                    </option>
-
-                    <option value="Rack 1 / Shelf B">
-                        Rack 1 / Shelf B
-                    </option>
-
-                    <option value="Rack 2 / Shelf A">
-                        Rack 2 / Shelf A
-                    </option>
-
-                    <option value="Rack 2 / Shelf B">
-                        Rack 2 / Shelf B
-                    </option>
-
-                    <option value="Rack 3 / Shelf A">
-                        Rack 3 / Shelf A
-                    </option>
-
-                    <option value="Rack 3 / Shelf B">
-                        Rack 3 / Shelf B
-                    </option>
-
-                    <option value="Rack 4 / Shelf A">
-                        Rack 4 / Shelf A
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="moveQty">
-                    Quantity
-                </label>
-
-                <input
-                    id="moveQty"
-                    type="number"
-                    min="1"
-                    step="1"
-                >
-
-            </div>
-
-
-            <div class="form-row">
-
-                <label for="moveNotes">
-                    Reason / Notes
-                </label>
-
-                <textarea
-                    id="moveNotes"
-                    placeholder="Example: Corrected rack location or moved to assembly floor"
-                ></textarea>
-
-            </div>
-
-
-            <div
-                id="moveValidationMessage"
-                class="validation-message"
-            ></div>
-
-            <div
-                id="moveSuccessMessage"
-                class="success-message"
-            ></div>
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                id="cancelMoveMaterialButton"
-                class="secondary-btn"
-                type="button"
-            >
-                Cancel
-            </button>
-
-            <button
-                id="confirmMoveMaterialButton"
-                class="primary-btn"
-                type="button"
-            >
-                Confirm Move
-            </button>
+            <span>
+                Click a PO row to view material details
+            </span>
 
         </div>
 
@@ -2606,1648 +873,193 @@
 
 
 <script>
-    /* ======================================================
-       STATE
-    ====================================================== */
 
-    let activeReceiptNbr = "";
-    let activeReceiptLineId = null;
-    let modalRemainingQty = 0;
-    let activeMaterial = null;
-    let activeReceiptFilter = "All";
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
 
-    /* ======================================================
-       MAIN TABS
-    ====================================================== */
+            /* =====================================
+               ELEMENTS
+            ====================================== */
 
-    const materialsTabs =
-        document.querySelectorAll(
-            ".materials-tab"
-        );
-
-    const tabPanels =
-        document.querySelectorAll(
-            ".tab-panel"
-        );
+            const searchInput =
+                document.getElementById(
+                    "poSearch"
+                );
 
 
-    materialsTabs.forEach(
-        function(button) {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    materialsTabs.forEach(
-                        function(otherButton) {
-                            otherButton.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
-
-                    tabPanels.forEach(
-                        function(panel) {
-                            panel.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
-
-                    button.classList.add(
-                        "active"
-                    );
-
-                    document.getElementById(
-                        button.dataset.tab
-                    ).classList.add(
-                        "active"
-                    );
-
-                    if (
-                        button.dataset.tab ===
-                        "warehousePanel"
-                    ) {
-                        updateWarehouseMetrics();
-                    }
-
-                }
-            );
-
-        }
-    );
+            const statusFilter =
+                document.getElementById(
+                    "statusFilter"
+                );
 
 
-    /* ======================================================
-       RECEIVING SEARCH / FILTER
-    ====================================================== */
-
-    const receiptSearch =
-        document.getElementById(
-            "receiptSearch"
-        );
-
-    const receiptFilterButtons =
-        document.querySelectorAll(
-            ".receipt-filter"
-        );
-
-
-    function getReceiptCards() {
-
-        return document.querySelectorAll(
-            ".receipt-card"
-        );
-    }
-
-
-    function updateReceiptVisibility() {
-
-        const searchTerm =
-            receiptSearch.value
-                .toLowerCase()
-                .trim();
-
-
-        getReceiptCards().forEach(
-            function(card) {
-
-                const status =
-                    card.dataset.status;
-
-                const searchData =
-                    (
-                        card.dataset.search ||
-                        ""
+            const rows =
+                Array.from(
+                    document.querySelectorAll(
+                        ".po-row"
                     )
-                    .toLowerCase();
+                );
 
 
-                const statusMatches =
-                    activeReceiptFilter ===
-                        "All" ||
-                    status ===
-                        activeReceiptFilter;
+            const visibleCount =
+                document.getElementById(
+                    "visibleCount"
+                );
 
 
-                const searchMatches =
-                    searchData.includes(
-                        searchTerm
-                    );
+            /* =====================================
+               SEARCH + STATUS FILTER
+            ====================================== */
+
+            function filterRows() {
 
 
-                card.style.display =
-                    statusMatches &&
-                    searchMatches
-                        ? ""
-                        : "none";
-
-            }
-        );
-    }
+                const searchValue =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
 
 
-    receiptSearch.addEventListener(
-        "input",
-        updateReceiptVisibility
-    );
+                const selectedStatus =
+                    statusFilter.value;
 
 
-    receiptFilterButtons.forEach(
-        function(button) {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    receiptFilterButtons.forEach(
-                        function(otherButton) {
-                            otherButton.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
+                let count = 0;
 
 
-                    button.classList.add(
-                        "active"
-                    );
+                rows.forEach(
+                    function (row) {
 
 
-                    activeReceiptFilter =
-                        button.dataset.filter;
+                        const searchableText =
+                            (
+                                row.dataset.search ||
+                                ""
+                            ).toLowerCase();
 
 
-                    updateReceiptVisibility();
-
-                }
-            );
-
-        }
-    );
-
-
-    /* ======================================================
-       STAGING MODAL
-    ====================================================== */
-
-    const stageModalBackdrop =
-        document.getElementById(
-            "stageModalBackdrop"
-        );
-
-    const closeStageModalButton =
-        document.getElementById(
-            "closeStageModalButton"
-        );
-
-    const cancelStageButton =
-        document.getElementById(
-            "cancelStageButton"
-        );
-
-    const confirmStageButton =
-        document.getElementById(
-            "confirmStageButton"
-        );
-
-
-    function connectStageButtons() {
-
-        document.querySelectorAll(
-            ".open-stage-btn"
-        ).forEach(
-            function(button) {
-
-                button.onclick =
-                    function() {
-
-                        activeReceiptNbr =
-                            button.dataset.receipt;
-
-                        activeReceiptLineId =
-                            Number(
-                                button.dataset.lineId
-                            );
-
-                        modalRemainingQty =
-                            Number(
-                                button.dataset.remaining
-                            );
-
-
-                        document.getElementById(
-                            "modalPart"
-                        ).textContent =
-                            button.dataset.part;
-
-
-                        document.getElementById(
-                            "modalDescription"
-                        ).textContent =
-                            button.dataset.description;
-
-
-                        document.getElementById(
-                            "modalReceipt"
-                        ).textContent =
-                            "Receipt " +
-                            button.dataset.receipt;
-
-
-                        document.getElementById(
-                            "modalLineNumber"
-                        ).textContent =
-                            "Receipt Line " +
-                            button.dataset.lineNbr;
-
-
-                        document.getElementById(
-                            "materialBarcode"
-                        ).value =
-                            button.dataset.barcode ||
+                        const rowStatus =
+                            row.dataset.status ||
                             "";
 
 
-                        document.getElementById(
-                            "storageLocation"
-                        ).value =
-                            "";
-
-
-                        document.getElementById(
-                            "stageQty"
-                        ).value =
-                            button.dataset.remaining;
-
-
-                        document.getElementById(
-                            "availableNote"
-                        ).textContent =
-                            "Receipt Qty: " +
-                            button.dataset.received +
-                            " · Already Staged: " +
-                            button.dataset.staged +
-                            " · Remaining: " +
-                            button.dataset.remaining;
-
-
-                        document.getElementById(
-                            "validationMessage"
-                        ).style.display =
-                            "none";
-
-
-                        document.getElementById(
-                            "successMessage"
-                        ).style.display =
-                            "none";
-
-
-                        stageModalBackdrop
-                            .classList
-                            .add(
-                                "open"
+                        const matchesSearch =
+                            !searchValue ||
+                            searchableText.includes(
+                                searchValue
                             );
 
-                    };
 
-            }
-        );
-    }
-
-
-    function closeStageModal() {
-
-        stageModalBackdrop
-            .classList
-            .remove(
-                "open"
-            );
-    }
+                        const matchesStatus =
+                            selectedStatus === "all" ||
+                            rowStatus ===
+                                selectedStatus;
 
 
-    async function submitStaging() {
-
-        const quantity =
-            Number(
-                document.getElementById(
-                    "stageQty"
-                ).value
-            );
+                        const showRow =
+                            matchesSearch &&
+                            matchesStatus;
 
 
-        const location =
-            document.getElementById(
-                "storageLocation"
-            ).value;
+                        row.style.display =
+                            showRow
+                                ? ""
+                                : "none";
 
 
-        const validationMessage =
-            document.getElementById(
-                "validationMessage"
-            );
+                        if (showRow) {
+                            count += 1;
+                        }
 
-
-        const successMessage =
-            document.getElementById(
-                "successMessage"
-            );
-
-
-        validationMessage.style.display =
-            "none";
-
-        successMessage.style.display =
-            "none";
-
-
-        if (!activeReceiptLineId) {
-
-            validationMessage.textContent =
-                "Unable to determine the material receipt line.";
-
-            validationMessage.style.display =
-                "block";
-
-            return;
-        }
-
-
-        if (!location) {
-
-            validationMessage.textContent =
-                "Select a Tech Center storage location.";
-
-            validationMessage.style.display =
-                "block";
-
-            return;
-        }
-
-
-        if (
-            quantity <= 0 ||
-            quantity >
-                modalRemainingQty
-        ) {
-
-            validationMessage.textContent =
-                "Staging quantity cannot exceed the quantity actually received and remaining to stage.";
-
-            validationMessage.style.display =
-                "block";
-
-            return;
-        }
-
-
-        confirmStageButton.disabled =
-            true;
-
-        confirmStageButton.textContent =
-            "Saving...";
-
-
-        try {
-
-            const response =
-                await fetch(
-                    "/materials/stage",
-                    {
-                        method:
-                            "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                {
-                                    receipt_nbr:
-                                        activeReceiptNbr,
-
-                                    receipt_line_id:
-                                        activeReceiptLineId,
-
-                                    quantity:
-                                        quantity,
-
-                                    location:
-                                        location
-                                }
-                            )
                     }
                 );
 
 
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                validationMessage.textContent =
-                    data.message ||
-                    "Unable to stage material.";
-
-                validationMessage.style.display =
-                    "block";
-
-                return;
-            }
-
-
-            successMessage.textContent =
-                "Material staged successfully.";
-
-            successMessage.style.display =
-                "block";
-
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        "/materials";
-
-                },
-                500
-            );
-
-
-        } catch (error) {
-
-            validationMessage.textContent =
-                "Unable to save staging activity.";
-
-            validationMessage.style.display =
-                "block";
-
-        } finally {
-
-            confirmStageButton.disabled =
-                false;
-
-            confirmStageButton.textContent =
-                "Confirm Staging";
-        }
-    }
-
-
-    closeStageModalButton.addEventListener(
-        "click",
-        closeStageModal
-    );
-
-
-    cancelStageButton.addEventListener(
-        "click",
-        closeStageModal
-    );
-
-
-    confirmStageButton.addEventListener(
-        "click",
-        submitStaging
-    );
-
-
-    stageModalBackdrop.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                stageModalBackdrop
-            ) {
-                closeStageModal();
-            }
-
-        }
-    );
-
-
-    /* ======================================================
-       WAREHOUSE SEARCH / FILTER
-    ====================================================== */
-
-    const warehouseSearch =
-        document.getElementById(
-            "warehouseSearch"
-        );
-
-    const warehouseProjectFilter =
-        document.getElementById(
-            "warehouseProjectFilter"
-        );
-
-    const warehousePackageFilter =
-        document.getElementById(
-            "warehousePackageFilter"
-        );
-
-    const warehouseLocationFilter =
-        document.getElementById(
-            "warehouseLocationFilter"
-        );
-
-
-    function getWarehouseRows() {
-
-        return document.querySelectorAll(
-            ".warehouse-row"
-        );
-    }
-
-
-    function updateWarehouseVisibility() {
-
-        const searchTerm =
-            warehouseSearch.value
-                .toLowerCase()
-                .trim();
-
-
-        const project =
-            warehouseProjectFilter.value;
-
-
-        const packageName =
-            warehousePackageFilter.value;
-
-
-        const location =
-            warehouseLocationFilter.value;
-
-
-        getWarehouseRows().forEach(
-            function(row) {
-
-                const searchMatches =
+                visibleCount.textContent =
+                    count +
                     (
-                        row.dataset.search ||
-                        ""
-                    )
-                    .toLowerCase()
-                    .includes(
-                        searchTerm
-                    );
-
-
-                const projectMatches =
-                    project ===
-                        "All" ||
-                    row.dataset.project ===
-                        project;
-
-
-                const packageMatches =
-                    packageName ===
-                        "All" ||
-                    row.dataset.package ===
-                        packageName;
-
-
-                const locationMatches =
-                    location ===
-                        "All" ||
-                    (
-                        row.dataset.locations ||
-                        ""
-                    ).includes(
-                        location
-                    );
-
-
-                row.style.display =
-                    searchMatches &&
-                    projectMatches &&
-                    packageMatches &&
-                    locationMatches
-                        ? ""
-                        : "none";
-
-            }
-        );
-    }
-
-
-    warehouseSearch.addEventListener(
-        "input",
-        updateWarehouseVisibility
-    );
-
-
-    warehouseProjectFilter.addEventListener(
-        "change",
-        updateWarehouseVisibility
-    );
-
-
-    warehousePackageFilter.addEventListener(
-        "change",
-        updateWarehouseVisibility
-    );
-
-
-    warehouseLocationFilter.addEventListener(
-        "change",
-        updateWarehouseVisibility
-    );
-
-
-    /* ======================================================
-       WAREHOUSE METRICS
-    ====================================================== */
-
-    function updateWarehouseMetrics() {
-
-        let warehouseQty = 0;
-        let assemblyQty = 0;
-
-
-        getWarehouseRows().forEach(
-            function(row) {
-
-                const warehouseElement =
-                    row.querySelector(
-                        ".warehouse-card-warehouse-qty"
-                    );
-
-
-                const assemblyElement =
-                    row.querySelector(
-                        ".warehouse-card-assembly-qty"
-                    );
-
-
-                warehouseQty +=
-                    Number(
-                        warehouseElement
-                            ?.dataset
-                            .value ||
-                        0
-                    );
-
-
-                assemblyQty +=
-                    Number(
-                        assemblyElement
-                            ?.dataset
-                            .value ||
-                        0
+                        count === 1
+                            ? " active purchase order"
+                            : " active purchase orders"
                     );
 
             }
-        );
 
 
-        document.getElementById(
-            "warehouseQtyTotal"
-        ).textContent =
-            warehouseQty;
+            /* =====================================
+               OPEN PO
+            ====================================== */
+
+            rows.forEach(
+                function (row) {
 
 
-        document.getElementById(
-            "assemblyQtyTotal"
-        ).textContent =
-            assemblyQty;
-    }
+                    function openPurchaseOrder() {
 
 
-    /* ======================================================
-       MATERIAL DETAIL
-    ====================================================== */
-
-    const materialDetailBackdrop =
-        document.getElementById(
-            "materialDetailBackdrop"
-        );
-
-    const closeMaterialDetailButton =
-        document.getElementById(
-            "closeMaterialDetailButton"
-        );
-
-    const closeMaterialDetailFooterButton =
-        document.getElementById(
-            "closeMaterialDetailFooterButton"
-        );
-
-    const openMoveMaterialButton =
-        document.getElementById(
-            "openMoveMaterialButton"
-        );
+                        const target =
+                            row.dataset.url;
 
 
-    function closeMaterialDetail() {
+                        if (target) {
 
-        materialDetailBackdrop
-            .classList
-            .remove(
-                "open"
-            );
-    }
+                            window.location.href =
+                                target;
 
+                        }
 
-    function renderMaterialDetail(
-        material
-    ) {
-
-        activeMaterial =
-            material;
+                    }
 
 
-        document.getElementById(
-            "detailPart"
-        ).textContent =
-            material.inventory_id ||
-            "—";
+                    row.addEventListener(
+                        "click",
+                        openPurchaseOrder
+                    );
 
 
-        document.getElementById(
-            "detailDescription"
-        ).textContent =
-            material.description ||
-            "";
+                    row.addEventListener(
+                        "keydown",
+                        function (event) {
 
 
-        document.getElementById(
-            "detailProject"
-        ).textContent =
-            material.project ||
-            "—";
+                            if (
+                                event.key === "Enter" ||
+                                event.key === " "
+                            ) {
 
+                                event.preventDefault();
 
-        document.getElementById(
-            "detailPackage"
-        ).textContent =
-            material.package_name ||
-            "Not Assigned";
+                                openPurchaseOrder();
 
+                            }
 
-        document.getElementById(
-            "detailProjectNumber"
-        ).textContent =
-            material.project_number ||
-            "—";
-
-
-        document.getElementById(
-            "detailPO"
-        ).textContent =
-            material.po_nbr ||
-            "—";
-
-
-        document.getElementById(
-            "detailReceipt"
-        ).textContent =
-            (
-                material.receipt_nbr ||
-                "—"
-            ) +
-            " · Line " +
-            (
-                material.line_nbr ||
-                "—"
-            );
-
-
-        document.getElementById(
-            "detailBarcode"
-        ).textContent =
-            material.barcode ||
-            "Not Assigned";
-
-
-        document.getElementById(
-            "detailWarehouseQty"
-        ).textContent =
-            material.warehouse_qty +
-            " " +
-            material.uom;
-
-
-        document.getElementById(
-            "detailAssemblyQty"
-        ).textContent =
-            material.assembly_qty +
-            " " +
-            material.uom;
-
-
-        document.getElementById(
-            "detailTotalQty"
-        ).textContent =
-            material.total_on_hand +
-            " " +
-            material.uom;
-
-
-        const locationsContainer =
-            document.getElementById(
-                "detailLocations"
-            );
-
-
-        locationsContainer.innerHTML =
-            "";
-
-
-        if (
-            !material.locations ||
-            material.locations.length ===
-                0
-        ) {
-
-            locationsContainer.innerHTML =
-                '<div class="field-value">' +
-                'No current locations.' +
-                '</div>';
-
-        } else {
-
-            material.locations.forEach(
-                function(location) {
-
-                    const row =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    row.className =
-                        "detail-location-row";
-
-
-                    row.innerHTML =
-                        "<span>" +
-                        location.location +
-                        "</span>" +
-
-                        "<strong>" +
-                        location.quantity +
-                        " " +
-                        material.uom +
-                        "</strong>";
-
-
-                    locationsContainer.appendChild(
-                        row
+                        }
                     );
 
                 }
             );
-        }
 
 
-        const movementContainer =
-            document.getElementById(
-                "detailMovementHistory"
+            /* =====================================
+               EVENT LISTENERS
+            ====================================== */
+
+            searchInput.addEventListener(
+                "input",
+                filterRows
             );
 
 
-        movementContainer.innerHTML =
-            "";
-
-
-        if (
-            !material.movement_history ||
-            material.movement_history.length ===
-                0
-        ) {
-
-            movementContainer.innerHTML =
-                '<div class="field-value">' +
-                'No movement history yet.' +
-                '</div>';
-
-        } else {
-
-            material.movement_history.forEach(
-                function(movement) {
-
-                    const entry =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    entry.className =
-                        "movement-entry";
-
-
-                    let noteHtml =
-                        "";
-
-
-                    if (movement.notes) {
-
-                        noteHtml =
-                            '<div class="movement-note">' +
-                            movement.notes +
-                            '</div>';
-                    }
-
-
-                    entry.innerHTML =
-                        '<div class="movement-route">' +
-
-                        (
-                            movement.from_location ||
-                            "Receiving & Staging"
-                        ) +
-
-                        " → " +
-
-                        movement.to_location +
-
-                        "</div>" +
-
-                        '<div class="movement-meta">' +
-
-                        movement.quantity +
-                        " " +
-                        movement.uom +
-
-                        " · " +
-
-                        (
-                            movement.moved_at ||
-                            ""
-                        ) +
-
-                        " · " +
-
-                        (
-                            movement.moved_by ||
-                            ""
-                        ) +
-
-                        "</div>" +
-
-                        noteHtml;
-
-
-                    movementContainer.appendChild(
-                        entry
-                    );
-
-                }
+            statusFilter.addEventListener(
+                "change",
+                filterRows
             );
-        }
-
-
-        openMoveMaterialButton.disabled =
-            !material.locations ||
-            material.locations.length ===
-                0;
-
-
-        materialDetailBackdrop
-            .classList
-            .add(
-                "open"
-            );
-    }
-
-
-    async function openMaterialDetail(
-        receiptLineId
-    ) {
-
-        if (!receiptLineId) {
-            return;
-        }
-
-
-        try {
-
-            const response =
-                await fetch(
-                    "/materials/line/" +
-                    encodeURIComponent(
-                        receiptLineId
-                    )
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                alert(
-                    data.message ||
-                    "Unable to open material."
-                );
-
-                return;
-            }
-
-
-            renderMaterialDetail(
-                data.material
-            );
-
-
-        } catch (error) {
-
-            alert(
-                "Unable to open material."
-            );
-        }
-    }
-
-
-    function connectMaterialButtons() {
-
-        document.querySelectorAll(
-            ".view-material-btn"
-        ).forEach(
-            function(button) {
-
-                button.onclick =
-                    function() {
-
-                        openMaterialDetail(
-                            button.dataset.lineId
-                        );
-
-                    };
-
-            }
-        );
-    }
-
-
-    function connectEditStagingButtons() {
-
-        document.querySelectorAll(
-            ".edit-staging-btn"
-        ).forEach(
-            function(button) {
-
-                button.onclick =
-                    function() {
-
-                        openMaterialDetail(
-                            button.dataset.lineId
-                        );
-
-                    };
-
-            }
-        );
-    }
-
-
-    closeMaterialDetailButton.addEventListener(
-        "click",
-        closeMaterialDetail
-    );
-
-
-    closeMaterialDetailFooterButton.addEventListener(
-        "click",
-        closeMaterialDetail
-    );
-
-
-    materialDetailBackdrop.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                materialDetailBackdrop
-            ) {
-                closeMaterialDetail();
-            }
 
         }
     );
 
-
-    /* ======================================================
-       MOVE / CORRECT MATERIAL
-    ====================================================== */
-
-    const moveMaterialBackdrop =
-        document.getElementById(
-            "moveMaterialBackdrop"
-        );
-
-    const closeMoveMaterialButton =
-        document.getElementById(
-            "closeMoveMaterialButton"
-        );
-
-    const cancelMoveMaterialButton =
-        document.getElementById(
-            "cancelMoveMaterialButton"
-        );
-
-    const confirmMoveMaterialButton =
-        document.getElementById(
-            "confirmMoveMaterialButton"
-        );
-
-    const moveFromLocation =
-        document.getElementById(
-            "moveFromLocation"
-        );
-
-
-    function closeMoveMaterial() {
-
-        moveMaterialBackdrop
-            .classList
-            .remove(
-                "open"
-            );
-    }
-
-
-    function updateMoveAvailable() {
-
-        const option =
-            moveFromLocation.options[
-                moveFromLocation.selectedIndex
-            ];
-
-
-        const available =
-            Number(
-                option
-                    ?.dataset
-                    .quantity ||
-                0
-            );
-
-
-        document.getElementById(
-            "moveAvailableNote"
-        ).textContent =
-            available > 0
-                ? "Available at this location: " +
-                    available +
-                    " " +
-                    activeMaterial.uom
-                : "";
-
-
-        document.getElementById(
-            "moveQty"
-        ).max =
-            available;
-
-
-        if (available > 0) {
-
-            document.getElementById(
-                "moveQty"
-            ).value =
-                available;
-        }
-    }
-
-
-    function openMoveMaterial() {
-
-        if (!activeMaterial) {
-            return;
-        }
-
-
-        document.getElementById(
-            "moveMaterialPart"
-        ).textContent =
-            activeMaterial.inventory_id;
-
-
-        document.getElementById(
-            "moveMaterialDescription"
-        ).textContent =
-            activeMaterial.description;
-
-
-        moveFromLocation.innerHTML =
-            '<option value="">' +
-            'Select current location' +
-            '</option>';
-
-
-        activeMaterial.locations.forEach(
-            function(location) {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    location.location;
-
-
-                option.textContent =
-                    location.location +
-                    " — " +
-                    location.quantity +
-                    " " +
-                    activeMaterial.uom;
-
-
-                option.dataset.quantity =
-                    location.quantity;
-
-
-                moveFromLocation.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        document.getElementById(
-            "moveToLocation"
-        ).value =
-            "";
-
-
-        document.getElementById(
-            "moveQty"
-        ).value =
-            "";
-
-
-        document.getElementById(
-            "moveNotes"
-        ).value =
-            "";
-
-
-        document.getElementById(
-            "moveAvailableNote"
-        ).textContent =
-            "";
-
-
-        document.getElementById(
-            "moveValidationMessage"
-        ).style.display =
-            "none";
-
-
-        document.getElementById(
-            "moveSuccessMessage"
-        ).style.display =
-            "none";
-
-
-        closeMaterialDetail();
-
-
-        moveMaterialBackdrop
-            .classList
-            .add(
-                "open"
-            );
-    }
-
-
-    async function submitMaterialMove() {
-
-        if (!activeMaterial) {
-            return;
-        }
-
-
-        const fromLocation =
-            moveFromLocation.value;
-
-
-        const toLocation =
-            document.getElementById(
-                "moveToLocation"
-            ).value;
-
-
-        const quantity =
-            Number(
-                document.getElementById(
-                    "moveQty"
-                ).value
-            );
-
-
-        const notes =
-            document.getElementById(
-                "moveNotes"
-            ).value.trim();
-
-
-        const validation =
-            document.getElementById(
-                "moveValidationMessage"
-            );
-
-
-        const success =
-            document.getElementById(
-                "moveSuccessMessage"
-            );
-
-
-        validation.style.display =
-            "none";
-
-        success.style.display =
-            "none";
-
-
-        if (!fromLocation) {
-
-            validation.textContent =
-                "Select the current material location.";
-
-            validation.style.display =
-                "block";
-
-            return;
-        }
-
-
-        if (!toLocation) {
-
-            validation.textContent =
-                "Select a destination location.";
-
-            validation.style.display =
-                "block";
-
-            return;
-        }
-
-
-        if (
-            fromLocation ===
-            toLocation
-        ) {
-
-            validation.textContent =
-                "The destination must be different from the current location.";
-
-            validation.style.display =
-                "block";
-
-            return;
-        }
-
-
-        const selectedOption =
-            moveFromLocation.options[
-                moveFromLocation.selectedIndex
-            ];
-
-
-        const available =
-            Number(
-                selectedOption
-                    ?.dataset
-                    .quantity ||
-                0
-            );
-
-
-        if (
-            quantity <= 0 ||
-            quantity > available
-        ) {
-
-            validation.textContent =
-                "Move quantity cannot exceed the quantity available at this location.";
-
-            validation.style.display =
-                "block";
-
-            return;
-        }
-
-
-        confirmMoveMaterialButton.disabled =
-            true;
-
-        confirmMoveMaterialButton.textContent =
-            "Moving...";
-
-
-        try {
-
-            const response =
-                await fetch(
-                    "/materials/move",
-                    {
-                        method:
-                            "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                {
-                                    receipt_nbr:
-                                        activeMaterial.receipt_nbr,
-
-                                    receipt_line_id:
-                                        activeMaterial.receipt_line_id,
-
-                                    from_location:
-                                        fromLocation,
-
-                                    to_location:
-                                        toLocation,
-
-                                    quantity:
-                                        quantity,
-
-                                    notes:
-                                        notes
-                                }
-                            )
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                validation.textContent =
-                    data.message ||
-                    "Unable to move material.";
-
-                validation.style.display =
-                    "block";
-
-                return;
-            }
-
-
-            success.textContent =
-                "Material updated successfully.";
-
-            success.style.display =
-                "block";
-
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        "/materials#warehouse";
-
-                },
-                500
-            );
-
-
-        } catch (error) {
-
-            validation.textContent =
-                "Unable to move material.";
-
-            validation.style.display =
-                "block";
-
-        } finally {
-
-            confirmMoveMaterialButton.disabled =
-                false;
-
-            confirmMoveMaterialButton.textContent =
-                "Confirm Move";
-        }
-    }
-
-
-    openMoveMaterialButton.addEventListener(
-        "click",
-        openMoveMaterial
-    );
-
-
-    moveFromLocation.addEventListener(
-        "change",
-        updateMoveAvailable
-    );
-
-
-    closeMoveMaterialButton.addEventListener(
-        "click",
-        closeMoveMaterial
-    );
-
-
-    cancelMoveMaterialButton.addEventListener(
-        "click",
-        closeMoveMaterial
-    );
-
-
-    confirmMoveMaterialButton.addEventListener(
-        "click",
-        submitMaterialMove
-    );
-
-
-    moveMaterialBackdrop.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                moveMaterialBackdrop
-            ) {
-                closeMoveMaterial();
-            }
-
-        }
-    );
-
-
-    /* ======================================================
-       OPEN WAREHOUSE TAB AFTER MOVE
-    ====================================================== */
-
-    function openWarehouseFromHash() {
-
-        if (
-            window.location.hash !==
-            "#warehouse"
-        ) {
-            return;
-        }
-
-
-        document.getElementById(
-            "receivingTabButton"
-        ).classList.remove(
-            "active"
-        );
-
-
-        document.getElementById(
-            "receivingPanel"
-        ).classList.remove(
-            "active"
-        );
-
-
-        document.getElementById(
-            "warehouseTabButton"
-        ).classList.add(
-            "active"
-        );
-
-
-        document.getElementById(
-            "warehousePanel"
-        ).classList.add(
-            "active"
-        );
-
-
-        updateWarehouseMetrics();
-    }
-
-
-    /* ======================================================
-       INITIALIZE
-    ====================================================== */
-
-    connectStageButtons();
-
-    connectEditStagingButtons();
-
-    connectMaterialButtons();
-
-    updateWarehouseMetrics();
-
-    openWarehouseFromHash();
 </script>
 
 {% endblock %}

@@ -1217,21 +1217,214 @@ def tech_center_home():
 @app.route("/materials")
 def materials():
 
-    all_receipt_groups = get_receipt_groups()
+    active_pos = []
 
-    receipt_groups = [
-        receipt
-        for receipt in all_receipt_groups
-        if not receipt["receipt_nbr"].startswith(
-            "POR-DEMO-"
+    for project_slug, po_lines in PURCHASE_ORDERS.items():
+
+        project = PROJECTS.get(project_slug)
+
+        if not project:
+            continue
+
+        project_name = project.get(
+            "short_name",
+            project.get("name", project_slug)
         )
-    ]
+
+        grouped_pos = {}
+
+        for line in po_lines:
+
+            po_number = line.get("po_number")
+
+            if not po_number:
+                continue
+
+            if po_number not in grouped_pos:
+                grouped_pos[po_number] = {
+                    "po_number": po_number,
+                    "project_slug": project_slug,
+                    "project_name": project_name,
+                    "vendor": line.get("vendor", "—"),
+                    "lines": [],
+                    "total_ordered": 0,
+                    "total_received": 0,
+                    "total_outstanding": 0,
+                    "backordered_items": 0
+                }
+
+            ordered = int(
+                line.get("ordered_qty", 0) or 0
+            )
+
+            received = int(
+                line.get("received_qty", 0) or 0
+            )
+
+            outstanding = max(
+                ordered - received,
+                0
+            )
+
+            backordered = int(
+                line.get("backordered_qty", 0) or 0
+            )
+
+            po = grouped_pos[po_number]
+
+            po["lines"].append(line)
+            po["total_ordered"] += ordered
+            po["total_received"] += received
+            po["total_outstanding"] += outstanding
+
+            if backordered > 0:
+                po["backordered_items"] += 1
+
+        for po in grouped_pos.values():
+
+            # Material Management shows only POs that still
+            # have material outstanding. Fully received POs
+            # remain available from the project-side history.
+            if po["total_outstanding"] > 0:
+                active_pos.append(po)
+
+    active_pos.sort(
+        key=lambda po: str(po["po_number"])
+    )
 
     return render_template(
         "materials_management.html",
-        receipt_groups=receipt_groups,
-        receipts=get_all_receipts(),
-        warehouse_materials=get_warehouse_materials()
+        active_pos=active_pos
+    )
+
+
+# ============================================================
+# MATERIAL MANAGEMENT - PO DETAIL
+# ============================================================
+
+@app.route(
+    "/materials/purchase-orders/<project_slug>/<po_number>"
+)
+def materials_purchase_order_detail(
+    project_slug,
+    po_number
+):
+
+    project = PROJECTS.get(
+        project_slug
+    )
+
+    if not project:
+
+        return (
+            "Project not found",
+            404
+        )
+
+    project_po_lines = PURCHASE_ORDERS.get(
+        project_slug,
+        []
+    )
+
+    po_lines = [
+        line
+        for line in project_po_lines
+        if str(line.get("po_number")) == str(po_number)
+    ]
+
+    if not po_lines:
+
+        return (
+            "Purchase order not found",
+            404
+        )
+
+    vendor = po_lines[0].get(
+        "vendor",
+        "—"
+    )
+
+    total_ordered = sum(
+        int(line.get("ordered_qty", 0) or 0)
+        for line in po_lines
+    )
+
+    total_received = sum(
+        int(line.get("received_qty", 0) or 0)
+        for line in po_lines
+    )
+
+    total_outstanding = max(
+        total_ordered - total_received,
+        0
+    )
+
+    backordered_lines = []
+    other_lines = []
+
+    for line in po_lines:
+
+        ordered = int(
+            line.get("ordered_qty", 0) or 0
+        )
+
+        received = int(
+            line.get("received_qty", 0) or 0
+        )
+
+        outstanding = max(
+            ordered - received,
+            0
+        )
+
+        backordered_qty = int(
+            line.get("backordered_qty", 0) or 0
+        )
+
+        display_line = dict(line)
+        display_line["outstanding_qty"] = outstanding
+        display_line["backordered_qty"] = backordered_qty
+
+        if backordered_qty > 0:
+            display_line["display_status"] = "Backordered"
+            backordered_lines.append(display_line)
+
+        elif outstanding == 0:
+            display_line["display_status"] = "Received"
+            other_lines.append(display_line)
+
+        elif received == 0:
+            display_line["display_status"] = "Awaiting Receipt"
+            other_lines.append(display_line)
+
+        else:
+            display_line["display_status"] = "Partially Received"
+            other_lines.append(display_line)
+
+    if backordered_lines:
+        po_status = "Backordered"
+
+    elif total_outstanding == 0:
+        po_status = "Received"
+
+    elif total_received == 0:
+        po_status = "Awaiting Receipt"
+
+    else:
+        po_status = "Partially Received"
+
+    return render_template(
+        "materials_purchase_order_detail.html",
+        project=project,
+        project_slug=project_slug,
+        po_number=po_number,
+        vendor=vendor,
+        po_status=po_status,
+        total_ordered=total_ordered,
+        total_received=total_received,
+        total_outstanding=total_outstanding,
+        backordered_lines=backordered_lines,
+        other_lines=other_lines
     )
 
 

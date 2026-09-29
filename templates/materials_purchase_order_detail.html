@@ -1,0 +1,1035 @@
+{% extends "base.html" %}
+
+{% block title %}PO {{ po_number }} | Material Management{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       MATERIAL MANAGEMENT - PURCHASE ORDER DETAIL
+       Compact AIMS / Acumatica-inspired layout
+    ========================================================== */
+
+    .po-detail-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 24px 30px 40px;
+    }
+
+    /* =========================================================
+       BACK LINK
+    ========================================================== */
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        margin-bottom: 14px;
+
+        color: #52685c;
+        text-decoration: none;
+
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .35px;
+        text-transform: uppercase;
+    }
+
+    .back-link:hover {
+        color: #294f3b;
+    }
+
+
+    /* =========================================================
+       PO HEADER
+    ========================================================== */
+
+    .po-header {
+        background: #ffffff;
+        border: 1px solid #dfe4e1;
+    }
+
+    .po-header-top {
+        min-height: 64px;
+
+        padding: 14px 16px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+
+        border-bottom: 1px solid #e1e6e3;
+    }
+
+    .po-eyebrow {
+        margin-bottom: 3px;
+
+        color: #748078;
+
+        font-size: 10px;
+        font-weight: 700;
+
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .po-title {
+        margin: 0;
+
+        color: #293830;
+
+        font-size: 23px;
+        font-weight: 650;
+
+        letter-spacing: -.25px;
+    }
+
+
+    /* =========================================================
+       STATUS PILLS
+    ========================================================== */
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 4px 8px;
+
+        border: 1px solid transparent;
+        border-radius: 3px;
+
+        font-size: 10px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+    }
+
+
+    /* Backordered - Red */
+
+    .status-backordered {
+        color: #8b3939;
+        background: #fbefef;
+        border-color: #efd0d0;
+    }
+
+    .status-backordered::before {
+        background: #b94d4d;
+    }
+
+
+    /* Awaiting Receipt - Yellow */
+
+    .status-awaiting {
+        color: #85651d;
+        background: #fff8e5;
+        border-color: #eedda8;
+    }
+
+    .status-awaiting::before {
+        background: #c99b2e;
+    }
+
+
+    /* Partial - Blue */
+
+    .status-partial {
+        color: #3c5f7b;
+        background: #eef5fa;
+        border-color: #cfdfe9;
+    }
+
+    .status-partial::before {
+        background: #5c86a5;
+    }
+
+
+    /* Received - Green */
+
+    .status-received {
+        color: #3f684e;
+        background: #eef7f1;
+        border-color: #cfe3d5;
+    }
+
+    .status-received::before {
+        background: #579269;
+    }
+
+
+    /* =========================================================
+       PO INFORMATION
+    ========================================================== */
+
+    .po-info-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(170px, 1.3fr)
+            minmax(170px, 1.3fr)
+            repeat(3, minmax(110px, .7fr));
+    }
+
+    .po-info-cell {
+        min-height: 60px;
+
+        padding: 10px 14px;
+
+        border-right: 1px solid #e7ebe8;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .po-info-cell:last-child {
+        border-right: none;
+    }
+
+    .info-label {
+        margin-bottom: 3px;
+
+        color: #7c8580;
+
+        font-size: 9px;
+        font-weight: 700;
+
+        letter-spacing: .55px;
+        text-transform: uppercase;
+    }
+
+    .info-value {
+        color: #39473f;
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .info-value.number {
+        font-size: 14px;
+
+        font-variant-numeric: tabular-nums;
+    }
+
+
+    /* =========================================================
+       SOURCE NOTE
+    ========================================================== */
+
+    .source-row {
+        padding: 7px 14px;
+
+        border-top: 1px solid #e7ebe8;
+
+        background: #fafbfa;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 12px;
+    }
+
+    .source-text {
+        color: #7a837e;
+        font-size: 10px;
+    }
+
+    .source-badge {
+        padding: 3px 7px;
+
+        border: 1px solid #d7e2db;
+        border-radius: 3px;
+
+        background: #eef4f0;
+
+        color: #486052;
+
+        font-size: 9px;
+        font-weight: 700;
+
+        letter-spacing: .35px;
+        text-transform: uppercase;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       SECTIONS
+    ========================================================== */
+
+    .detail-section {
+        margin-top: 18px;
+
+        border: 1px solid #dfe4e1;
+
+        background: #ffffff;
+    }
+
+    .section-header {
+        min-height: 43px;
+
+        padding: 8px 12px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 12px;
+
+        border-bottom: 1px solid #e1e6e3;
+    }
+
+    .section-title {
+        color: #35443c;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .section-subtitle {
+        margin-top: 2px;
+
+        color: #818985;
+
+        font-size: 10px;
+    }
+
+    .line-count {
+        color: #76817b;
+
+        font-size: 10px;
+        font-weight: 600;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       BACKORDER SECTION
+    ========================================================== */
+
+    .backorder-section {
+        border-left: 3px solid #b94d4d;
+    }
+
+    .backorder-section .section-header {
+        background: #fffafa;
+    }
+
+    .backorder-section .section-title {
+        color: #713838;
+    }
+
+
+    /* =========================================================
+       COMPACT LINE ITEM TABLE
+    ========================================================== */
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .line-table {
+        width: 100%;
+
+        min-width: 980px;
+
+        border-collapse: collapse;
+    }
+
+    .line-table th {
+        height: 29px;
+
+        padding: 5px 8px;
+
+        border-right: 1px solid #e6eae7;
+        border-bottom: 1px solid #dce2de;
+
+        background: #f5f7f6;
+
+        color: #606b65;
+
+        text-align: left;
+
+        font-size: 9px;
+        font-weight: 700;
+
+        letter-spacing: .35px;
+        text-transform: uppercase;
+
+        white-space: nowrap;
+    }
+
+    .line-table td {
+        height: 34px;
+
+        padding: 5px 8px;
+
+        border-right: 1px solid #edf0ee;
+        border-bottom: 1px solid #e8ece9;
+
+        color: #414c46;
+
+        font-size: 11px;
+
+        white-space: nowrap;
+    }
+
+    .line-table th:last-child,
+    .line-table td:last-child {
+        border-right: none;
+    }
+
+    .line-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .line-table tbody tr:hover {
+        background: #f8faf9;
+    }
+
+    .line-number {
+        width: 38px;
+
+        color: #858d88 !important;
+
+        text-align: center;
+    }
+
+    .part-number {
+        color: #315c46 !important;
+        font-weight: 700;
+    }
+
+    .description-cell {
+        min-width: 210px;
+    }
+
+    .uom {
+        text-align: center;
+    }
+
+    .qty {
+        text-align: right;
+
+        font-variant-numeric: tabular-nums;
+    }
+
+    .line-table th.qty {
+        text-align: right;
+    }
+
+    .expected-date {
+        color: #5d6762;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+    ========================================================== */
+
+    .empty-lines {
+        padding: 26px 16px;
+
+        color: #818985;
+
+        text-align: center;
+
+        font-size: 11px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 1000px) {
+
+        .po-info-grid {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+        .po-info-cell {
+            border-bottom: 1px solid #e7ebe8;
+        }
+    }
+
+    @media (max-width: 700px) {
+
+        .po-detail-page {
+            padding: 20px 16px 35px;
+        }
+
+        .po-header-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .po-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .po-info-cell {
+            border-right: none;
+        }
+
+        .source-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+</style>
+
+
+<div class="po-detail-page">
+
+
+    <!-- =====================================================
+         BACK TO MATERIAL MANAGEMENT
+    ====================================================== -->
+
+    <a
+        class="back-link"
+        href="{{ url_for('materials') }}"
+    >
+        ← Material Management
+    </a>
+
+
+    <!-- =====================================================
+         PURCHASE ORDER HEADER
+    ====================================================== -->
+
+    <div class="po-header">
+
+        <div class="po-header-top">
+
+            <div>
+
+                <div class="po-eyebrow">
+                    Purchase Order
+                </div>
+
+                <h1 class="po-title">
+                    {{ po_number }}
+                </h1>
+
+            </div>
+
+
+            <!-- PO STATUS -->
+
+            {% if po_status == "Backordered" %}
+
+                <span class="status-pill status-backordered">
+                    Backordered
+                </span>
+
+            {% elif po_status == "Awaiting Receipt" %}
+
+                <span class="status-pill status-awaiting">
+                    Awaiting Receipt
+                </span>
+
+            {% elif po_status == "Partially Received" %}
+
+                <span class="status-pill status-partial">
+                    Partially Received
+                </span>
+
+            {% else %}
+
+                <span class="status-pill status-received">
+                    Received
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             ACUMATICA-LIKE PO INFORMATION
+        ================================================== -->
+
+        <div class="po-info-grid">
+
+
+            <!-- VENDOR -->
+
+            <div class="po-info-cell">
+
+                <span class="info-label">
+                    Vendor
+                </span>
+
+                <span class="info-value">
+                    {{ vendor }}
+                </span>
+
+            </div>
+
+
+            <!-- PROJECT -->
+
+            <div class="po-info-cell">
+
+                <span class="info-label">
+                    Project
+                </span>
+
+                <span class="info-value">
+                    {{ project.short_name }}
+                </span>
+
+            </div>
+
+
+            <!-- ORDERED -->
+
+            <div class="po-info-cell">
+
+                <span class="info-label">
+                    Ordered
+                </span>
+
+                <span class="info-value number">
+                    {{ total_ordered }}
+                </span>
+
+            </div>
+
+
+            <!-- RECEIVED -->
+
+            <div class="po-info-cell">
+
+                <span class="info-label">
+                    Received
+                </span>
+
+                <span class="info-value number">
+                    {{ total_received }}
+                </span>
+
+            </div>
+
+
+            <!-- OUTSTANDING -->
+
+            <div class="po-info-cell">
+
+                <span class="info-label">
+                    Outstanding
+                </span>
+
+                <span class="info-value number">
+                    {{ total_outstanding }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SOURCE NOTE
+        ================================================== -->
+
+        <div class="source-row">
+
+            <span class="source-text">
+                Purchase order and line-item information shown
+                as a proposed Acumatica data source.
+            </span>
+
+            <span class="source-badge">
+                Proposed Acumatica Source
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONFIRMED BACKORDERS
+         ONLY SHOW THIS SECTION IF THERE ARE ACTUAL
+         CONFIRMED BACKORDER LINES
+    ====================================================== -->
+
+    {% if backordered_lines %}
+
+        <div class="detail-section backorder-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <div class="section-title">
+                        Backordered Materials
+                    </div>
+
+                    <div class="section-subtitle">
+                        Materials confirmed as backordered.
+                    </div>
+
+                </div>
+
+                <div class="line-count">
+
+                    {{ backordered_lines|length }}
+
+                    item{% if backordered_lines|length != 1 %}s{% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table class="line-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="line-number">
+                                #
+                            </th>
+
+                            <th>
+                                Part Number
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                UOM
+                            </th>
+
+                            <th class="qty">
+                                Ordered
+                            </th>
+
+                            <th class="qty">
+                                Received
+                            </th>
+
+                            <th class="qty">
+                                Backordered
+                            </th>
+
+                            <th>
+                                Expected Date
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for line in backordered_lines %}
+
+                            <tr>
+
+                                <td class="line-number">
+                                    {{ loop.index }}
+                                </td>
+
+                                <td class="part-number">
+                                    {{ line.part_number }}
+                                </td>
+
+                                <td class="description-cell">
+                                    {{ line.description }}
+                                </td>
+
+                                <td class="uom">
+                                    {{ line.uom|default('EA', true) }}
+                                </td>
+
+                                <td class="qty">
+                                    {{ line.ordered_qty }}
+                                </td>
+
+                                <td class="qty">
+                                    {{ line.received_qty }}
+                                </td>
+
+                                <td class="qty">
+                                    {{ line.backordered_qty }}
+                                </td>
+
+                                <td class="expected-date">
+                                    {{ line.expected_date|default('—', true) }}
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            status-pill
+                                            status-backordered
+                                        "
+                                    >
+                                        Backordered
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         ALL OTHER MATERIALS
+    ====================================================== -->
+
+    <div class="detail-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <div class="section-title">
+                    All Other Materials
+                </div>
+
+                <div class="section-subtitle">
+                    Current purchase order line-item status.
+                </div>
+
+            </div>
+
+
+            <div class="line-count">
+
+                {{ other_lines|length }}
+
+                item{% if other_lines|length != 1 %}s{% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if other_lines %}
+
+            <div class="table-wrap">
+
+                <table class="line-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="line-number">
+                                #
+                            </th>
+
+                            <th>
+                                Part Number
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                UOM
+                            </th>
+
+                            <th class="qty">
+                                Ordered
+                            </th>
+
+                            <th class="qty">
+                                Received
+                            </th>
+
+                            <th class="qty">
+                                Outstanding
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for line in other_lines %}
+
+                            <tr>
+
+                                <!-- LINE -->
+
+                                <td class="line-number">
+                                    {{ loop.index }}
+                                </td>
+
+
+                                <!-- PART NUMBER -->
+
+                                <td class="part-number">
+                                    {{ line.part_number }}
+                                </td>
+
+
+                                <!-- DESCRIPTION -->
+
+                                <td class="description-cell">
+                                    {{ line.description }}
+                                </td>
+
+
+                                <!-- UOM -->
+
+                                <td class="uom">
+                                    {{ line.uom|default('EA', true) }}
+                                </td>
+
+
+                                <!-- ORDERED -->
+
+                                <td class="qty">
+                                    {{ line.ordered_qty }}
+                                </td>
+
+
+                                <!-- RECEIVED -->
+
+                                <td class="qty">
+                                    {{ line.received_qty }}
+                                </td>
+
+
+                                <!-- OUTSTANDING -->
+
+                                <td class="qty">
+                                    {{ line.outstanding_qty }}
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    {% if line.display_status == "Backordered" %}
+
+                                        <span
+                                            class="
+                                                status-pill
+                                                status-backordered
+                                            "
+                                        >
+                                            Backordered
+                                        </span>
+
+
+                                    {% elif line.display_status == "Awaiting Receipt" %}
+
+                                        <span
+                                            class="
+                                                status-pill
+                                                status-awaiting
+                                            "
+                                        >
+                                            Awaiting Receipt
+                                        </span>
+
+
+                                    {% elif line.display_status == "Partially Received" %}
+
+                                        <span
+                                            class="
+                                                status-pill
+                                                status-partial
+                                            "
+                                        >
+                                            Partially Received
+                                        </span>
+
+
+                                    {% else %}
+
+                                        <span
+                                            class="
+                                                status-pill
+                                                status-received
+                                            "
+                                        >
+                                            Received
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+            <div class="empty-lines">
+                No other material lines are listed for this purchase order.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
