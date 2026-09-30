@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -34,9 +35,7 @@
 
 <header class="topbar">
 
-
     <div class="brand-area">
-
 
         <div class="audubon-brand">
 
@@ -78,13 +77,10 @@
 
         </select>
 
-
     </div>
 
 
-
     <div class="header-actions">
-
 
         <button
             class="notification-button"
@@ -115,9 +111,7 @@
 
         </div>
 
-
     </div>
-
 
 </header>
 
@@ -140,7 +134,9 @@
         <div class="sidebar-navigation">
 
 
-            <!-- HOME -->
+            <!-- =================================================
+                 HOME
+            ================================================== -->
 
             <a
                 href="{{ url_for('tech_center_home') }}"
@@ -159,11 +155,13 @@
 
 
 
-            <!-- MATERIALS MANAGEMENT -->
+            <!-- =================================================
+                 MATERIALS MANAGEMENT
+            ================================================== -->
 
             <a
                 href="{{ url_for('materials') }}"
-                class="nav-item {% if request.endpoint == 'materials' %}active{% endif %}"
+                class="nav-item {% if request.endpoint in ['materials', 'materials_purchase_order_detail', 'material_line_detail', 'material_detail'] %}active{% endif %}"
             >
 
                 <span class="nav-icon">
@@ -178,7 +176,9 @@
 
 
 
-            <!-- PROJECTS -->
+            <!-- =================================================
+                 PROJECTS
+            ================================================== -->
 
             <div
                 class="project-nav-wrapper"
@@ -224,7 +224,6 @@
 
                     <div class="project-flyout-header">
 
-
                         <div>
 
                             <span class="flyout-eyebrow">
@@ -242,12 +241,13 @@
                             {{ projects_menu|length }} Projects
                         </span>
 
-
                     </div>
 
 
 
-                    <!-- SEARCH -->
+                    <!-- =====================================
+                         SEARCH
+                    ====================================== -->
 
                     <div class="flyout-search">
 
@@ -267,13 +267,14 @@
 
 
 
-                    <!-- REAL TECH CENTER PROJECTS -->
+                    <!-- =====================================
+                         TECH CENTER PROJECTS
+                    ====================================== -->
 
                     <div class="flyout-project-list">
 
 
                         {% for slug, project_item in projects_menu.items() %}
-
 
                         <a
                             href="{{ url_for('project_dashboard', project_slug=slug) }}"
@@ -285,7 +286,6 @@
                             <div class="flyout-project-icon">
                                 {{ project_item.initials }}
                             </div>
-
 
 
                             <div class="flyout-project-info">
@@ -301,26 +301,21 @@
                             </div>
 
 
-
                             <span class="flyout-project-status">
                                 {{ project_item.status }}
                             </span>
-
 
 
                             <span class="flyout-project-arrow">
                                 →
                             </span>
 
-
                         </a>
-
 
                         {% endfor %}
 
 
                     </div>
-
 
 
                     <div
@@ -330,15 +325,15 @@
                         No matching projects found.
                     </div>
 
-
                 </div>
-
 
             </div>
 
 
 
-            <!-- REPORTING -->
+            <!-- =================================================
+                 REPORTING
+            ================================================== -->
 
             <a
                 href="{{ url_for('reporting') }}"
@@ -360,12 +355,11 @@
 
 
 
-        <!-- =============================================
+        <!-- =================================================
              SIDEBAR FOOTER
-        ============================================== -->
+        ================================================== -->
 
         <div class="sidebar-footer">
-
 
             <div class="sidebar-brand">
 
@@ -385,7 +379,6 @@
             <span class="mock-label">
                 AIMS Tech Center Mock
             </span>
-
 
         </div>
 
@@ -416,10 +409,12 @@
 
 <script>
 
-
 let projectFlyoutTimer;
 
 
+/* =====================================================
+   WORKSPACE
+===================================================== */
 
 function changeWorkspace(value) {
 
@@ -432,6 +427,9 @@ function changeWorkspace(value) {
 }
 
 
+/* =====================================================
+   OPEN PROJECT FLYOUT
+===================================================== */
 
 function openProjectFlyout() {
 
@@ -457,6 +455,9 @@ function openProjectFlyout() {
 }
 
 
+/* =====================================================
+   CLOSE PROJECT FLYOUT
+===================================================== */
 
 function closeProjectFlyout() {
 
@@ -479,6 +480,9 @@ function closeProjectFlyout() {
 }
 
 
+/* =====================================================
+   SCHEDULE PROJECT FLYOUT CLOSE
+===================================================== */
 
 function scheduleProjectFlyoutClose() {
 
@@ -487,17 +491,23 @@ function scheduleProjectFlyoutClose() {
 
     projectFlyoutTimer =
         setTimeout(
+
             function() {
 
                 closeProjectFlyout();
 
             },
+
             300
+
         );
 
 }
 
 
+/* =====================================================
+   CANCEL PROJECT FLYOUT CLOSE
+===================================================== */
 
 function cancelProjectFlyoutClose() {
 
@@ -506,6 +516,9 @@ function cancelProjectFlyoutClose() {
 }
 
 
+/* =====================================================
+   TOGGLE PROJECT FLYOUT
+===================================================== */
 
 function toggleProjectFlyout(event) {
 
@@ -535,6 +548,9 @@ function toggleProjectFlyout(event) {
 }
 
 
+/* =====================================================
+   FILTER PROJECTS
+===================================================== */
 
 function filterFlyoutProjects() {
 
@@ -542,6 +558,11 @@ function filterFlyoutProjects() {
         document.getElementById(
             "flyoutProjectSearch"
         );
+
+
+    if (!searchInput) {
+        return;
+    }
 
 
     const searchValue =
@@ -561,8 +582,8 @@ function filterFlyoutProjects() {
 
 
     projects.forEach(
-        function(project) {
 
+        function(project) {
 
             const projectSearch =
                 project
@@ -589,8 +610,8 @@ function filterFlyoutProjects() {
 
             }
 
-
         }
+
     );
 
 
@@ -598,6 +619,11 @@ function filterFlyoutProjects() {
         document.getElementById(
             "flyoutNoResults"
         );
+
+
+    if (!noResults) {
+        return;
+    }
 
 
     if (visibleProjects === 0) {
@@ -615,11 +641,15 @@ function filterFlyoutProjects() {
 }
 
 
+/* =====================================================
+   CLOSE PROJECT FLYOUT WHEN CLICKING ELSEWHERE
+===================================================== */
 
 document.addEventListener(
-    "click",
-    function(event) {
 
+    "click",
+
+    function(event) {
 
         const wrapper =
             document.getElementById(
@@ -638,10 +668,9 @@ document.addEventListener(
 
         }
 
-
     }
-);
 
+);
 
 </script>
 

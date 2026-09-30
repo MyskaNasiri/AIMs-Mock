@@ -16,6 +16,7 @@
         padding: 24px 30px 40px;
     }
 
+
     /* =========================================================
        BACK LINK
     ========================================================== */
@@ -52,7 +53,6 @@
 
     .po-header-top {
         min-height: 64px;
-
         padding: 14px 16px;
 
         display: flex;
@@ -116,7 +116,6 @@
         border-radius: 50%;
     }
 
-
     /* Backordered - Red */
 
     .status-backordered {
@@ -128,7 +127,6 @@
     .status-backordered::before {
         background: #b94d4d;
     }
-
 
     /* Awaiting Receipt - Yellow */
 
@@ -142,7 +140,6 @@
         background: #c99b2e;
     }
 
-
     /* Partial - Blue */
 
     .status-partial {
@@ -154,7 +151,6 @@
     .status-partial::before {
         background: #5c86a5;
     }
-
 
     /* Received - Green */
 
@@ -175,6 +171,7 @@
 
     .po-info-grid {
         display: grid;
+
         grid-template-columns:
             minmax(170px, 1.3fr)
             minmax(170px, 1.3fr)
@@ -467,6 +464,7 @@
         .po-info-cell {
             border-bottom: 1px solid #e7ebe8;
         }
+
     }
 
     @media (max-width: 700px) {
@@ -492,13 +490,12 @@
             align-items: flex-start;
             flex-direction: column;
         }
-    }
 
+    }
 </style>
 
 
 <div class="po-detail-page">
-
 
     <!-- =====================================================
          BACK TO MATERIAL MANAGEMENT
@@ -569,7 +566,6 @@
         ================================================== -->
 
         <div class="po-info-grid">
-
 
             <!-- VENDOR -->
 
@@ -666,7 +662,6 @@
         </div>
 
     </div>
-
 
 
     <!-- =====================================================
@@ -817,7 +812,6 @@
         </div>
 
     {% endif %}
-
 
 
     <!-- =====================================================
@@ -1023,7 +1017,8 @@
         {% else %}
 
             <div class="empty-lines">
-                No other material lines are listed for this purchase order.
+                No additional material lines are listed
+                for this purchase order.
             </div>
 
         {% endif %}

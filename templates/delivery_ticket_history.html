@@ -1,0 +1,46 @@
+    {% extends "base.html" %}
+    {% block title %}Delivery Ticket History | AIMS{% endblock %}
+    {% block content %}
+    <style>
+    .history-page{padding:18px 22px 28px}.history-eyebrow{color:#2b6e5a;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.history-title{margin:4px 0 3px;font-size:22px;color:#1f2b27}.history-subtitle{margin:0;color:#707b77;font-size:12px}.material-view-tabs{display:flex;gap:6px;margin:18px 0 12px;border-bottom:1px solid #dfe5e2}.material-view-tab{padding:9px 12px;margin-bottom:-1px;border-bottom:2px solid transparent;color:#66726e;font-size:11px;font-weight:700;text-decoration:none}.material-view-tab.active{color:#245f4d;border-bottom-color:#2b6e5a}.history-card{background:#fff;border:1px solid #dce2df;border-radius:4px;overflow:hidden}.history-toolbar{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;background:#fbfcfb;border-bottom:1px solid #e2e7e4}.history-search{width:360px;max-width:100%;height:34px;border:1px solid #cfd7d3;border-radius:3px;padding:0 10px;font-size:12px}.history-export{height:34px;border:1px solid #2b6e5a;border-radius:3px;padding:0 12px;background:#fff;color:#245f4d;font-size:11px;font-weight:700;cursor:pointer}.history-table{width:100%;border-collapse:collapse}.history-table th,.history-table td{padding:10px 12px;border-bottom:1px solid #e7ebe9;text-align:left;font-size:11px}.history-table th{background:#f4f7f5;color:#69746f;font-size:9px;letter-spacing:.04em;text-transform:uppercase}.ticket-row{cursor:pointer}.ticket-row:hover{background:#f8faf9}.ticket-number{color:#24614f;font-weight:800}.qty{font-weight:700}.ticket-detail{display:none;background:#fbfcfb}.ticket-detail.open{display:table-row}.ticket-detail-cell{padding:12px 16px 14px!important}.line-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #dfe5e2}.line-table th,.line-table td{padding:7px 9px;font-size:10px;border-bottom:1px solid #e7ebe9}.line-table th{background:#f3f6f4}.notes{margin-top:8px;font-size:10px;color:#56615d}.empty{padding:24px;text-align:center;color:#7b8581;font-size:12px}
+    </style>
+    <div class="history-page">
+    <div class="history-eyebrow">Materials</div>
+    <h1 class="history-title">Delivery Ticket History</h1>
+    <p class="history-subtitle">Receiving history recorded from project purchase orders.</p>
+    <div class="material-view-tabs">
+    <a class="material-view-tab" href="{{ url_for('materials') }}">Purchase Orders</a>
+    <a class="material-view-tab active" href="{{ url_for('delivery_ticket_history') }}">Delivery Ticket History</a>
+    </div>
+    <div class="history-card">
+    <div class="history-toolbar">
+    <input id="ticketSearch" class="history-search" type="search" placeholder="Search ticket, PO, project, vendor, receiver, part..." autocomplete="off">
+    <button id="exportTickets" class="history-export" type="button">Export CSV</button>
+    </div>
+    {% if delivery_tickets %}
+    <table class="history-table"><thead><tr><th>Delivery Ticket</th><th>Date</th><th>Project</th><th>PO</th><th>Vendor</th><th>Received By</th><th>Qty</th></tr></thead><tbody>
+    {% for ticket in delivery_tickets %}
+    <tr class="ticket-row" data-ticket-row data-search="{{ ticket.search_text|lower }}">
+    <td class="ticket-number">{{ ticket.ticket_number }}</td><td>{{ ticket.date }}</td><td>{{ ticket.project_name }}</td><td>{{ ticket.po_number }}</td><td>{{ ticket.vendor }}</td><td>{{ ticket.received_by }}</td><td class="qty">{{ ticket.total_received }}</td>
+    </tr>
+    <tr class="ticket-detail"><td colspan="7" class="ticket-detail-cell">
+    <table class="line-table"><thead><tr><th>Part Number</th><th>Quantity Received</th></tr></thead><tbody>
+    {% for line in ticket.lines %}<tr><td>{{ line.part_number }}</td><td>{{ line.qty }}</td></tr>{% endfor %}
+    </tbody></table>
+    {% if ticket.notes %}<div class="notes"><strong>Notes:</strong> {{ ticket.notes }}</div>{% endif %}
+    </td></tr>
+    {% endfor %}
+    </tbody></table>
+    {% else %}<div class="empty">No delivery tickets have been recorded.</div>{% endif %}
+    </div></div>
+    <script>
+    (function(){
+    const search=document.getElementById("ticketSearch");
+    const rows=Array.from(document.querySelectorAll("[data-ticket-row]"));
+    rows.forEach(function(row){row.addEventListener("click",function(){const detail=row.nextElementSibling;if(detail&&detail.classList.contains("ticket-detail"))detail.classList.toggle("open");});});
+    if(search)search.addEventListener("input",function(){const q=search.value.trim().toLowerCase();rows.forEach(function(row){const detail=row.nextElementSibling;const show=!q||(row.dataset.search||"").toLowerCase().includes(q);row.style.display=show?"":"none";if(!show&&detail)detail.classList.remove("open");});});
+    const button=document.getElementById("exportTickets");
+    if(button)button.addEventListener("click",function(){const visible=rows.filter(r=>r.style.display!=="none");const data=[["Delivery Ticket","Date","Project","PO","Vendor","Received By","Qty"]];visible.forEach(r=>data.push(Array.from(r.children).map(c=>c.textContent.trim())));const csv=data.map(values=>values.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="delivery_ticket_history.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+    })();
+    </script>
+    {% endblock %}

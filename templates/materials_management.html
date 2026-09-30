@@ -1,1065 +1,3608 @@
-{% extends "base.html" %}
-
-{% block title %}Material Management | AIMS{% endblock %}
+    {% extends "base.html" %}
 
-{% block content %}
 
-<style>
-    .materials-page {
-        padding: 28px 30px 40px;
-        max-width: 1500px;
-        margin: 0 auto;
-    }
 
-    .page-eyebrow {
-        color: #567064;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-    }
-
-    .page-title {
-        margin: 0;
-        color: #26352e;
-        font-size: 28px;
-        font-weight: 650;
-        letter-spacing: -0.4px;
-    }
 
-    .page-subtitle {
-        margin-top: 6px;
-        color: #737c77;
-        font-size: 13px;
-    }
 
-    /* =========================================
-       SOURCE INFORMATION
-    ========================================= */
+    {% block title %}
 
-    .source-bar {
-        margin-top: 22px;
-        border: 1px solid #dfe5e1;
-        background: #ffffff;
-        padding: 11px 14px;
+    Material Management | AIMS
 
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 18px;
-    }
+    {% endblock %}
 
-    .source-title {
-        color: #34453c;
-        font-size: 12px;
-        font-weight: 700;
-    }
 
-    .source-note {
-        color: #7a837e;
-        font-size: 11px;
-        margin-top: 2px;
-    }
 
-    .source-badge {
-        display: inline-flex;
-        align-items: center;
 
-        white-space: nowrap;
 
-        padding: 4px 8px;
+    {% block content %}
 
-        border-radius: 3px;
 
-        background: #eef4f0;
-        color: #486052;
 
-        border: 1px solid #d7e2db;
+    <style>
 
-        font-size: 10px;
-        font-weight: 700;
 
-        letter-spacing: .35px;
-        text-transform: uppercase;
-    }
-
-
-    /* =========================================
-       PURCHASE ORDER WORKSPACE
-    ========================================= */
-
-    .workspace {
-        margin-top: 18px;
-
-        border: 1px solid #dfe4e1;
-
-        background: #ffffff;
-    }
-
-    .workspace-header {
-        padding: 14px 15px;
-
-        border-bottom: 1px solid #e2e7e4;
-
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        gap: 14px;
-    }
-
-    .workspace-title {
-        color: #34433b;
-        font-size: 14px;
-        font-weight: 700;
-    }
-
-    .workspace-subtitle {
-        color: #7b837f;
-        font-size: 11px;
-        margin-top: 2px;
-    }
-
-
-    /* =========================================
-       SEARCH / FILTERS
-    ========================================= */
-
-    .controls {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .search-box,
-    .status-filter {
-        height: 34px;
-
-        box-sizing: border-box;
-
-        border: 1px solid #ccd5d0;
-
-        background: #ffffff;
-        color: #34433b;
-
-        font-family: inherit;
-        font-size: 12px;
-
-        outline: none;
-    }
-
-    .search-box {
-        width: 290px;
-        padding: 0 10px;
-    }
-
-    .status-filter {
-        min-width: 155px;
-        padding: 0 9px;
-    }
-
-    .search-box:focus,
-    .status-filter:focus {
-        border-color: #738f7f;
-
-        box-shadow:
-            0 0 0 2px rgba(82, 111, 94, .08);
-    }
-
-
-    /* =========================================
-       AIMS / ACUMATICA STYLE TABLE
-    ========================================= */
-
-    .table-wrap {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .po-table {
-        width: 100%;
-
-        border-collapse: collapse;
-
-        min-width: 920px;
-
-        table-layout: auto;
-    }
-
-    .po-table th {
-        background: #f5f7f6;
-
-        color: #5e6963;
-
-        border-bottom: 1px solid #dce2de;
-        border-right: 1px solid #e7ebe8;
-
-        padding: 7px 10px;
-
-        text-align: left;
-
-        font-size: 10px;
-        font-weight: 700;
-
-        letter-spacing: .45px;
-        text-transform: uppercase;
-
-        white-space: nowrap;
-    }
-
-    .po-table td {
-        border-bottom: 1px solid #e8ece9;
-        border-right: 1px solid #eef1ef;
-
-        padding: 7px 10px;
-
-        color: #3f4944;
-
-        font-size: 12px;
-        line-height: 1.25;
-
-        white-space: nowrap;
-    }
-
-    .po-table th:last-child,
-    .po-table td:last-child {
-        border-right: 0;
-    }
-
-    .po-row {
-        cursor: pointer;
-
-        transition:
-            background .12s ease;
-    }
-
-    .po-row:hover {
-        background: #f7faf8;
-    }
-
-    .po-number {
-        color: #315c46;
-        font-weight: 700;
-    }
-
-    .project-name {
-        color: #4b5751;
-    }
-
-    .qty {
-        text-align: right;
-
-        font-variant-numeric:
-            tabular-nums;
-    }
-
-    .po-table th.qty {
-        text-align: right;
-    }
-
-
-    /* =========================================
-       STATUS COLORS
-    ========================================= */
-
-    .status-pill {
-        display: inline-flex;
-        align-items: center;
-
-        gap: 6px;
-
-        border-radius: 3px;
-
-        padding: 3px 7px;
-
-        font-size: 10px;
-        line-height: 1.2;
-
-        font-weight: 700;
-
-        white-space: nowrap;
-
-        border:
-            1px solid transparent;
-    }
-
-    .status-pill::before {
-        content: "";
-
-        width: 6px;
-        height: 6px;
-
-        border-radius: 50%;
-
-        flex: 0 0 6px;
-    }
-
-
-    /* BACKORDERED */
-
-    .status-backordered {
-        color: #8b3939;
-
-        background: #fbefef;
-
-        border-color: #efd0d0;
-    }
-
-    .status-backordered::before {
-        background: #b94d4d;
-    }
-
-
-    /* AWAITING RECEIPT */
-
-    .status-awaiting {
-        color: #85651d;
-
-        background: #fff8e5;
-
-        border-color: #eedda8;
-    }
-
-    .status-awaiting::before {
-        background: #c99b2e;
-    }
-
-
-    /* PARTIALLY RECEIVED */
-
-    .status-partial {
-        color: #3c5f7b;
-
-        background: #eef5fa;
-
-        border-color: #cfdfe9;
-    }
-
-    .status-partial::before {
-        background: #5c86a5;
-    }
-
-
-    /* RECEIVED */
-
-    .status-received {
-        color: #3f684e;
-
-        background: #eef7f1;
-
-        border-color: #cfe3d5;
-    }
-
-    .status-received::before {
-        background: #579269;
-    }
-
-
-    .backorder-count {
-        margin-left: 5px;
-
-        color: #9b4545;
-
-        font-size: 10px;
-        font-weight: 700;
-    }
-
-
-    /* =========================================
-       EMPTY STATE
-    ========================================= */
-
-    .empty-state {
-        padding: 42px 20px;
-
-        text-align: center;
-
-        color: #7c8580;
-
-        font-size: 13px;
-    }
-
-
-    /* =========================================
-       TABLE FOOTER
-    ========================================= */
-
-    .table-footer {
-        padding: 8px 12px;
-
-        border-top:
-            1px solid #e2e7e4;
-
-        background: #fafbfa;
-
-        color: #7b837f;
-
-        font-size: 10px;
-
-        display: flex;
-        justify-content: space-between;
-
-        gap: 12px;
-    }
-
-
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
-
-    @media (max-width: 900px) {
 
         .materials-page {
-            padding:
-                22px 18px 35px;
+
+            padding: 28px 30px 40px;
+
+            max-width: 1500px;
+
+            margin: 0 auto;
+
         }
 
-        .source-bar,
+
+
+
+
+        /* =========================================
+
+           PAGE HEADER
+
+        ========================================= */
+
+
+
+        .page-eyebrow {
+
+            color: #567064;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            letter-spacing: 1.2px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 5px;
+
+        }
+
+
+
+        .page-title {
+
+            margin: 0;
+
+            color: #26352e;
+
+            font-size: 28px;
+
+            font-weight: 650;
+
+            letter-spacing: -0.4px;
+
+        }
+
+
+
+        .page-subtitle {
+
+            margin-top: 6px;
+
+            color: #737c77;
+
+            font-size: 13px;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           SOURCE INFORMATION
+
+        ========================================= */
+
+
+
+        .source-bar {
+
+            margin-top: 22px;
+
+            border: 1px solid #dfe5e1;
+
+            background: #ffffff;
+
+            padding: 11px 14px;
+
+
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 18px;
+
+        }
+
+
+
+        .source-title {
+
+            color: #34453c;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .source-note {
+
+            color: #7a837e;
+
+            font-size: 11px;
+
+            margin-top: 2px;
+
+        }
+
+
+
+        .source-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            white-space: nowrap;
+
+            padding: 4px 8px;
+
+            border-radius: 3px;
+
+            background: #eef4f0;
+
+            color: #486052;
+
+            border: 1px solid #d7e2db;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: .35px;
+
+            text-transform: uppercase;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           METRICS
+
+        ========================================= */
+
+
+
+        .metrics-grid {
+
+            margin-top: 18px;
+
+
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(4, minmax(0, 1fr));
+
+
+
+            gap: 10px;
+
+        }
+
+
+
+        .metric-card {
+
+            background: #ffffff;
+
+            border: 1px solid #dfe4e1;
+
+            padding: 14px 15px;
+
+            min-height: 92px;
+
+        }
+
+
+
+        .metric-card.overdue-card {
+
+            border-left: 3px solid #b94d4d;
+
+        }
+
+
+
+        .metric-label {
+
+            color: #727c77;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: .55px;
+
+            text-transform: uppercase;
+
+        }
+
+
+
+        .metric-value {
+
+            margin-top: 7px;
+
+            color: #2f3e36;
+
+            font-size: 27px;
+
+            line-height: 1;
+
+            font-weight: 650;
+
+            font-variant-numeric:
+
+                tabular-nums;
+
+        }
+
+
+
+        .metric-card.overdue-card
+
+        .metric-value {
+
+            color: #9b4141;
+
+        }
+
+
+
+        .metric-note {
+
+            margin-top: 7px;
+
+            color: #89918d;
+
+            font-size: 10px;
+
+            line-height: 1.3;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           STATUS SUMMARY
+
+        ========================================= */
+
+
+
+        .status-summary {
+
+            margin-top: 10px;
+
+            background: #ffffff;
+
+            border: 1px solid #dfe4e1;
+
+        }
+
+
+
+        .status-summary-header {
+
+            padding: 11px 14px;
+
+            border-bottom: 1px solid #e2e7e4;
+
+
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+
+
+            gap: 12px;
+
+        }
+
+
+
+        .status-summary-title {
+
+            color: #34433b;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .status-summary-note {
+
+            color: #7b837f;
+
+            font-size: 10px;
+
+        }
+
+
+
+        .status-summary-grid {
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(5, minmax(0, 1fr));
+
+        }
+
+
+
+        .status-summary-item {
+
+            padding: 10px 13px;
+
+            border-right: 1px solid #edf0ee;
+
+        }
+
+
+
+        .status-summary-item:last-child {
+
+            border-right: 0;
+
+        }
+
+
+
+        .status-summary-name {
+
+            color: #7a837f;
+
+            font-size: 10px;
+
+            margin-bottom: 4px;
+
+        }
+
+
+
+        .status-summary-number {
+
+            color: #34433b;
+
+            font-size: 18px;
+
+            font-weight: 650;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           OVERDUE WORKSPACE
+
+        ========================================= */
+
+
+
+        .overdue-workspace {
+
+            margin-top: 18px;
+
+            border: 1px solid #ead1d1;
+
+            border-left: 3px solid #b94d4d;
+
+            background: #ffffff;
+
+        }
+
+
+
+        .overdue-header {
+
+            padding: 12px 14px;
+
+            border-bottom: 1px solid #ecdada;
+
+            background: #fffafa;
+
+
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+
+
+            gap: 12px;
+
+        }
+
+
+
+        .overdue-title {
+
+            color: #844040;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .overdue-subtitle {
+
+            margin-top: 2px;
+
+            color: #967474;
+
+            font-size: 10px;
+
+        }
+
+
+
+        .overdue-total {
+
+            color: #934848;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           PURCHASE ORDER WORKSPACE
+
+        ========================================= */
+
+
+
+        .workspace {
+
+            margin-top: 18px;
+
+            border: 1px solid #dfe4e1;
+
+            background: #ffffff;
+
+        }
+
+
+
         .workspace-header {
-            align-items:
-                flex-start;
 
-            flex-direction:
-                column;
+            padding: 14px 15px;
+
+            border-bottom: 1px solid #e2e7e4;
+
+
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+
+
+            gap: 14px;
+
         }
+
+
+
+        .workspace-title {
+
+            color: #34433b;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .workspace-subtitle {
+
+            color: #7b837f;
+
+            font-size: 11px;
+
+            margin-top: 2px;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           SEARCH / FILTERS
+
+        ========================================= */
+
+
 
         .controls {
-            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
         }
 
-        .search-box {
-            flex: 1;
 
-            width: auto;
-        }
-    }
-
-
-    @media (max-width: 620px) {
-
-        .controls {
-            flex-direction:
-                column;
-
-            align-items:
-                stretch;
-        }
 
         .search-box,
+
         .status-filter {
-            width: 100%;
+
+            height: 34px;
+
+            box-sizing: border-box;
+
+            border: 1px solid #ccd5d0;
+
+            background: #ffffff;
+
+            color: #34433b;
+
+            font-family: inherit;
+
+            font-size: 12px;
+
+            outline: none;
+
         }
-    }
 
-</style>
 
 
-<div class="materials-page">
+        .search-box {
 
-    <!-- =========================================
-         PAGE HEADER
-    ========================================== -->
+            width: 330px;
 
-    <div class="page-eyebrow">
-        Tech Center
-    </div>
+            padding: 0 10px;
 
+        }
 
-    <h1 class="page-title">
-        Material Management
-    </h1>
 
 
-    <div class="page-subtitle">
-        Review active purchase orders and material
-        availability for Tech Center receiving.
-    </div>
+        .status-filter {
 
+            min-width: 175px;
 
-    <!-- =========================================
-         DATA SOURCE
-    ========================================== -->
+            padding: 0 9px;
 
-    <div class="source-bar">
+        }
 
-        <div>
 
-            <div class="source-title">
-                Purchase Order Source
-            </div>
 
-            <div class="source-note">
-                Prototype view of purchasing information
-                proposed from Acumatica.
-            </div>
+        .search-box:focus,
 
-        </div>
+        .status-filter:focus {
 
+            border-color: #738f7f;
 
-        <div class="source-badge">
-            Proposed Acumatica Source
-        </div>
+            box-shadow:
 
-    </div>
+                0 0 0 2px
 
+                rgba(82, 111, 94, .08);
 
-    <!-- =========================================
-         ACTIVE PURCHASE ORDERS
-    ========================================== -->
+        }
 
-    <div class="workspace">
 
-        <div class="workspace-header">
 
-            <div>
 
-                <div class="workspace-title">
-                    Active Purchase Orders
-                </div>
 
-                <div class="workspace-subtitle">
-                    Select a PO to review its material
-                    line items.
-                </div>
+        /* =========================================
 
-            </div>
+           TABLES
 
+        ========================================= */
 
-            <div class="controls">
 
-                <input
-                    id="poSearch"
-                    class="search-box"
-                    type="search"
-                    placeholder="Search PO, project, vendor..."
-                    autocomplete="off"
-                >
 
+        .table-wrap {
 
-                <select
-                    id="statusFilter"
-                    class="status-filter"
-                >
+            width: 100%;
 
-                    <option value="all">
-                        All Statuses
-                    </option>
+            overflow-x: auto;
 
-                    <option value="Backordered">
-                        Backordered
-                    </option>
+        }
 
-                    <option value="Awaiting Receipt">
-                        Awaiting Receipt
-                    </option>
 
-                    <option value="Partially Received">
-                        Partially Received
-                    </option>
 
-                    <option value="Received">
-                        Received
-                    </option>
+        .po-table {
 
-                </select>
+            width: 100%;
 
-            </div>
+            border-collapse: collapse;
 
-        </div>
+            min-width: 920px;
 
+            table-layout: auto;
 
-        <!-- =====================================
-             PO TABLE
-        ====================================== -->
+        }
 
-        <div class="table-wrap">
 
-            <table class="po-table">
 
-                <thead>
+        .po-table th {
 
-                    <tr>
+            background: #f5f7f6;
 
-                        <th>
-                            PO Number
-                        </th>
+            color: #5e6963;
 
-                        <th>
-                            Project
-                        </th>
 
-                        <th>
-                            Vendor
-                        </th>
 
-                        <th class="qty">
-                            Ordered
-                        </th>
+            border-bottom:
 
-                        <th class="qty">
-                            Received
-                        </th>
+                1px solid #dce2de;
 
-                        <th class="qty">
-                            Outstanding
-                        </th>
 
-                        <th>
-                            Status
-                        </th>
 
-                    </tr>
+            border-right:
 
-                </thead>
+                1px solid #e7ebe8;
 
 
-                <tbody id="poTableBody">
 
-                    {% for po in active_pos %}
+            padding: 7px 10px;
 
 
-                        <!-- =============================
-                             DETERMINE DISPLAY STATUS
-                        ============================== -->
 
-                        {% if po.backordered_items > 0 %}
+            text-align: left;
 
-                            {% set display_status =
-                                "Backordered"
-                            %}
 
 
-                        {% elif po.total_outstanding == 0 %}
+            font-size: 10px;
 
-                            {% set display_status =
-                                "Received"
-                            %}
+            font-weight: 700;
 
 
-                        {% elif po.total_received == 0 %}
 
-                            {% set display_status =
-                                "Awaiting Receipt"
-                            %}
+            letter-spacing: .45px;
 
+            text-transform: uppercase;
 
-                        {% else %}
 
-                            {% set display_status =
-                                "Partially Received"
-                            %}
 
-                        {% endif %}
+            white-space: nowrap;
 
+        }
 
-                        <!-- =============================
-                             PURCHASE ORDER ROW
-                        ============================== -->
 
-                        <tr
-                            class="po-row"
-                            tabindex="0"
-                            role="link"
 
-                            data-status="{{
-                                display_status
-                            }}"
+        .po-table td {
 
-                            data-search="
-                                {{ po.po_number }}
-                                {{ po.project_name }}
-                                {{ po.vendor }}
-                            "
+            border-bottom:
 
-                            data-url="{{
-                                url_for(
-                                    'materials_purchase_order_detail',
-                                    project_slug=po.project_slug,
-                                    po_number=po.po_number
-                                )
-                            }}"
-                        >
+                1px solid #e8ece9;
 
 
-                            <!-- PO NUMBER -->
 
-                            <td>
+            border-right:
 
-                                <span class="po-number">
-                                    {{ po.po_number }}
-                                </span>
+                1px solid #eef1ef;
 
-                            </td>
 
 
-                            <!-- PROJECT -->
+            padding: 7px 10px;
 
-                            <td class="project-name">
 
-                                {{ po.project_name }}
 
-                            </td>
+            color: #3f4944;
 
 
-                            <!-- VENDOR -->
 
-                            <td>
+            font-size: 12px;
 
-                                {{ po.vendor }}
+            line-height: 1.25;
 
-                            </td>
 
 
-                            <!-- ORDERED -->
+            white-space: nowrap;
 
-                            <td class="qty">
+        }
 
-                                {{ po.total_ordered }}
 
-                            </td>
 
+        .po-table th:last-child,
 
-                            <!-- RECEIVED -->
+        .po-table td:last-child {
 
-                            <td class="qty">
+            border-right: 0;
 
-                                {{ po.total_received }}
+        }
 
-                            </td>
 
 
-                            <!-- OUTSTANDING -->
+        .po-row {
 
-                            <td class="qty">
+            cursor: pointer;
 
-                                {{ po.total_outstanding }}
+            transition:
 
-                            </td>
+    *background* .12s ease;
 
+        }
 
-                            <!-- STATUS -->
 
-                            <td>
 
+        .po-row:hover {
 
-                                {% if display_status ==
-                                    "Backordered"
-                                %}
+            background: #f7faf8;
 
-                                    <span
-                                        class="
-                                            status-pill
-                                            status-backordered
-                                        "
-                                    >
-                                        Backordered
-                                    </span>
+        }
 
 
-                                    {% if
-                                        po.backordered_items > 1
-                                    %}
 
-                                        <span
-                                            class="backorder-count"
-                                        >
-                                            {{
-                                                po.backordered_items
-                                            }}
-                                            items
-                                        </span>
+        .po-number {
 
-                                    {% endif %}
+            color: #315c46;
 
+            font-weight: 700;
 
-                                {% elif display_status ==
-                                    "Awaiting Receipt"
-                                %}
+        }
 
-                                    <span
-                                        class="
-                                            status-pill
-                                            status-awaiting
-                                        "
-                                    >
-                                        Awaiting Receipt
-                                    </span>
 
 
-                                {% elif display_status ==
-                                    "Partially Received"
-                                %}
+        .project-name {
 
-                                    <span
-                                        class="
-                                            status-pill
-                                            status-partial
-                                        "
-                                    >
-                                        Partially Received
-                                    </span>
+            color: #4b5751;
 
+        }
 
-                                {% else %}
 
-                                    <span
-                                        class="
-                                            status-pill
-                                            status-received
-                                        "
-                                    >
-                                        Received
-                                    </span>
 
-                                {% endif %}
+        .secondary-text {
 
-                            </td>
+            margin-top: 2px;
 
-                        </tr>
+            color: #8b938f;
 
+            font-size: 10px;
 
-                    {% else %}
+        }
 
 
-                        <tr>
 
-                            <td
-                                colspan="7"
-                                class="empty-state"
-                            >
-                                No active purchase orders
-                                were found.
-                            </td>
+        .qty {
 
-                        </tr>
+            text-align: right;
 
+            font-variant-numeric:
 
-                    {% endfor %}
+                tabular-nums;
 
-                </tbody>
+        }
 
-            </table>
 
-        </div>
 
+        .po-table th.qty {
 
-        <!-- =====================================
-             TABLE FOOTER
-        ====================================== -->
+            text-align: right;
 
-        <div class="table-footer">
+        }
 
-            <span id="visibleCount">
 
-                {{ active_pos|length }}
 
-                active purchase order{% if
-                    active_pos|length != 1
-                %}s{% endif %}
+        .part-number {
 
-            </span>
+            color: #3e5549;
 
+            font-weight: 700;
 
-            <span>
-                Click a PO row to view material details
-            </span>
+        }
 
-        </div>
 
-    </div>
 
-</div>
+        .overdue-days {
 
+            color: #994444;
 
-<script>
+            font-weight: 700;
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+        }
 
 
-            /* =====================================
-               ELEMENTS
-            ====================================== */
 
-            const searchInput =
-                document.getElementById(
-                    "poSearch"
-                );
+        .overdue-row {
 
+            background: #fffdfd;
 
-            const statusFilter =
-                document.getElementById(
-                    "statusFilter"
-                );
+        }
 
 
-            const rows =
-                Array.from(
-                    document.querySelectorAll(
-                        ".po-row"
-                    )
-                );
 
+        .overdue-row:hover {
 
-            const visibleCount =
-                document.getElementById(
-                    "visibleCount"
-                );
+            background: #fff8f8;
 
+        }
 
-            /* =====================================
-               SEARCH + STATUS FILTER
-            ====================================== */
 
-            function filterRows() {
 
 
-                const searchValue =
-                    searchInput.value
-                        .trim()
-                        .toLowerCase();
 
+        /* =========================================
 
-                const selectedStatus =
-                    statusFilter.value;
+           STATUS COLORS
 
+        ========================================= */
 
-                let count = 0;
 
 
-                rows.forEach(
-                    function (row) {
+        .status-pill {
 
+            display: inline-flex;
 
-                        const searchableText =
-                            (
-                                row.dataset.search ||
-                                ""
-                            ).toLowerCase();
+            align-items: center;
 
+            gap: 6px;
 
-                        const rowStatus =
-                            row.dataset.status ||
-                            "";
 
 
-                        const matchesSearch =
-                            !searchValue ||
-                            searchableText.includes(
-                                searchValue
-                            );
+            border-radius: 3px;
 
+            padding: 3px 7px;
 
-                        const matchesStatus =
-                            selectedStatus === "all" ||
-                            rowStatus ===
-                                selectedStatus;
 
 
-                        const showRow =
-                            matchesSearch &&
-                            matchesStatus;
+            font-size: 10px;
 
+            line-height: 1.2;
 
-                        row.style.display =
-                            showRow
-                                ? ""
-                                : "none";
+            font-weight: 700;
 
 
-                        if (showRow) {
-                            count += 1;
-                        }
 
-                    }
-                );
+            white-space: nowrap;
 
 
-                visibleCount.textContent =
-                    count +
-                    (
-                        count === 1
-                            ? " active purchase order"
-                            : " active purchase orders"
-                    );
+
+            border:
+
+                1px solid transparent;
+
+        }
+
+
+
+        .status-pill::before {
+
+            content: "";
+
+
+
+            width: 6px;
+
+            height: 6px;
+
+
+
+            border-radius: 50%;
+
+            flex: 0 0 6px;
+
+        }
+
+
+
+
+
+        /* OVERDUE */
+
+
+
+        .status-overdue {
+
+            color: #884040;
+
+            background: #fceeee;
+
+            border-color: #efcccc;
+
+        }
+
+
+
+        .status-overdue::before {
+
+            background: #b84d4d;
+
+        }
+
+
+
+
+
+        /* BACKORDERED */
+
+
+
+        .status-backordered {
+
+            color: #8b3939;
+
+            background: #fbefef;
+
+            border-color: #efd0d0;
+
+        }
+
+
+
+        .status-backordered::before {
+
+            background: #b94d4d;
+
+        }
+
+
+
+
+
+        /* AWAITING RECEIPT */
+
+
+
+        .status-awaiting {
+
+            color: #85651d;
+
+            background: #fff8e5;
+
+            border-color: #eedda8;
+
+        }
+
+
+
+        .status-awaiting::before {
+
+            background: #c99b2e;
+
+        }
+
+
+
+
+
+        /* PARTIALLY RECEIVED */
+
+
+
+        .status-partial {
+
+            color: #3c5f7b;
+
+            background: #eef5fa;
+
+            border-color: #cfdfe9;
+
+        }
+
+
+
+        .status-partial::before {
+
+            background: #5c86a5;
+
+        }
+
+
+
+
+
+        /* RECEIVED */
+
+
+
+        .status-received {
+
+            color: #3f684e;
+
+            background: #eef7f1;
+
+            border-color: #cfe3d5;
+
+        }
+
+
+
+        .status-received::before {
+
+            background: #579269;
+
+        }
+
+
+
+
+
+        .backorder-count {
+
+            margin-left: 5px;
+
+            color: #9b4545;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           EMPTY STATE
+
+        ========================================= */
+
+
+
+        .empty-state {
+
+            padding: 42px 20px;
+
+            text-align: center;
+
+            color: #7c8580;
+
+            font-size: 13px;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           TABLE FOOTER
+
+        ========================================= */
+
+
+
+        .table-footer {
+
+            padding: 8px 12px;
+
+
+
+            border-top:
+
+                1px solid #e2e7e4;
+
+
+
+            background: #fafbfa;
+
+
+
+            color: #7b837f;
+
+
+
+            font-size: 10px;
+
+
+
+            display: flex;
+
+            justify-content: space-between;
+
+
+
+            gap: 12px;
+
+        }
+
+
+
+
+
+        /* =========================================
+
+           RESPONSIVE
+
+        ========================================= */
+
+
+
+        @media (max-width: 1000px) {
+
+
+
+            .metrics-grid {
+
+                grid-template-columns:
+
+                    repeat(2, 1fr);
 
             }
 
 
-            /* =====================================
-               OPEN PO
-            ====================================== */
 
-            rows.forEach(
-                function (row) {
+            .status-summary-grid {
 
+                grid-template-columns:
 
-                    function openPurchaseOrder() {
+                    repeat(2, 1fr);
 
-
-                        const target =
-                            row.dataset.url;
+            }
 
 
-                        if (target) {
 
-                            window.location.href =
-                                target;
+            .status-summary-item {
+
+                border-bottom:
+
+                    1px solid #edf0ee;
+
+            }
+
+
+
+        }
+
+
+
+
+
+        @media (max-width: 900px) {
+
+
+
+            .materials-page {
+
+                padding:
+
+                    22px 18px 35px;
+
+            }
+
+
+
+            .source-bar,
+
+            .workspace-header {
+
+                align-items:
+
+                    flex-start;
+
+
+
+                flex-direction:
+
+                    column;
+
+            }
+
+
+
+            .controls {
+
+                width: 100%;
+
+            }
+
+
+
+            .search-box {
+
+                flex: 1;
+
+                width: auto;
+
+            }
+
+
+
+        }
+
+
+
+
+
+        @media (max-width: 620px) {
+
+
+
+            .metrics-grid {
+
+                grid-template-columns:
+
+                    1fr;
+
+            }
+
+
+
+            .status-summary-grid {
+
+                grid-template-columns:
+
+                    1fr;
+
+            }
+
+
+
+            .controls {
+
+                flex-direction:
+
+                    column;
+
+
+
+                align-items:
+
+                    stretch;
+
+            }
+
+
+
+            .search-box,
+
+            .status-filter {
+
+                width: 100%;
+
+            }
+
+
+
+        }
+
+
+
+
+        .material-view-tabs {
+            display: flex;
+            gap: 6px;
+            margin: 16px 0 12px;
+            border-bottom: 1px solid #dfe5e2;
+        }
+        .material-view-tab {
+            padding: 9px 12px;
+            margin-bottom: -1px;
+            border-bottom: 2px solid transparent;
+            color: #66726e;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .material-view-tab:hover { color: #245f4d; background: #f7faf8; }
+        .material-view-tab.active { color: #245f4d; border-bottom-color: #2b6e5a; }
+
+    
+        .po-detail-row { display: none; background: #fbfcfb; }
+        .po-detail-row.open { display: table-row; }
+        .po-detail-cell { padding: 12px 14px 14px !important; white-space: normal !important; }
+        .po-detail-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #dfe4e1; }
+        .po-detail-table th, .po-detail-table td { padding: 7px 9px; border-bottom: 1px solid #e8ece9; font-size: 10px; text-align: left; }
+        .po-detail-table th { background: #f5f7f6; color: #5e6963; font-weight: 700; text-transform: uppercase; letter-spacing: .35px; }
+        .po-detail-table .qty { text-align: right; }
+        .po-row.expanded { background: #f4f8f5; }
+
+    </style>
+
+
+
+
+
+    <div class="materials-page">
+
+
+
+
+
+        <!-- =========================================
+
+             PAGE HEADER
+
+        ========================================== -->
+
+
+
+        <div class="page-eyebrow">
+
+            Tech Center
+
+        </div>
+
+
+
+
+
+        <h1 class="page-title">
+
+            Material Management
+
+        </h1>
+
+
+
+
+
+        <div class="page-subtitle">
+
+            Review purchase orders, material availability,
+
+            overdue deliveries, and receiving status for the
+
+            Tech Center.
+
+        </div>
+
+
+
+
+
+        <!-- =========================================
+
+             DATA SOURCE
+
+        ========================================== -->
+
+
+
+        <div class="source-bar">
+
+
+
+            <div>
+
+
+
+                <div class="source-title">
+
+                    Purchase Order Source
+
+                </div>
+
+
+
+                <div class="source-note">
+
+                    Prototype view of purchasing information
+
+                    proposed from Acumatica.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="source-badge">
+
+                Proposed Acumatica Source
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- =========================================
+
+             METRICS
+
+        ========================================== -->
+
+
+
+        <div class="metrics-grid">
+
+
+
+
+
+            <div class="metric-card">
+
+
+
+                <div class="metric-label">
+
+                    Items Received
+
+                </div>
+
+
+
+                <div class="metric-value">
+
+                    {{ metrics.items_received }}
+
+                </div>
+
+
+
+                <div class="metric-note">
+
+                    Total quantity recorded as received.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="metric-card overdue-card">
+
+
+
+                <div class="metric-label">
+
+                    Items Overdue
+
+                </div>
+
+
+
+                <div class="metric-value">
+
+                    {{ metrics.items_overdue }}
+
+                </div>
+
+
+
+                <div class="metric-note">
+
+                    Outstanding quantity past its delivery date.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="metric-card">
+
+
+
+                <div class="metric-label">
+
+                    Active POs
+
+                </div>
+
+
+
+                <div class="metric-value">
+
+                    {{ metrics.active_pos }}
+
+                </div>
+
+
+
+                <div class="metric-note">
+
+                    Purchase orders with material still open.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="metric-card">
+
+
+
+                <div class="metric-label">
+
+                    Items Pending
+
+                </div>
+
+
+
+                <div class="metric-value">
+
+                    {{ metrics.items_pending }}
+
+                </div>
+
+
+
+                <div class="metric-note">
+
+                    Total quantity still outstanding.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+        <!-- =========================================
+
+             STATUS SUMMARY
+
+        ========================================== -->
+
+
+
+        <div class="status-summary">
+
+
+
+            <div class="status-summary-header">
+
+
+
+                <div class="status-summary-title">
+
+                    Material Status
+
+                </div>
+
+
+
+                <div class="status-summary-note">
+
+                    {{ metrics.open_lines }} open line
+
+                    item{% if metrics.open_lines != 1 %}s{% endif %}
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="status-summary-grid">
+
+
+
+
+
+                <div class="status-summary-item">
+
+
+
+                    <div class="status-summary-name">
+
+                        Overdue
+
+                    </div>
+
+
+
+                    <div class="status-summary-number">
+
+                        {{ status_counts["Overdue"] }}
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+                <div class="status-summary-item">
+
+
+
+                    <div class="status-summary-name">
+
+                        Backordered
+
+                    </div>
+
+
+
+                    <div class="status-summary-number">
+
+                        {{ status_counts["Backordered"] }}
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+                <div class="status-summary-item">
+
+
+
+                    <div class="status-summary-name">
+
+                        Partially Received
+
+                    </div>
+
+
+
+                    <div class="status-summary-number">
+
+                        {{ status_counts["Partially Received"] }}
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+                <div class="status-summary-item">
+
+
+
+                    <div class="status-summary-name">
+
+                        Awaiting Receipt
+
+                    </div>
+
+
+
+                    <div class="status-summary-number">
+
+                        {{ status_counts["Awaiting Receipt"] }}
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+                <div class="status-summary-item">
+
+
+
+                    <div class="status-summary-name">
+
+                        Received
+
+                    </div>
+
+
+
+                    <div class="status-summary-number">
+
+                        {{ status_counts["Received"] }}
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+        <div class="material-view-tabs">
+            <a class="material-view-tab active" href="{{ url_for('materials') }}">
+                Material Status
+            </a>
+            <a class="material-view-tab" href="{{ url_for('delivery_ticket_history') }}">
+                Delivery Ticket History
+            </a>
+        </div>
+
+
+
+
+
+
+
+        <!-- =========================================
+
+             OVERDUE MATERIALS
+
+        ========================================== -->
+
+
+
+        {% if overdue_lines %}
+
+
+
+            <div class="overdue-workspace">
+
+
+
+
+
+                <div class="overdue-header">
+
+
+
+
+
+                    <div>
+<div class="overdue-title">
+
+                            Overdue Materials
+
+                        </div>
+
+
+
+                        <div class="overdue-subtitle">
+
+                            Outstanding material with a delivery
+
+                            date earlier than today.
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+
+
+                    <div class="overdue-total">
+
+
+
+                        {{ overdue_lines|length }}
+
+
+
+                        overdue line
+
+                        item{% if overdue_lines|length != 1 %}s{% endif %}
+
+
+
+                    </div>
+
+
+
+
+
+                </div>
+
+
+
+
+
+                <div class="table-wrap">
+
+
+
+
+
+                    <table class="po-table">
+
+
+
+
+
+                        <thead>
+
+
+
+                            <tr>
+
+
+
+                                <th>
+
+                                    PO Number
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Project
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Part Number
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Description
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Vendor
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Delivery Date
+
+                                </th>
+
+
+
+                                <th class="qty">
+
+                                    Ordered
+
+                                </th>
+
+
+
+                                <th class="qty">
+
+                                    Received
+
+                                </th>
+
+
+
+                                <th class="qty">
+
+                                    Outstanding
+
+                                </th>
+
+
+
+                                <th>
+
+                                    Days Overdue
+
+                                </th>
+
+
+
+                            </tr>
+
+
+
+                        </thead>
+
+
+
+
+
+                        <tbody>
+
+
+
+
+
+                            {% for line in overdue_lines %}
+
+
+
+
+
+                                <tr
+
+                                    class="
+
+                                        po-row
+
+                                        overdue-row
+
+                                    "
+
+
+
+                                    tabindex="0"
+
+
+
+                                    role="link"
+
+
+
+                                    data-url="{{
+
+
+
+                                        url_for(
+
+                                            'materials_purchase_order_detail',
+
+                                            project_slug=line.project_slug,
+
+                                            po_number=line.po_number
+
+                                        )
+
+
+
+                                    }}"
+
+                                >
+
+
+
+
+
+                                    <td>
+
+
+
+                                        <span class="po-number">
+
+                                            {{ line.po_number }}
+
+                                        </span>
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="project-name">
+
+
+
+                                        {{ line.project_name }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="part-number">
+
+
+
+                                        {{
+
+                                            line.part_number
+
+                                            or "—"
+
+                                        }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td>
+
+
+
+                                        {{
+
+                                            line.description
+
+                                            or "—"
+
+                                        }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td>
+
+
+
+                                        {{
+
+                                            line.vendor
+
+                                            or "—"
+
+                                        }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td>
+
+
+
+                                        {{
+
+                                            line.delivery_date
+
+                                            or line.expected_date
+
+                                            or line.promised_date
+
+                                            or "—"
+
+                                        }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="qty">
+
+
+
+                                        {{ line.ordered_qty }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="qty">
+
+
+
+                                        {{ line.received_qty }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="qty">
+
+
+
+                                        {{ line.outstanding_qty }}
+
+
+
+                                    </td>
+
+
+
+
+
+                                    <td class="overdue-days">
+
+
+
+                                        {{ line.days_overdue }}
+
+                                        day{% if line.days_overdue != 1 %}s{% endif %}
+
+
+
+                                    </td>
+
+
+
+
+
+                                </tr>
+
+
+
+
+
+                            {% endfor %}
+
+
+
+
+
+                        </tbody>
+
+
+
+
+
+                    </table>
+
+
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+        {% endif %}
+
+
+
+
+
+        <!-- =========================================
+
+             ALL PURCHASE ORDERS
+
+        ========================================== -->
+
+
+
+        <div class="workspace">
+
+
+
+
+
+            <div class="workspace-header">
+
+
+
+
+
+                <div>
+
+
+
+
+
+                    <div class="workspace-title">
+
+                        All Purchase Orders
+
+                    </div>
+
+
+
+
+
+                    <div class="workspace-subtitle">
+
+
+
+                        Select a PO to review its material
+
+                        line items.
+
+
+
+                    </div>
+
+
+
+
+
+                </div>
+
+
+
+
+
+                <div class="controls">
+
+
+
+
+
+                    <input
+
+                        id="poSearch"
+
+                        class="search-box"
+
+                        type="search"
+
+                        placeholder="Search PO, project, vendor, part number..."
+
+                        autocomplete="off"
+
+                    >
+
+
+
+
+
+                    <select
+
+                        id="statusFilter"
+
+                        class="status-filter"
+
+                    >
+
+
+
+
+
+                        <option value="all">
+
+                            All Statuses
+
+                        </option>
+
+
+
+
+
+                        <option value="Overdue">
+
+                            Overdue
+
+                        </option>
+
+
+
+
+
+                        <option value="Backordered">
+
+                            Backordered
+
+                        </option>
+
+
+
+
+
+                        <option value="Awaiting Receipt">
+
+                            Awaiting Receipt
+
+                        </option>
+
+
+
+
+
+                        <option value="Partially Received">
+
+                            Partially Received
+
+                        </option>
+
+
+
+
+
+                        <option value="Received">
+
+                            Received
+
+                        </option>
+
+
+
+
+
+                    </select>
+
+
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+
+            <!-- =====================================
+
+                 PO TABLE
+
+            ====================================== -->
+
+
+
+            <div class="table-wrap">
+
+
+
+
+
+                <table class="po-table">
+
+
+
+
+
+                    <thead>
+
+
+
+
+
+                        <tr>
+
+
+
+
+
+                            <th>
+
+                                PO Number
+
+                            </th>
+
+
+
+
+
+                            <th>
+
+                                Project
+
+                            </th>
+
+
+
+
+
+                            <th>
+
+                                Vendor
+
+                            </th>
+
+
+
+
+
+                            <th class="qty">
+
+                                Ordered
+
+                            </th>
+
+
+
+
+
+                            <th class="qty">
+
+                                Received
+
+                            </th>
+
+
+
+
+
+                            <th class="qty">
+
+                                Outstanding
+
+                            </th>
+
+
+
+
+
+                            <th>
+
+                                Status
+
+                            </th>
+
+
+
+
+
+                        </tr>
+
+
+
+
+
+                    </thead>
+
+
+
+
+
+                    <tbody id="poTableBody">
+
+
+
+
+
+                        {% for po in all_pos %}
+
+
+
+
+
+                            <tr
+
+                                class="po-row"
+                                data-po="{{ po.po_number }}"
+
+
+
+                                tabindex="0"
+
+
+
+                                data-status="{{ po.status }}"
+
+
+
+                                data-search="{{ po.search_text }}"
+
+                            >
+
+
+
+
+
+                                <!-- PO NUMBER -->
+
+
+
+                                <td>
+
+
+
+                                    <span class="po-number">
+
+                                        {{ po.po_number }}
+
+                                    </span>
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- PROJECT -->
+
+
+
+                                <td class="project-name">
+
+
+
+                                    {{ po.project_name }}
+
+
+
+
+
+                                    {% if po.package_name %}
+
+
+
+                                        <div class="secondary-text">
+
+
+
+                                            {{ po.package_name }}
+
+
+
+                                        </div>
+
+
+
+                                    {% endif %}
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- VENDOR -->
+
+
+
+                                <td>
+
+
+
+                                    {{ po.vendor }}
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- ORDERED -->
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ po.total_ordered }}
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- RECEIVED -->
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ po.total_received }}
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- OUTSTANDING -->
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ po.total_outstanding }}
+
+
+
+                                </td>
+
+
+
+
+
+                                <!-- STATUS -->
+
+
+
+                                <td>
+
+
+
+
+
+                                    {% if po.status == "Overdue" %}
+
+
+
+
+
+                                        <span
+
+                                            class="
+
+                                                status-pill
+
+                                                status-overdue
+
+                                            "
+
+                                        >
+
+
+
+                                            Overdue
+
+
+
+                                        </span>
+
+
+
+
+
+                                    {% elif po.status == "Backordered" %}
+
+
+
+
+
+                                        <span
+
+                                            class="
+
+                                                status-pill
+
+                                                status-backordered
+
+                                            "
+
+                                        >
+
+
+
+                                            Backordered
+
+
+
+                                        </span>
+
+
+
+
+
+                                        {% if
+
+                                            po.backordered_items > 1
+
+                                        %}
+
+
+
+                                            <span
+
+                                                class="backorder-count"
+
+                                            >
+
+
+
+                                                {{
+
+                                                    po.backordered_items
+
+                                                }}
+
+
+
+                                                items
+
+
+
+                                            </span>
+
+
+
+                                        {% endif %}
+
+
+
+
+
+                                    {% elif po.status ==
+
+                                        "Awaiting Receipt"
+
+                                    %}
+
+
+
+
+
+                                        <span
+
+                                            class="
+
+                                                status-pill
+
+                                                status-awaiting
+
+                                            "
+
+                                        >
+
+
+
+                                            Awaiting Receipt
+
+
+
+                                        </span>
+
+
+
+
+
+                                    {% elif po.status ==
+
+                                        "Partially Received"
+
+                                    %}
+
+
+
+
+
+                                        <span
+
+                                            class="
+
+                                                status-pill
+
+                                                status-partial
+
+                                            "
+
+                                        >
+
+
+
+                                            Partially Received
+
+
+
+                                        </span>
+
+
+
+
+
+                                    {% else %}
+
+
+
+
+
+                                        <span
+
+                                            class="
+
+                                                status-pill
+
+                                                status-received
+
+                                            "
+
+                                        >
+
+
+
+                                            Received
+
+
+
+                                        </span>
+
+
+
+
+
+                                    {% endif %}
+
+
+
+
+
+                                </td>
+
+
+
+
+
+                            </tr>
+
+<tr class="po-detail-row" data-detail-for="{{ po.po_number }}">
+                                <td colspan="7" class="po-detail-cell">
+                                    <table class="po-detail-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Part Number</th>
+                                                <th>Description</th>
+                                                <th>Delivery Date</th>
+                                                <th class="qty">Ordered</th>
+                                                <th class="qty">Received</th>
+                                                <th class="qty">Outstanding</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for line in po.lines %}
+                                                <tr>
+                                                    <td class="part-number">{{ line.part_number or "—" }}</td>
+                                                    <td>{{ line.description or "—" }}</td>
+                                                    <td>{{ line.delivery_date or "—" }}</td>
+                                                    <td class="qty">{{ line.ordered_qty }}</td>
+                                                    <td class="qty">{{ line.received_qty }}</td>
+                                                    <td class="qty">{{ line.outstanding_qty }}</td>
+                                                    <td>{{ line.display_status }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+
+
+
+
+
+
+                        {% else %}
+
+
+
+
+
+                            <tr>
+
+
+
+                                <td
+
+                                    colspan="7"
+
+                                    class="empty-state"
+
+                                >
+
+
+
+                                    No purchase orders
+
+                                    were found.
+
+
+
+                                </td>
+
+
+
+                            </tr>
+                            
+
+
+
+
+
+
+                        {% endfor %}
+
+
+
+
+
+                    </tbody>
+
+
+
+
+
+                </table>
+
+
+
+
+
+            </div>
+
+
+
+
+
+            <!-- =====================================
+
+                 TABLE FOOTER
+
+            ====================================== -->
+
+
+
+            <div class="table-footer">
+
+
+
+
+
+                <span id="visibleCount">
+
+
+
+                    {{ all_pos|length }}
+
+
+
+                    purchase order{% if
+
+                        all_pos|length != 1
+
+                    %}s{% endif %}
+
+
+
+                </span>
+
+
+
+
+
+                <span>
+
+
+
+                    Click a PO row to view material details
+
+
+
+                </span>
+
+
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+    <script>
+
+
+
+        document.addEventListener(
+
+
+
+            "DOMContentLoaded",
+
+
+
+            function () {
+
+
+
+
+
+                /* =====================================
+
+                   ELEMENTS
+
+                ====================================== */
+
+
+
+                const searchInput =
+
+                    document.getElementById(
+
+                        "poSearch"
+
+                    );
+
+
+
+
+
+                const statusFilter =
+
+                    document.getElementById(
+
+                        "statusFilter"
+
+                    );
+
+
+
+
+
+                const rows =
+
+                    Array.from(
+
+
+
+                        document.querySelectorAll(
+
+                            "#poTableBody .po-row"
+
+                        )
+
+
+
+                    );
+
+
+
+
+
+                const clickableRows =
+
+                    Array.from(
+
+
+
+                        document.querySelectorAll(
+
+                            ".overdue-row[data-url]"
+
+                        )
+
+
+
+                    );
+
+
+
+
+
+                const visibleCount =
+
+                    document.getElementById(
+
+                        "visibleCount"
+
+                    );
+
+
+
+
+
+                /* =====================================
+
+                   SEARCH + STATUS FILTER
+
+                ====================================== */
+
+
+
+                function filterRows() {
+
+
+
+
+
+                    const searchValue =
+
+                        searchInput.value
+
+                            .trim()
+
+                            .toLowerCase();
+
+
+
+
+
+                    const selectedStatus =
+
+                        statusFilter.value;
+
+
+
+
+
+                    let count = 0;
+
+
+
+
+
+                    rows.forEach(
+
+
+
+                        function (row) {
+
+
+
+
+
+                            const searchableText =
+
+                                (
+
+                                    row.dataset.search ||
+
+                                    ""
+
+                                ).toLowerCase();
+
+
+
+
+
+                            const rowStatus =
+
+                                row.dataset.status ||
+
+                                "";
+
+
+
+
+
+                            const matchesSearch =
+
+                                !searchValue ||
+
+                                searchableText.includes(
+
+                                    searchValue
+
+                                );
+
+
+
+
+
+                            const matchesStatus =
+
+                                selectedStatus === "all" ||
+
+                                rowStatus ===
+
+                                    selectedStatus;
+
+
+
+
+
+                            const showRow =
+
+                                matchesSearch &&
+
+                                matchesStatus;
+
+
+
+
+
+                            row.style.display =
+
+                                showRow
+
+                                    ? ""
+
+                                    : "none";
+
+
+
+
+
+                            if (showRow) {
+
+                                count += 1;
+
+                            }
+
+
+
+
 
                         }
+
+
+
+                    );
+
+
+
+
+
+                    visibleCount.textContent =
+
+                        count +
+
+                        (
+
+                            count === 1
+
+                                ? " purchase order"
+
+                                : " purchase orders"
+
+                        );
+
+
+
+                }
+
+
+
+
+
+                
+                /* =====================================
+                   EXPAND / COLLAPSE ALL PURCHASE ORDERS
+                ====================================== */
+
+                rows.forEach(
+                    function (row) {
+                        function togglePurchaseOrder() {
+                            const poNumber = row.dataset.po;
+                            const detailRow =
+                                document.querySelector(
+                                    '.po-detail-row[data-detail-for="' +
+                                    poNumber +
+                                    '"]'
+                                );
+
+                            if (!detailRow) {
+                                return;
+                            }
+
+                            const isOpen =
+                                detailRow.classList.contains("open");
+
+                            detailRow.classList.toggle("open", !isOpen);
+                            row.classList.toggle("expanded", !isOpen);
+                        }
+
+                        row.addEventListener("click", togglePurchaseOrder);
+
+                        row.addEventListener(
+                            "keydown",
+                            function (event) {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault();
+                                    togglePurchaseOrder();
+                                }
+                            }
+                        );
+                    }
+                );
+
+
+/* =====================================
+
+                   OPEN PO
+
+                ====================================== */
+
+
+
+                clickableRows.forEach(
+
+
+
+                    function (row) {
+
+
+
+
+
+                        function openPurchaseOrder() {
+
+
+
+
+
+                            const target =
+
+                                row.dataset.url;
+
+
+
+
+
+                            if (target) {
+
+
+
+                                window.location.href =
+
+                                    target;
+
+
+
+                            }
+
+
+
+
+
+                        }
+
+
+
+
+
+                        row.addEventListener(
+
+
+
+                            "click",
+
+
+
+                            openPurchaseOrder
+
+
+
+                        );
+
+
+
+
+
+                        row.addEventListener(
+
+
+
+                            "keydown",
+
+
+
+                            function (event) {
+
+
+
+
+
+                                if (
+
+
+
+                                    event.key === "Enter" ||
+
+                                    event.key === " "
+
+
+
+                                ) {
+
+
+
+                                    event.preventDefault();
+
+
+
+                                    openPurchaseOrder();
+
+
+
+                                }
+
+
+
+
+
+                            }
+
+
+
+                        );
+
+
+
+
 
                     }
 
 
-                    row.addEventListener(
-                        "click",
-                        openPurchaseOrder
-                    );
+
+                );
 
 
-                    row.addEventListener(
-                        "keydown",
-                        function (event) {
 
 
-                            if (
-                                event.key === "Enter" ||
-                                event.key === " "
-                            ) {
 
-                                event.preventDefault();
+                /* =====================================
 
-                                openPurchaseOrder();
+                   EVENT LISTENERS
 
-                            }
-
-                        }
-                    );
-
-                }
-            );
+                ====================================== */
 
 
-            /* =====================================
-               EVENT LISTENERS
-            ====================================== */
 
-            searchInput.addEventListener(
-                "input",
-                filterRows
-            );
+                searchInput.addEventListener(
 
 
-            statusFilter.addEventListener(
-                "change",
-                filterRows
-            );
 
-        }
-    );
+                    "input",
 
-</script>
 
-{% endblock %}
+
+                    filterRows
+
+
+
+                );
+
+
+
+
+
+                statusFilter.addEventListener(
+
+
+
+                    "change",
+
+
+
+                    filterRows
+
+
+
+                );
+
+
+
+
+
+            }
+
+
+
+        );
+
+
+
+    </script>
+
+
+
+
+
+    {% endblock %}

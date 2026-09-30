@@ -1,459 +1,4234 @@
-{% extends "base.html" %}
+={% extends "base.html" %}
+
 
 
 {% block title %}
+
 Purchase Orders | {{ project.name }} | AIMS
+
 {% endblock %}
+
 
 
 {% block content %}
 
 
+
 <style>
 
+.project-po-page {
+
+    margin-top: 22px;
+
+}
+
+
+
+/* =====================================================
+
+    PAGE HEADING
+
+====================================================== */
+
+
+
 .po-page-heading {
-    margin-bottom: 18px;
+
+    margin-bottom: 16px;
+
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+
+
+    gap: 18px;
+
+}
+
+
+
+.po-page-heading h2 {
+
+    margin: 0 0 4px;
+
+
+
+    color: #2f3e36;
+
+
+
+    font-size: 20px;
+
+    font-weight: 650;
+
+}
+
+
+
+.po-page-heading p {
+
+    margin: 0;
+
+
+
+    color: #748087;
+
+
+
+    font-size: 11px;
+
+}
+
+
+
+.source-label {
+
+    padding: 4px 8px;
+
+
+
+    background: #eef4f0;
+
+
+
+    border: 1px solid #d7e2db;
+
+    border-radius: 3px;
+
+
+
+    color: #486052;
+
+
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .35px;
+
+    text-transform: uppercase;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    SUMMARY
+
+====================================================== */
+
+
+
+.po-summary-grid {
+
+    margin-bottom: 14px;
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns:
+
+        repeat(4, minmax(0, 1fr));
+
+
+
+    gap: 8px;
+
+}
+
+
+
+.po-summary-card {
+
+    padding: 11px 13px;
+
+
+
+    background: #ffffff;
+
+
+
+    border: 1px solid #dfe4e1;
+
+}
+
+
+
+.po-summary-card.attention {
+
+    border-left: 3px solid #b94d4d;
+
+}
+
+
+
+.po-summary-label {
+
+    color: #7a837f;
+
+
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .45px;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.po-summary-value {
+
+    margin-top: 5px;
+
+
+
+    color: #34433b;
+
+
+
+    font-size: 21px;
+
+    font-weight: 650;
+
+
+
+    font-variant-numeric: tabular-nums;
+
+}
+
+
+
+.po-summary-card.attention .po-summary-value {
+
+    color: #994545;
+
+}
+
+
+
+.po-summary-note {
+
+    margin-top: 2px;
+
+
+
+    color: #89918d;
+
+
+
+    font-size: 9px;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    WORKSPACE
+
+====================================================== */
+
+
+
+.po-workspace {
+
+    background: #ffffff;
+
+
+
+    border: 1px solid #dfe4e1;
+
+}
+
+
+
+.po-workspace-header {
+
+    padding: 11px 12px;
+
+
+
+    border-bottom: 1px solid #dfe4e1;
+
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+
+
+    gap: 15px;
+
+}
+
+
+
+.workspace-title {
+
+    color: #34433b;
+
+
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+
+.workspace-subtitle {
+
+    margin-top: 2px;
+
+
+
+    color: #7c8580;
+
+
+
+    font-size: 10px;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    TOOLBAR
+
+====================================================== */
+
+
+
+.po-toolbar {
+
+    display: flex;
+
+    align-items: center;
+
+
+
+    gap: 7px;
+
+}
+
+
+
+.po-search {
+
+    width: 300px;
+
+    height: 32px;
+
+
+
+    padding: 0 9px;
+
+
+
+    border: 1px solid #ccd5d0;
+
+
+
+    background: #ffffff;
+
+
+
+    color: #34433b;
+
+
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+
+
+    outline: none;
+
+}
+
+
+
+.po-search:focus {
+
+    border-color: #738f7f;
+
+
+
+    box-shadow:
+
+        0 0 0 2px
+
+        rgba(82, 111, 94, .08);
+
+}
+
+
+
+.po-filter {
+
+    height: 32px;
+
+
+
+    padding: 0 8px;
+
+
+
+    border: 1px solid #ccd5d0;
+
+
+
+    background: #ffffff;
+
+
+
+    color: #4d5b54;
+
+
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+
+
+    outline: none;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    MAIN PO TABLE
+
+====================================================== */
+
+
+
+.po-table-wrap {
+
+    width: 100%;
+
+
+
+    overflow-x: auto;
+
+}
+
+
+
+.po-table {
+
+    width: 100%;
+
+
+
+    min-width: 1050px;
+
+
+
+    border-collapse: collapse;
+
+    table-layout: auto;
+
+}
+
+
+
+.po-table > thead > tr > th {
+
+    padding: 7px 9px;
+
+
+
+    background: #f5f7f6;
+
+
+
+    border-right: 1px solid #e7ebe8;
+
+    border-bottom: 1px solid #dce2de;
+
+
+
+    color: #5e6963;
+
+
+
+    text-align: left;
+
+
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .4px;
+
+    text-transform: uppercase;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.po-table > tbody > .po-row > td {
+
+    padding: 8px 9px;
+
+
+
+    border-right: 1px solid #eef1ef;
+
+    border-bottom: 1px solid #e8ece9;
+
+
+
+    color: #3f4944;
+
+
+
+    font-size: 11px;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.po-table > thead > tr > th:last-child,
+
+.po-table > tbody > .po-row > td:last-child {
+
+    border-right: 0;
+
+}
+
+
+
+.po-row {
+
+    cursor: pointer;
+
+
+
+    transition: *background* .12s ease;
+
+}
+
+
+
+.po-row:hover {
+
+    background: #f5f9f6;
+
+}
+
+
+
+.po-row.expanded {
+
+    background: #f3f7f4;
+
+}
+
+
+
+.po-number-cell {
+
+    display: flex;
+
+    align-items: center;
+
+
+
+    gap: 7px;
+
+}
+
+
+
+.expand-arrow {
+
+    width: 12px;
+
+
+
+    color: #68766f;
+
+
+
+    font-size: 10px;
+
+
+
+    transition: transform .15s ease;
+
+}
+
+
+
+.po-row.expanded .expand-arrow {
+
+    transform: rotate(90deg);
+
+}
+
+
+
+.po-number {
+
+    color: #315c46;
+
+
+
+    font-weight: 700;
+
+}
+
+
+
+.vendor-name {
+
+    color: #44534b;
+
+}
+
+
+
+.package-name {
+
+    color: #64726b;
+
+}
+
+
+
+.qty {
+
+    text-align: right;
+
+
+
+    font-variant-numeric: tabular-nums;
+
+}
+
+
+
+.po-table th.qty {
+
+    text-align: right;
+
+}
+
+
+
+.center {
+
+    text-align: center !important;
+
+}
+
+
+
+.outstanding-value {
+
+    font-weight: 650;
+
+}
+
+
+
+.outstanding-value.has-outstanding {
+
+    color: #8c4d3c;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    STATUS
+
+====================================================== */
+
+
+
+.status-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+
+
+    gap: 5px;
+
+
+
+    padding: 3px 6px;
+
+
+
+    border: 1px solid transparent;
+
+    border-radius: 3px;
+
+
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.status-pill::before {
+
+    content: "";
+
+
+
+    width: 5px;
+
+    height: 5px;
+
+
+
+    border-radius: 50%;
+
+}
+
+
+
+.status-received {
+
+    color: #3f684e;
+
+
+
+    background: #eef7f1;
+
+
+
+    border-color: #cfe3d5;
+
+}
+
+
+
+.status-received::before {
+
+    background: #579269;
+
+}
+
+
+
+.status-partial {
+
+    color: #3c5f7b;
+
+
+
+    background: #eef5fa;
+
+
+
+    border-color: #cfdfe9;
+
+}
+
+
+
+.status-partial::before {
+
+    background: #5c86a5;
+
+}
+
+
+
+.status-awaiting {
+
+    color: #85651d;
+
+
+
+    background: #fff8e5;
+
+
+
+    border-color: #eedda8;
+
+}
+
+
+
+.status-awaiting::before {
+
+    background: #c99b2e;
+
+}
+
+
+
+.status-overdue {
+
+    color: #985235;
+
+
+
+    background: #fff1e9;
+
+
+
+    border-color: #efd1c0;
+
+}
+
+
+
+.status-overdue::before {
+
+    background: #c9683e;
+
+}
+
+
+
+.status-backordered {
+
+    color: #8b3939;
+
+
+
+    background: #fbefef;
+
+
+
+    border-color: #efd0d0;
+
+}
+
+
+
+.status-backordered::before {
+
+    background: #b94d4d;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    EXPANDED PO AREA
+
+====================================================== */
+
+
+
+.po-detail-row {
+
+    display: none;
+
+}
+
+
+
+.po-detail-row.open {
+
+    display: table-row;
+
+}
+
+
+
+.po-detail-row > td {
+
+    padding: 0 !important;
+
+
+
+    background: #fafcfb;
+
+
+
+    border-bottom: 1px solid #d7dfda;
+
+}
+
+
+
+.po-expanded-panel {
+
+    padding: 14px 18px 17px 35px;
+
+
+
+    border-left: 3px solid #6b8a78;
+
+}
+
+
+
+.expanded-heading {
+
+    margin-bottom: 10px;
+
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+
+
+    gap: 15px;
+
+}
+
+
+
+.expanded-title {
+
+    color: #35443c;
+
+
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .25px;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.expanded-description {
+
+    margin-top: 2px;
+
+
+
+    color: #818985;
+
+
+
+    font-size: 9px;
+
+}
+
+
+
+.line-count-label {
+
+    color: #7b847f;
+
+
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    LINE ITEM TABLE
+
+====================================================== */
+
+
+
+.line-table-wrap {
+
+    width: 100%;
+
+
+
+    overflow-x: auto;
+
+
+
+    background: #ffffff;
+
+
+
+    border: 1px solid #dfe5e1;
+
+}
+
+
+
+.line-table {
+
+    width: 100%;
+
+
+
+    min-width: 980px;
+
+
+
+    border-collapse: collapse;
+
+}
+
+
+
+.line-table th {
+
+    padding: 6px 8px;
+
+
+
+    background: #f4f6f5;
+
+
+
+    border-right: 1px solid #e5e9e6;
+
+    border-bottom: 1px solid #dce2de;
+
+
+
+    color: #626c67;
+
+
+
+    text-align: left;
+
+
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .35px;
+
+    text-transform: uppercase;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.line-table td {
+
+    padding: 7px 8px;
+
+
+
+    border-right: 1px solid #edf0ee;
+
+    border-bottom: 1px solid #e9ecea;
+
+
+
+    color: #424c47;
+
+
+
+    font-size: 10px;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.line-table th:last-child,
+
+.line-table td:last-child {
+
+    border-right: 0;
+
+}
+
+
+
+.line-table tbody tr:last-child td {
+
+    border-bottom: 0;
+
+}
+
+
+
+.line-table tbody tr:hover {
+
+    background: #f8faf9;
+
+}
+
+
+
+.part-number {
+
+    color: #315c46 !important;
+
+
+
+    font-weight: 700;
+
+}
+
+
+
+.description-cell {
+
+    min-width: 210px;
+
+
+
+    white-space: normal !important;
+
+}
+
+
+
+.uom {
+
+    text-align: center;
+
+}
+
+
+
+.delivery-date {
+
+    color: #606b65;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    DELIVERY TICKET
+
+====================================================== */
+
+
+
+.ticket-list {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+
+
+    gap: 4px;
+
+}
+
+
+
+.ticket-badge {
+
+    display: inline-flex;
+
+
+
+    padding: 2px 5px;
+
+
+
+    background: #f4f7f5;
+
+
+
+    border: 1px solid #d6dfda;
+
+    border-radius: 2px;
+
+
+
+    color: #4c6457;
+
+
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+
+
+    white-space: nowrap;
+
+}
+
+
+
+.no-ticket {
+
+    color: #a0a7a3;
+
+
+
+    font-size: 9px;
+
+}
+
+
+
+
+
+/* =====================================================
+
+    RECEIPT HISTORY
+
+====================================================== */
+
+
+
+.receipt-history {
+
+    margin-top: 10px;
+
+
+
+    background: #ffffff;
+
+
+
+    border: 1px solid #e0e5e2;
+
+}
+
+
+
+.receipt-history-header {
+
+    padding: 7px 9px;
+
+
+
+    background: #f7f9f8;
+
+
+
+    border-bottom: 1px solid #e0e5e2;
+
+
+
+    color: #5b6961;
+
+
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .35px;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.receipt-history-grid {
+
+    display: grid;
+
+
+
+    grid-template-columns:
+
+        1fr 1fr 1fr 1fr 1fr;
+
+}
+
+
+
+.receipt-history-item {
+
+    padding: 7px 9px;
+
+
+
+    border-right: 1px solid #e8ece9;
+
+    border-bottom: 1px solid #e8ece9;
+
+
+
+    font-size: 9px;
+
+}
+
+
+
+.receipt-history-item:nth-child(5n) {
+
+    border-right: 0;
+
+}
+
+
+
+.receipt-label {
+
+    margin-bottom: 2px;
+
+
+
+    color: #89918d;
+
+
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+
+
+    letter-spacing: .3px;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.receipt-value {
+
+    color: #44524a;
+
+
+
+    font-weight: 600;
+
+}
+
+
+
+
+
+.receipt-ticket-list {
+    padding: 8px;
+    display: grid;
+    gap: 8px;
+}
+
+.receipt-ticket-card {
+    border: 1px solid #dfe5e1;
+    background: #ffffff;
+}
+
+.receipt-ticket-summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.po-page-heading h2 {
-    margin: 0 0 5px;
-    font-size: 20px;
-}
-
-.po-page-heading p {
-    margin: 0;
-    color: #748087;
-    font-size: 11px;
-}
-
-.acumatica-source-label {
-    padding: 6px 10px;
-    background: #eef4f2;
-    border: 1px solid #d7e3df;
-    border-radius: 20px;
-    color: #3f6759;
+    gap: 12px;
+    padding: 8px 10px;
+    background: #f7f9f8;
+    border-bottom: 1px solid #e3e8e5;
     font-size: 9px;
+}
+
+.receipt-ticket-number {
+    color: #315c46;
+    font-weight: 800;
+    margin-right: 10px;
+}
+
+.receipt-ticket-date,
+.receipt-ticket-receiver {
+    color: #68736d;
+}
+
+.receipt-ticket-lines {
+    width: 100%;
+}
+
+.receipt-ticket-line {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 10px;
+    padding: 6px 10px;
+    border-bottom: 1px solid #edf0ee;
+    color: #44524a;
+    font-size: 9px;
+}
+
+.receipt-ticket-line:last-child {
+    border-bottom: 0;
+}
+
+.receipt-ticket-line-head {
+    background: #fbfcfb;
+    color: #89918d;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.receipt-ticket-part {
+    color: #315c46;
     font-weight: 700;
 }
 
-.po-toolbar {
-    margin-bottom: 18px;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
+.receipt-ticket-notes {
+    padding: 7px 10px;
+    border-top: 1px solid #e8ece9;
+    color: #5d6862;
+    font-size: 9px;
 }
 
-.po-search {
-    width: 390px;
-    height: 43px;
-    padding: 0 13px;
+.receipt-ticket-notes span {
+    margin-right: 6px;
+    color: #89918d;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+
+    FOOTER / EMPTY
+
+====================================================== */
+
+
+
+.po-table-footer {
+
+    padding: 7px 10px;
+
+
+
+    background: #fafbfa;
+
+
+
+    border-top: 1px solid #e2e7e4;
+
+
+
+    color: #7b837f;
+
+
+
+    font-size: 9px;
+
+
+
+    display: flex;
+
+    justify-content: space-between;
+
+
+
+    gap: 10px;
+
+}
+
+
+
+.empty-state {
+
+    padding: 50px 20px;
+
+
+
+    background: #ffffff;
+
+
+
+    border: 1px solid #dce4e1;
+
+
+
+    text-align: center;
+
+}
+
+
+
+.empty-state h3 {
+
+    margin: 0 0 6px;
+
+
+
+    color: #3e4d45;
+
+
+
+    font-size: 14px;
+
+}
+
+
+
+.empty-state p {
+
+    margin: 0;
+
+
+
+    color: #748087;
+
+
+
+    font-size: 11px;
+
+}
+
+
+
+.no-results-row {
+
+    display: none;
+
+}
+
+
+
+.no-results-row.show {
+
+    display: table-row;
+
+}
+
+
+
+.no-results-row td {
+
+    padding: 28px 15px !important;
+
+
+
+    color: #7b8580;
+
+
+
+    text-align: center;
+
+
+
+    font-size: 11px;
+
+}
+
+
+
+
+
+/* =====================================================
+    RECORD DELIVERY
+====================================================== */
+
+.expanded-actions {
     display: flex;
     align-items: center;
-    background: #ffffff;
-    border: 1px solid #d8e0dd;
-    border-radius: 8px;
+    gap: 9px;
 }
 
-.po-search span {
-    margin-right: 8px;
-}
-
-.po-search input {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-}
-
-.po-filter-buttons {
-    display: flex;
-    gap: 6px;
-}
-
-.po-filter-button {
-    height: 36px;
-    padding: 0 13px;
-    border: 1px solid #d7dfdc;
-    border-radius: 7px;
-    background: #ffffff;
-    color: #59676c;
+.record-delivery-btn {
+    padding: 6px 10px;
+    border: 1px solid #52705f;
+    border-radius: 3px;
+    background: #52705f;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .25px;
     cursor: pointer;
 }
 
-.po-filter-button.active {
-    background: #285f4c;
+.record-delivery-btn:hover {
+    background: #456151;
+}
+
+.receiving-form-panel {
+    display: none;
+    margin-top: 10px;
+    padding: 12px;
+    background: #f7faf8;
+    border: 1px solid #d9e2dc;
+    border-left: 3px solid #52705f;
+}
+
+.receiving-form-panel.open {
+    display: block;
+}
+
+.receiving-form-title {
+    margin-bottom: 3px;
+    color: #35443c;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.receiving-form-subtitle {
+    margin-bottom: 11px;
+    color: #7b8580;
+    font-size: 9px;
+}
+
+.receiving-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 11px;
+}
+
+.receiving-field label,
+.receiving-notes label {
+    display: block;
+    margin-bottom: 4px;
+    color: #66726b;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.receiving-field input,
+.receiving-notes textarea,
+.receive-qty-input {
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid #cdd6d1;
+    border-radius: 2px;
+    background: #ffffff;
+    color: #3f4944;
+    font-family: inherit;
+    font-size: 10px;
+    outline: none;
+}
+
+.receiving-field input {
+    height: 31px;
+    padding: 0 8px;
+}
+
+.receiving-field input:focus,
+.receiving-notes textarea:focus,
+.receive-qty-input:focus {
+    border-color: #738f7f;
+    box-shadow: 0 0 0 2px rgba(82, 111, 94, .08);
+}
+
+.receive-entry-table {
+    width: 100%;
+    margin-bottom: 10px;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #dde4e0;
+}
+
+.receive-entry-table th {
+    padding: 6px 7px;
+    background: #f1f4f2;
+    border-bottom: 1px solid #dce2de;
+    color: #626c67;
+    text-align: left;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.receive-entry-table td {
+    padding: 6px 7px;
+    border-bottom: 1px solid #e9edea;
+    color: #46514b;
+    font-size: 9px;
+}
+
+.receive-entry-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.receive-qty-input {
+    width: 70px;
+    height: 27px;
+    padding: 0 6px;
+    text-align: right;
+}
+
+.receive-qty-input:disabled {
+    background: #f1f3f2;
+    color: #9ba29e;
+    cursor: not-allowed;
+}
+
+.receiving-notes textarea {
+    min-height: 58px;
+    padding: 7px 8px;
+    resize: vertical;
+}
+
+.receiving-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.receive-cancel-btn,
+.receive-submit-btn {
+    padding: 6px 11px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.receive-cancel-btn {
+    border: 1px solid #cbd4cf;
+    background: #ffffff;
+    color: #5d6962;
+}
+
+.receive-submit-btn {
+    border: 1px solid #52705f;
+    background: #52705f;
     color: #ffffff;
 }
 
-.po-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.receive-submit-btn:hover {
+    background: #456151;
 }
 
-.po-card {
-    padding: 20px;
-    background: #ffffff;
-    border: 1px solid #dce4e1;
-    border-radius: 10px;
-}
-
-.po-card-header {
-    margin-bottom: 17px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.po-number-label {
-    display: block;
-    color: #78847f;
-    font-size: 8px;
-}
-
-.po-vendor {
-    display: block;
-    margin-top: 5px;
+.receive-message {
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border: 1px solid;
     font-size: 10px;
 }
 
-.po-part-section {
-    padding: 14px;
-    display: grid;
-    grid-template-columns: 0.8fr 2fr;
-    gap: 20px;
-    background: #f8faf9;
-    border-radius: 7px;
+.receive-message.success {
+    border-color: #cfe3d5;
+    background: #eef7f1;
+    color: #3f684e;
 }
 
-.po-section-label {
-    display: block;
-    margin-bottom: 5px;
+.receive-message.error {
+    border-color: #efd0d0;
+    background: #fbefef;
+    color: #8b3939;
+}
+
+.receipt-notes {
+    margin-top: 3px;
+    color: #7b8580;
     font-size: 8px;
+    font-weight: 400;
 }
 
-.po-quantity-grid {
-    margin-top: 15px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border: 1px solid #e1e7e4;
-    border-radius: 7px;
-    overflow: hidden;
+
+/* =====================================================
+
+    RESPONSIVE
+
+====================================================== */
+
+
+
+@media (max-width: 950px) {
+
+
+
+    .po-summary-grid {
+
+        grid-template-columns:
+
+            repeat(2, 1fr);
+
+    }
+
+
+
+    .po-workspace-header {
+
+        align-items: flex-start;
+
+
+
+        flex-direction: column;
+
+    }
+
+
+
+    .po-toolbar {
+
+        width: 100%;
+
+    }
+
+
+
+    .po-search {
+
+        flex: 1;
+
+
+
+        width: auto;
+
+    }
+
+
+
+    .receipt-history-grid {
+
+        grid-template-columns:
+
+            repeat(2, 1fr);
+
+    }
+
+
+
+    .receipt-history-item:nth-child(5n) {
+
+        border-right:
+
+            1px solid #e8ece9;
+
+    }
+
+
+
+    .receipt-history-item:nth-child(2n) {
+
+        border-right: 0;
+
+    }
+
+
+
 }
 
-.po-quantity-grid > div {
-    padding: 13px;
-    border-right: 1px solid #e1e7e4;
-}
 
-.po-quantity-grid > div:last-child {
-    border-right: none;
-}
 
-.po-quantity-grid span {
-    display: block;
-    margin-bottom: 6px;
-    color: #77837f;
-    font-size: 9px;
-}
+@media (max-width: 620px) {
 
-.po-receipt-status {
-    font-size: 9px;
-}
 
-.empty-state {
-    padding: 60px 20px;
-    background: #ffffff;
-    border: 1px solid #dce4e1;
-    border-radius: 10px;
-    text-align: center;
-}
 
-.empty-state h3 {
-    margin-bottom: 7px;
-}
+    .po-page-heading {
 
-.empty-state p {
-    color: #748087;
-    font-size: 11px;
+        align-items: flex-start;
+
+
+
+        flex-direction: column;
+
+    }
+
+
+
+    .po-summary-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+
+    .po-toolbar {
+
+        flex-direction: column;
+
+
+
+        align-items: stretch;
+
+    }
+
+
+
+    .po-search,
+
+    .po-filter {
+
+        width: 100%;
+
+    }
+
+
+
+    .po-expanded-panel {
+
+        padding-left: 12px;
+
+    }
+
+    .receiving-fields {
+        grid-template-columns: 1fr;
+    }
+
+
+
 }
 
 </style>
 
 
 
+
+
+<!-- =====================================================
+
+    PROJECT HEADER
+
+====================================================== -->
+
+
+
 <section class="project-dashboard-header">
 
-    <div>
 
-        <span class="page-eyebrow">
-            PROJECT {{ project.number }}
-        </span>
 
-        <h1>
-            {{ project.name }}
-        </h1>
+<div>
 
-        <p>
-            Project purchasing and receipt visibility
-        </p>
 
-    </div>
 
-    <span class="status-badge active-status-badge">
-        {{ project.status }}
+    <span class="page-eyebrow">
+
+        PROJECT {{ project.number }}
+
     </span>
 
+
+
+    <h1>
+
+        {{ project.name }}
+
+    </h1>
+
+
+
+    <p>
+
+        Project purchasing and receipt visibility
+
+    </p>
+
+
+
+</div>
+
+
+
+<span class="status-badge active-status-badge">
+
+    {{ project.status }}
+
+</span>
+
+
+
 </section>
+
+
+
+
+
+<!-- =====================================================
+
+    PROJECT NAVIGATION
+
+====================================================== -->
 
 
 
 <nav class="project-dashboard-nav">
 
-    <a
-        href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Overview
-    </a>
 
-    <a
-        href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
-        class="project-dashboard-tab active"
-    >
-        Purchase Orders
-    </a>
 
-    <a
-        href="{{ url_for('project_schedule', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Project Schedule
-    </a>
+<a
 
-    <a
-        href="{{ url_for('project_materials', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Materials
-    </a>
+    href="{{ url_for(
 
-    <a
-        href="#"
-        class="project-dashboard-tab"
-    >
-        Reports
-    </a>
+        'project_dashboard',
+
+        project_slug=project_slug
+
+    ) }}"
+
+    class="project-dashboard-tab"
+
+>
+
+    Overview
+
+</a>
+
+
+
+<a
+
+    href="{{ url_for(
+
+        'project_purchase_orders',
+
+        project_slug=project_slug
+
+    ) }}"
+
+    class="project-dashboard-tab active"
+
+>
+
+    Purchase Orders
+
+</a>
+
+
+
+<a
+
+    href="{{ url_for(
+
+        'project_schedule',
+
+        project_slug=project_slug
+
+    ) }}"
+
+    class="project-dashboard-tab"
+
+>
+
+    Project Schedule
+
+</a>
+
+
+
+<a
+
+    href="{{ url_for(
+
+        'project_materials',
+
+        project_slug=project_slug
+
+    ) }}"
+
+    class="project-dashboard-tab"
+
+>
+
+    Materials
+
+</a>
+
+
+
+<a
+
+    href="#"
+
+    class="project-dashboard-tab"
+
+>
+
+    Reports
+
+</a>
+
+
 
 </nav>
 
 
 
+
+
+<div class="project-po-page">
+
+{% if request.args.get("recorded") %}
+    <div class="receive-message success">
+        Delivery ticket {{ request.args.get("recorded") }} was recorded successfully.
+    </div>
+{% endif %}
+
+{% if request.args.get("receive_error") %}
+    <div class="receive-message error">
+        {{ request.args.get("receive_error") }}
+    </div>
+{% endif %}
+
+
+
+
+
+<!-- =================================================
+
+        PAGE HEADING
+
+================================================== -->
+
+
+
 <section class="po-page-heading">
+
+
 
     <div>
 
+
+
         <h2>
+
             Purchase Orders
+
         </h2>
 
+
+
         <p>
-            Purchasing information associated with this project.
+
+            Procurement records associated with this project.
+
+            Select a purchase order to view its line items.
+
         </p>
+
+
 
     </div>
 
-    <span class="acumatica-source-label">
+
+
+    <span class="source-label">
+
         Proposed Acumatica Source
+
     </span>
 
+
+
 </section>
+
+
 
 
 
 {% if purchase_orders %}
 
 
-<section class="po-toolbar">
-
-    <div class="po-search">
-
-        <span>
-            ⌕
-        </span>
-
-        <input
-            type="text"
-            id="poSearch"
-            placeholder="Search PO, vendor, or part number..."
-            oninput="filterPurchaseOrders()"
-        >
-
-    </div>
-
-</section>
 
 
 
-<section class="po-list">
+    <!-- =================================================
+
+            SUMMARY
+
+    ================================================== -->
 
 
-{% for po in purchase_orders %}
+
+    <section class="po-summary-grid">
 
 
-<article
-    class="po-card"
-    data-search="{{ po.po_number }} {{ po.vendor }} {{ po.part_number }} {{ po.description }}"
->
 
-    <div class="po-card-header">
+        <div class="po-summary-card">
 
-        <div>
 
-            <span class="po-number-label">
-                PURCHASE ORDER
+
+            <div class="po-summary-label">
+
+                Purchase Orders
+
+            </div>
+
+
+
+            <div class="po-summary-value">
+
+                {{ po_metrics.total_pos }}
+
+            </div>
+
+
+
+            <div class="po-summary-note">
+
+                PO records for this project
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <div class="po-summary-card">
+
+
+
+            <div class="po-summary-label">
+
+                Open POs
+
+            </div>
+
+
+
+            <div class="po-summary-value">
+
+                {{ po_metrics.open_pos }}
+
+            </div>
+
+
+
+            <div class="po-summary-note">
+
+                Purchase orders with outstanding material
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <div class="po-summary-card">
+
+
+
+            <div class="po-summary-label">
+
+                Received POs
+
+            </div>
+
+
+
+            <div class="po-summary-value">
+
+                {{ po_metrics.received_pos }}
+
+            </div>
+
+
+
+            <div class="po-summary-note">
+
+                Fully received purchase orders
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <div class="
+
+            po-summary-card
+
+            {% if po_metrics.outstanding_items > 0 %}
+
+                attention
+
+            {% endif %}
+
+        ">
+
+
+
+            <div class="po-summary-label">
+
+                Outstanding Items
+
+            </div>
+
+
+
+            <div class="po-summary-value">
+
+                {{ po_metrics.outstanding_items }}
+
+            </div>
+
+
+
+            <div class="po-summary-note">
+
+                Units still expected
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+
+
+    <!-- =================================================
+
+            PURCHASE ORDER REGISTER
+
+    ================================================== -->
+
+
+
+    <section class="po-workspace">
+
+
+
+        <div class="po-workspace-header">
+
+
+
+            <div>
+
+
+
+                <div class="workspace-title">
+
+                    Purchase Order Register
+
+                </div>
+
+
+
+                <div class="workspace-subtitle">
+
+                    Click a purchase order to expand or collapse its material lines.
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <div class="po-toolbar">
+
+
+
+                <input
+
+                    id="poSearch"
+
+                    class="po-search"
+
+                    type="search"
+
+                    placeholder="Search PO, vendor, package, part..."
+
+                    autocomplete="off"
+
+                >
+
+
+
+                <select
+
+                    id="poStatusFilter"
+
+                    class="po-filter"
+
+                >
+
+
+
+                    <option value="all">
+
+                        All Statuses
+
+                    </option>
+
+
+
+                    <option value="Received">
+
+                        Received
+
+                    </option>
+
+
+
+                    <option value="Partially Received">
+
+                        Partially Received
+
+                    </option>
+
+
+
+                    <option value="Awaiting Receipt">
+
+                        Awaiting Receipt
+
+                    </option>
+
+
+
+                    <option value="Overdue">
+
+                        Overdue
+
+                    </option>
+
+
+
+                    <option value="Backordered">
+
+                        Backordered
+
+                    </option>
+
+
+
+                </select>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <div class="po-table-wrap">
+
+
+
+            <table class="po-table">
+
+
+
+                <thead>
+
+
+
+                    <tr>
+
+
+
+                        <th>
+
+                            PO Number
+
+                        </th>
+
+
+
+                        <th>
+
+                            Vendor
+
+                        </th>
+
+
+
+                        <th>
+
+                            Package
+
+                        </th>
+
+
+
+                        <th>
+
+                            Delivery
+
+                        </th>
+
+
+
+                        <th class="center">
+
+                            Lines
+
+                        </th>
+
+
+
+                        <th class="qty">
+
+                            Ordered
+
+                        </th>
+
+
+
+                        <th class="qty">
+
+                            Received
+
+                        </th>
+
+
+
+                        <th class="qty">
+
+                            Outstanding
+
+                        </th>
+
+
+
+                        <th>
+
+                            Status
+
+                        </th>
+
+
+
+                    </tr>
+
+
+
+                </thead>
+
+
+
+
+
+                <tbody id="purchaseOrderTable">
+
+
+
+                    {% for po in purchase_orders %}
+
+
+
+                        <!-- =====================================
+
+                                MAIN PO ROW
+
+                        ====================================== -->
+
+
+
+                        <tr
+
+                            class="po-row"
+
+                            data-po="{{ po.po_number }}"
+
+                            data-status="{{ po.status }}"
+
+                            data-search="
+
+                                {{ po.po_number }}
+
+                                {{ po.vendor }}
+
+                                {{ po.package_name }}
+
+                                {% for line in po.lines %}
+
+                                    {{ line.part_number }}
+
+                                    {{ line.description }}
+
+                                {% endfor %}
+
+                            "
+
+                            tabindex="0"
+
+                        >
+
+
+
+                            <td>
+
+
+
+                                <div class="po-number-cell">
+
+
+
+                                    <span class="expand-arrow">
+
+                                        ▶
+
+                                    </span>
+
+
+
+                                    <span class="po-number">
+
+                                        {{ po.po_number }}
+
+                                    </span>
+
+
+
+                                </div>
+
+
+
+                            </td>
+
+
+
+
+
+                            <td class="vendor-name">
+
+                                {{ po.vendor }}
+
+                            </td>
+
+
+
+
+
+                            <td class="package-name">
+
+                                {{ po.package_name }}
+
+                            </td>
+
+
+
+
+
+                            <td>
+
+                                {{
+
+                                    po.delivery_date
+
+                                    |default("—", true)
+
+                                }}
+
+                            </td>
+
+
+
+
+
+                            <td class="center">
+
+                                {{ po.line_count }}
+
+                            </td>
+
+
+
+
+
+                            <td class="qty">
+
+                                {{ po.total_ordered }}
+
+                            </td>
+
+
+
+
+
+                            <td class="qty">
+
+                                {{ po.total_received }}
+
+                            </td>
+
+
+
+
+
+                            <td class="qty">
+
+
+
+                                <span class="
+
+                                    outstanding-value
+
+                                    {% if po.total_outstanding > 0 %}
+
+                                        has-outstanding
+
+                                    {% endif %}
+
+                                ">
+
+                                    {{ po.total_outstanding }}
+
+                                </span>
+
+
+
+                            </td>
+
+
+
+
+
+                            <td>
+
+
+
+                                {% if po.status == "Backordered" %}
+
+
+
+                                    <span class="
+
+                                        status-pill
+
+                                        status-backordered
+
+                                    ">
+
+                                        Backordered
+
+                                    </span>
+
+
+
+                                {% elif po.status == "Overdue" %}
+
+
+
+                                    <span class="
+
+                                        status-pill
+
+                                        status-overdue
+
+                                    ">
+
+                                        Overdue
+
+                                    </span>
+
+
+
+                                {% elif po.status == "Partially Received" %}
+
+
+
+                                    <span class="
+
+                                        status-pill
+
+                                        status-partial
+
+                                    ">
+
+                                        Partially Received
+
+                                    </span>
+
+
+
+                                {% elif po.status == "Awaiting Receipt" %}
+
+
+
+                                    <span class="
+
+                                        status-pill
+
+                                        status-awaiting
+
+                                    ">
+
+                                        Awaiting Receipt
+
+                                    </span>
+
+
+
+                                {% else %}
+
+
+
+                                    <span class="
+
+                                        status-pill
+
+                                        status-received
+
+                                    ">
+
+                                        Received
+
+                                    </span>
+
+
+
+                                {% endif %}
+
+
+
+                            </td>
+
+
+
+                        </tr>
+
+
+
+
+
+                        <!-- =====================================
+
+                                EXPANDED DETAIL ROW
+
+                        ====================================== -->
+
+
+
+                        <tr
+
+                            class="po-detail-row"
+
+                            data-detail-for="{{ po.po_number }}"
+
+                        >
+
+
+
+                            <td colspan="9">
+
+
+
+                                <div class="po-expanded-panel">
+
+
+
+                                    <div class="expanded-heading">
+
+
+
+                                        <div>
+
+
+
+                                            <div class="expanded-title">
+
+                                                {{ po.po_number }} Line Items
+
+                                            </div>
+
+
+
+                                            <div class="expanded-description">
+
+                                                Material detail and current receipt status.
+
+                                            </div>
+
+
+
+                                        </div>
+
+
+
+                                        <div class="expanded-actions">
+
+                                            <div class="line-count-label">
+                                                {{ po.line_count }}
+                                                line{% if po.line_count != 1 %}s{% endif %}
+                                            </div>
+
+                                            {% if po.total_outstanding > 0 %}
+                                                <button
+                                                    type="button"
+                                                    class="record-delivery-btn"
+                                                    data-receive-toggle="{{ po.po_number }}"
+                                                >
+                                                    Record Delivery
+                                                </button>
+                                            {% endif %}
+
+                                        </div>
+
+
+
+                                    </div>
+
+
+
+
+
+                                    <div class="line-table-wrap">
+
+
+
+                                        <table class="line-table">
+
+
+
+                                            <thead>
+
+
+
+                                                <tr>
+
+
+
+                                                    <th>
+
+                                                        Part Number
+
+                                                    </th>
+
+
+
+                                                    <th>
+
+                                                        Description
+
+                                                    </th>
+
+
+
+                                                    <th class="center">
+
+                                                        UOM
+
+                                                    </th>
+
+
+
+                                                    <th class="qty">
+
+                                                        Ordered
+
+                                                    </th>
+
+
+
+                                                    <th class="qty">
+
+                                                        Received
+
+                                                    </th>
+
+
+
+                                                    <th class="qty">
+
+                                                        Outstanding
+
+                                                    </th>
+
+
+
+                                                    <th>
+
+                                                        Delivery
+
+                                                    </th>
+
+
+
+                                                    <th>
+
+                                                        Status
+
+                                                    </th>
+
+
+
+                                                    <th>
+
+                                                        Delivery Ticket
+
+                                                    </th>
+
+
+
+                                                </tr>
+
+
+
+                                            </thead>
+
+
+
+
+
+                                            <tbody>
+
+
+
+                                                {% for line in po.lines %}
+
+
+
+                                                    <tr>
+
+
+
+                                                        <td class="part-number">
+
+                                                            {{ line.part_number }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="description-cell">
+
+                                                            {{ line.description }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="uom">
+
+                                                            {{
+
+                                                                line.uom
+
+                                                                |default("EA", true)
+
+                                                            }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="qty">
+
+                                                            {{ line.ordered_qty }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="qty">
+
+                                                            {{ line.received_qty }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="qty">
+
+                                                            {{ line.outstanding_qty }}
+
+                                                        </td>
+
+
+
+
+
+                                                        <td class="delivery-date">
+
+
+
+                                                            {% if line.display_status == "Backordered"
+
+                                                                and line.expected_date %}
+
+
+
+                                                                {{ line.expected_date }}
+
+
+
+                                                            {% else %}
+
+
+
+                                                                {{
+
+                                                                    line.delivery_date
+
+                                                                    |default("—", true)
+
+                                                                }}
+
+
+
+                                                            {% endif %}
+
+
+
+                                                        </td>
+
+
+
+
+
+                                                        <td>
+
+
+
+                                                            {% if line.display_status == "Backordered" %}
+
+
+
+                                                                <span class="
+
+                                                                    status-pill
+
+                                                                    status-backordered
+
+                                                                ">
+
+                                                                    Backordered
+
+                                                                </span>
+
+
+
+                                                            {% elif line.display_status == "Overdue" %}
+
+
+
+                                                                <span class="
+
+                                                                    status-pill
+
+                                                                    status-overdue
+
+                                                                ">
+
+                                                                    Overdue
+
+                                                                </span>
+
+
+
+                                                            {% elif line.display_status == "Partially Received" %}
+
+
+
+                                                                <span class="
+
+                                                                    status-pill
+
+                                                                    status-partial
+
+                                                                ">
+
+                                                                    Partially Received
+
+                                                                </span>
+
+
+
+                                                            {% elif line.display_status == "Awaiting Receipt" %}
+
+
+
+                                                                <span class="
+
+                                                                    status-pill
+
+                                                                    status-awaiting
+
+                                                                ">
+
+                                                                    Awaiting Receipt
+
+                                                                </span>
+
+
+
+                                                            {% else %}
+
+
+
+                                                                <span class="
+
+                                                                    status-pill
+
+                                                                    status-received
+
+                                                                ">
+
+                                                                    Received
+
+                                                                </span>
+
+
+
+                                                            {% endif %}
+
+
+
+                                                        </td>
+
+
+
+
+
+                                                        <td>
+
+
+
+                                                            {% if line.delivery_history %}
+
+
+
+                                                                <div class="ticket-list">
+
+
+
+                                                                    {% for receipt in line.delivery_history %}
+
+
+
+                                                                        <span
+
+                                                                            class="ticket-badge"
+
+                                                                            title="
+
+                                                                                {{ receipt.date }}
+
+                                                                                · Qty {{ receipt.qty }}
+
+                                                                                · Received by {{ receipt.received_by }}
+
+                                                                            "
+
+                                                                        >
+
+                                                                            {{ receipt.ticket_number }}
+
+                                                                        </span>
+
+
+
+                                                                    {% endfor %}
+
+
+
+                                                                </div>
+
+
+
+                                                            {% else %}
+
+
+
+                                                                <span class="no-ticket">
+
+                                                                    —
+
+                                                                </span>
+
+
+
+                                                            {% endif %}
+
+
+
+                                                        </td>
+
+
+
+                                                    </tr>
+
+
+
+                                                {% endfor %}
+
+
+
+                                            </tbody>
+
+
+
+                                        </table>
+
+
+
+                                    </div>
+
+
+
+
+
+                                    <div
+                                        class="receiving-form-panel"
+                                        data-receive-panel="{{ po.po_number }}"
+                                    >
+
+                                        <div class="receiving-form-title">
+                                            Record Delivery — {{ po.po_number }}
+                                        </div>
+
+                                        <div class="receiving-form-subtitle">
+                                            Enter the delivery ticket information and only the quantities physically received today.
+                                        </div>
+
+                                        <form
+                                            method="POST"
+                                            class="record-delivery-form"
+                                            action="{{ url_for('record_project_po_delivery', project_slug=project_slug, po_number=po.po_number) }}"
+                                        >
+
+                                            <div class="receiving-fields">
+
+                                                <div class="receiving-field">
+                                                    <label>Delivery Ticket / Packing Slip</label>
+                                                    <input
+                                                        type="text"
+                                                        name="ticket_number"
+                                                        placeholder="Example: DT-1068"
+                                                        required
+                                                    >
+                                                </div>
+
+                                                <div class="receiving-field">
+                                                    <label>Delivery Date</label>
+                                                    <input
+                                                        type="date"
+                                                        name="delivery_date"
+                                                        value="{{ today_iso }}"
+                                                        required
+                                                    >
+                                                </div>
+
+                                                <div class="receiving-field">
+                                                    <label>Received By</label>
+                                                    <input
+                                                        type="text"
+                                                        name="received_by"
+                                                        placeholder="Receiver name"
+                                                        required
+                                                    >
+                                                </div>
+
+                                            </div>
+
+                                            <table class="receive-entry-table">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Part Number</th>
+                                                        <th>Description</th>
+                                                        <th class="qty">Ordered</th>
+                                                        <th class="qty">Previously Received</th>
+                                                        <th class="qty">Remaining</th>
+                                                        <th class="qty">Qty Received Now</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    {% for line in po.lines %}
+                                                        <tr>
+                                                            <td class="part-number">
+                                                                {{ line.part_number }}
+                                                            </td>
+                                                            <td>
+                                                                {{ line.description }}
+                                                            </td>
+                                                            <td class="qty">
+                                                                {{ line.ordered_qty }}
+                                                            </td>
+                                                            <td class="qty">
+                                                                {{ line.received_qty }}
+                                                            </td>
+                                                            <td class="qty">
+                                                                {{ line.outstanding_qty }}
+                                                            </td>
+                                                            <td class="qty">
+                                                                <input
+                                                                    class="receive-qty-input"
+                                                                    type="number"
+                                                                    name="qty_{{ loop.index0 }}"
+                                                                    value="0"
+                                                                    min="0"
+                                                                    max="{{ line.outstanding_qty }}"
+                                                                    step="1"
+                                                                    {% if line.outstanding_qty == 0 %}disabled{% endif %}
+                                                                >
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                </tbody>
+
+                                            </table>
+
+                                            <div class="receiving-notes">
+                                                <label>Notes (Optional)</label>
+                                                <textarea
+                                                    name="notes"
+                                                    placeholder="Example: Boxes inspected. No visible damage."
+                                                ></textarea>
+                                            </div>
+
+                                            <div class="receiving-form-actions">
+                                                <button
+                                                    type="button"
+                                                    class="receive-cancel-btn"
+                                                    data-receive-cancel="{{ po.po_number }}"
+                                                >
+                                                    Cancel
+                                                </button>
+
+                                                <button
+                                                    type="submit"
+                                                    class="receive-submit-btn"
+                                                >
+                                                    Record Delivery
+                                                </button>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+
+                                    <!-- =================================
+
+                                            RECEIPT / DELIVERY HISTORY
+
+                                    ================================== -->
+
+
+
+                                    {% set history = namespace(items=[], tickets=[]) %}
+
+                                    {% for line in po.lines %}
+                                        {% for receipt in line.delivery_history %}
+                                            {% set history.items = history.items + [receipt] %}
+                                            {% if receipt.ticket_number not in history.tickets %}
+                                                {% set history.tickets = history.tickets + [receipt.ticket_number] %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                    {% if history.items %}
+                                        <div class="receipt-history">
+                                            <div class="receipt-history-header">
+                                                Delivery / Receipt History
+                                            </div>
+
+                                            <div class="receipt-ticket-list">
+                                                {% for ticket_number in history.tickets|reverse %}
+                                                    {% set ticket = namespace(first=None) %}
+                                                    {% for receipt in history.items %}
+                                                        {% if receipt.ticket_number == ticket_number and ticket.first is none %}
+                                                            {% set ticket.first = receipt %}
+                                                        {% endif %}
+                                                    {% endfor %}
+
+                                                    {% if ticket.first %}
+                                                        <div class="receipt-ticket-card">
+                                                            <div class="receipt-ticket-summary">
+                                                                <div>
+                                                                    <span class="receipt-ticket-number">{{ ticket.first.ticket_number }}</span>
+                                                                    <span class="receipt-ticket-date">{{ ticket.first.date }}</span>
+                                                                </div>
+                                                                <div class="receipt-ticket-receiver">
+                                                                    Received by <strong>{{ ticket.first.received_by }}</strong>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="receipt-ticket-lines">
+                                                                <div class="receipt-ticket-line receipt-ticket-line-head">
+                                                                    <span>Part Number</span>
+                                                                    <span>Quantity Received</span>
+                                                                </div>
+                                                                {% for receipt in history.items %}
+                                                                    {% if receipt.ticket_number == ticket_number %}
+                                                                        <div class="receipt-ticket-line">
+                                                                            <span class="receipt-ticket-part">{{ receipt.part_number }}</span>
+                                                                            <span>{{ receipt.qty }}</span>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+
+                                                            {% if ticket.first.notes %}
+                                                                <div class="receipt-ticket-notes">
+                                                                    <span>Notes</span>
+                                                                    {{ ticket.first.notes }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+
+
+
+
+
+
+
+
+
+                                </div>
+
+
+
+                            </td>
+
+
+
+                        </tr>
+
+
+
+                    {% endfor %}
+
+
+
+
+
+                    <tr
+
+                        id="noPoResults"
+
+                        class="no-results-row"
+
+                    >
+
+
+
+                        <td colspan="9">
+
+                            No purchase orders match the current search or filter.
+
+                        </td>
+
+
+
+                    </tr>
+
+
+
+                </tbody>
+
+
+
+            </table>
+
+
+
+        </div>
+
+
+
+
+
+        <div class="po-table-footer">
+
+
+
+            <span id="visiblePoCount">
+
+                {{ purchase_orders|length }}
+
+                purchase order{% if purchase_orders|length != 1 %}s{% endif %}
+
             </span>
 
-            <h3>
-                PO {{ po.po_number }}
-            </h3>
 
-            <span class="po-vendor">
-                {{ po.vendor }}
+
+            <span>
+
+                Project {{ project.number }}
+
             </span>
 
-        </div>
 
-        <strong>
-            {{ po.status }}
-        </strong>
-
-    </div>
-
-
-    <div class="po-part-section">
-
-        <div>
-
-            <span class="po-section-label">
-                PART NUMBER
-            </span>
-
-            <strong>
-                {{ po.part_number }}
-            </strong>
 
         </div>
 
 
-        <div>
 
-            <span class="po-section-label">
-                DESCRIPTION
-            </span>
-
-            <strong>
-                {{ po.description }}
-            </strong>
-
-        </div>
-
-    </div>
+    </section>
 
 
-    <div class="po-quantity-grid">
 
-        <div>
-            <span>Ordered</span>
-            <strong>{{ po.ordered_qty }}</strong>
-        </div>
-
-        <div>
-            <span>Received</span>
-            <strong>{{ po.received_qty }}</strong>
-        </div>
-
-        <div>
-            <span>Remaining</span>
-            <strong>{{ po.remaining_qty }}</strong>
-        </div>
-
-        <div>
-            <span>Receipt Status</span>
-            <strong class="po-receipt-status">
-                {{ po.receipt_status }}
-            </strong>
-        </div>
-
-    </div>
-
-</article>
-
-
-{% endfor %}
-
-
-</section>
 
 
 {% else %}
 
 
-<div class="empty-state">
 
-    <h3>
-        Purchase order data not added yet
-    </h3>
+    <div class="empty-state">
 
-    <p>
-        The Tech Center schedule identifies this project,
-        but procurement records for this project have not
-        been added to the AIMS mock.
-    </p>
 
-</div>
+
+        <h3>
+
+            Purchase order data not added yet
+
+        </h3>
+
+
+
+        <p>
+
+            Procurement records for this project
+
+            have not been added to the AIMS mock.
+
+        </p>
+
+
+
+    </div>
+
 
 
 {% endif %}
 
 
 
+</div>
+
+
+
+
+
 <script>
 
-function filterPurchaseOrders() {
+document.addEventListener(
 
-    const search =
-        document
-            .getElementById("poSearch");
+"DOMContentLoaded",
 
-    if (!search) {
-        return;
+function () {
+
+
+
+    const poRows =
+
+        Array.from(
+
+            document.querySelectorAll(".po-row")
+
+        );
+
+
+
+    const searchInput =
+
+        document.getElementById("poSearch");
+
+
+
+    const statusFilter =
+
+        document.getElementById("poStatusFilter");
+
+
+
+    const visibleCount =
+
+        document.getElementById("visiblePoCount");
+
+
+
+    const noResults =
+
+        document.getElementById("noPoResults");
+
+
+    /* =============================================
+        RECORD DELIVERY PANEL
+    ============================================== */
+
+    document.querySelectorAll("[data-receive-toggle]").forEach(
+        function (button) {
+            button.addEventListener("click", function (event) {
+                event.stopPropagation();
+                const poNumber = button.dataset.receiveToggle;
+                const panel = document.querySelector(
+                    '[data-receive-panel="' + poNumber + '"]'
+                );
+                if (panel) {
+                    panel.classList.toggle("open");
+                }
+            });
+        }
+    );
+
+    document.querySelectorAll("[data-receive-cancel]").forEach(
+        function (button) {
+            button.addEventListener("click", function (event) {
+                event.stopPropagation();
+                const poNumber = button.dataset.receiveCancel;
+                const panel = document.querySelector(
+                    '[data-receive-panel="' + poNumber + '"]'
+                );
+                if (panel) {
+                    panel.classList.remove("open");
+                }
+            });
+        }
+    );
+
+    document.querySelectorAll(".receiving-form-panel").forEach(
+        function (panel) {
+            panel.addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
+        }
+    );
+
+    document.querySelectorAll(".record-delivery-form").forEach(
+        function (form) {
+            form.addEventListener("submit", function () {
+                const submitButton = form.querySelector(".receive-submit-btn");
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Recording...";
+                }
+            });
+        }
+    );
+
+    const openPoFromServer =
+        new URLSearchParams(window.location.search).get("open_po");
+
+    if (openPoFromServer) {
+        const row = document.querySelector(
+            '.po-row[data-po="' + openPoFromServer + '"]'
+        );
+        const detailRow = document.querySelector(
+            '.po-detail-row[data-detail-for="' + openPoFromServer + '"]'
+        );
+        if (row && detailRow) {
+            row.classList.add("expanded");
+            detailRow.classList.add("open");
+        }
     }
 
-    const value =
-        search.value.toLowerCase();
 
-    document
-        .querySelectorAll(".po-card")
-        .forEach(
-            function(card) {
 
-                const text =
-                    card.dataset.search.toLowerCase();
 
-                card.style.display =
-                    text.includes(value)
-                    ? "block"
-                    : "none";
+
+    /* =============================================
+
+        EXPAND / COLLAPSE
+
+    ============================================== */
+
+
+
+    function togglePurchaseOrder(row) {
+
+
+
+        const poNumber =
+
+            row.dataset.po;
+
+
+
+        const detailRow =
+
+            document.querySelector(
+
+                '.po-detail-row[data-detail-for="' +
+
+                poNumber +
+
+                '"]'
+
+            );
+
+
+
+        if (!detailRow) {
+
+            return;
+
+        }
+
+
+
+        const isOpen =
+
+            detailRow.classList.contains("open");
+
+
+
+        if (isOpen) {
+
+
+
+            detailRow.classList.remove("open");
+
+            row.classList.remove("expanded");
+
+
+
+        } else {
+
+
+
+            detailRow.classList.add("open");
+
+            row.classList.add("expanded");
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+    poRows.forEach(
+
+        function (row) {
+
+
+
+            row.addEventListener(
+
+                "click",
+
+                function () {
+
+                    togglePurchaseOrder(row);
+
+                }
+
+            );
+
+
+
+
+
+            row.addEventListener(
+
+                "keydown",
+
+                function (event) {
+
+
+
+                    if (
+
+                        event.key === "Enter" ||
+
+                        event.key === " "
+
+                    ) {
+
+
+
+                        event.preventDefault();
+
+
+
+                        togglePurchaseOrder(row);
+
+
+
+                    }
+
+
+
+                }
+
+            );
+
+
+
+        }
+
+    );
+
+
+
+
+
+    /* =============================================
+
+        SEARCH / FILTER
+
+    ============================================== */
+
+
+
+    function filterPurchaseOrders() {
+
+
+
+        const searchValue =
+
+            searchInput
+
+                ? searchInput.value
+
+                    .trim()
+
+                    .toLowerCase()
+
+                : "";
+
+
+
+        const selectedStatus =
+
+            statusFilter
+
+                ? statusFilter.value
+
+                : "all";
+
+
+
+        let count = 0;
+
+
+
+
+
+        poRows.forEach(
+
+            function (row) {
+
+
+
+                const searchText =
+
+                    (
+
+                        row.dataset.search || ""
+
+                    ).toLowerCase();
+
+
+
+                const rowStatus =
+
+                    row.dataset.status || "";
+
+
+
+                const matchesSearch =
+
+                    !searchValue ||
+
+                    searchText.includes(
+
+                        searchValue
+
+                    );
+
+
+
+                const matchesStatus =
+
+                    selectedStatus === "all" ||
+
+                    rowStatus === selectedStatus;
+
+
+
+                const visible =
+
+                    matchesSearch &&
+
+                    matchesStatus;
+
+
+
+                row.style.display =
+
+                    visible
+
+                        ? ""
+
+                        : "none";
+
+
+
+
+
+                const poNumber =
+
+                    row.dataset.po;
+
+
+
+                const detailRow =
+
+                    document.querySelector(
+
+                        '.po-detail-row[data-detail-for="' +
+
+                        poNumber +
+
+                        '"]'
+
+                    );
+
+
+
+
+
+                if (!visible && detailRow) {
+
+
+
+                    detailRow.classList.remove("open");
+
+                    row.classList.remove("expanded");
+
+
+
+                }
+
+
+
+
+
+                if (visible) {
+
+                    count += 1;
+
+                }
+
+
 
             }
+
         );
+
+
+
+
+
+        if (visibleCount) {
+
+
+
+            visibleCount.textContent =
+
+                count +
+
+                (
+
+                    count === 1
+
+                        ? " purchase order"
+
+                        : " purchase orders"
+
+                );
+
+
+
+        }
+
+
+
+
+
+        if (noResults) {
+
+
+
+            if (count === 0) {
+
+                noResults.classList.add("show");
+
+            } else {
+
+                noResults.classList.remove("show");
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+    if (searchInput) {
+
+
+
+        searchInput.addEventListener(
+
+            "input",
+
+            filterPurchaseOrders
+
+        );
+
+
+
+    }
+
+
+
+
+
+    if (statusFilter) {
+
+
+
+        statusFilter.addEventListener(
+
+            "change",
+
+            filterPurchaseOrders
+
+        );
+
+
+
+    }
+
+
 
 }
 
+);
+
 </script>
+
 
 
 {% endblock %}
