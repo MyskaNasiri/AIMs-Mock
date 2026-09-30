@@ -1,789 +1,3143 @@
 {% extends "base.html" %}
 
 
+
+
+
+
+
+
+
+
+
 {% block title %}
+
 Tech Center | AIMS
+
 {% endblock %}
+
+
+
+
+
+
+
+
+
 
 
 {% block content %}
 
 
+
+
+
+
+
+
+
+
+
 <style>
 
 
+
+
+
+
+
+
+
+
+
 /* =========================================================
+
+
+
    TECH CENTER PROJECT LIST
+
+
+
 ========================================================= */
+
+
+
+
+
+
 
 .tech-project-list {
 
+
+
+
+
+
+
     display: flex;
+
+
+
     flex-direction: column;
+
+
+
+
+
+
 
     gap: 10px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-row {
 
+
+
+
+
+
+
     padding: 14px 15px;
 
+
+
+
+
+
+
     display: flex;
+
+
+
     align-items: center;
+
+
+
+
+
+
 
     gap: 12px;
 
+
+
+
+
+
+
     background: #ffffff;
+
+
+
+
+
+
 
     border: 1px solid #e1e7e4;
 
+
+
+
+
+
+
     border-radius: 8px;
+
+
+
+
+
+
 
     color: inherit;
 
+
+
+
+
+
+
     text-decoration: none;
 
+
+
+
+
+
+
     transition:
+
+
+
         border-color 0.15s ease,
-        background 0.15s ease;
+
+
+
+background 0.15s ease;
+
+
+
+
+
+
 
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-row:hover {
 
+
+
+
+
+
+
     border-color: #bfd0ca;
+
+
+
+
+
+
 
     background: #fafcfb;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-avatar {
 
+
+
+
+
+
+
     width: 38px;
+
+
+
     height: 38px;
 
+
+
+
+
+
+
     display: flex;
+
+
+
     align-items: center;
+
+
+
     justify-content: center;
+
+
+
+
+
+
 
     flex-shrink: 0;
 
+
+
+
+
+
+
     background: #e8f1ed;
+
+
+
+
+
+
 
     border-radius: 8px;
 
+
+
+
+
+
+
     color: #285f4c;
 
+
+
+
+
+
+
     font-size: 10px;
+
+
+
     font-weight: 800;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-details {
 
+
+
+
+
+
+
     flex: 1;
+
+
+
+
+
+
 
     min-width: 0;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-details strong {
 
+
+
+
+
+
+
     display: block;
+
+
+
+
+
+
 
     margin-bottom: 4px;
 
+
+
+
+
+
+
     color: #2b393e;
+
+
+
+
+
+
 
     font-size: 11px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-details span {
 
+
+
+
+
+
+
     color: #7a8782;
+
+
+
+
+
+
 
     font-size: 9px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-pm {
 
+
+
+
+
+
+
     min-width: 125px;
+
+
+
+
+
+
 
     text-align: right;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-pm span {
 
+
+
+
+
+
+
     display: block;
+
+
+
+
+
+
 
     margin-bottom: 3px;
 
+
+
+
+
+
+
     color: #8a9591;
 
+
+
+
+
+
+
     font-size: 7px;
+
+
+
     font-weight: 600;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-project-pm strong {
 
+
+
+
+
+
+
     color: #56635f;
+
+
+
+
+
+
 
     font-size: 9px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 /* =========================================================
+
+
+
    CLEAN HOMEPAGE INTRO
+
+
+
 ========================================================= */
+
+
+
+
+
+
 
 .tech-home-intro {
 
+
+
+
+
+
+
     margin-bottom: 26px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-home-intro .page-eyebrow {
 
+
+
+
+
+
+
     display: block;
+
+
+
+
+
+
 
     margin-bottom: 18px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-home-intro h1 {
 
+
+
+
+
+
+
     margin: 0 0 14px;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 .tech-home-intro p {
 
+
+
+
+
+
+
     margin: 0;
+
+
+
+
+
+
 
     color: #435058;
 
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 
 </style>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- =====================================================
+
+
+
      CLEAN HOMEPAGE HEADER
-===================================================== -->
+
+
+
+\===================================================== -->
+
+
+
+
+
+
 
 <section class="tech-home-intro">
 
 
+
+
+
+
+
+
+
+
+
     <span class="page-eyebrow">
+
+
+
         TECH CENTER
+
+
+
     </span>
 
 
+
+
+
+
+
+
+
+
+
     <h1>
+
+
+
         Good morning, Myska
+
+
+
     </h1>
 
 
+
+
+
+
+
+
+
+
+
     <p>
+
+
+
         Material, fabrication, and project management overview
+
+
+
     </p>
+
+
+
+
+
+
+
+
+
 
 
 </section>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- =====================================================
+
+
+
      DASHBOARD METRICS
-===================================================== -->
+
+
+
+\===================================================== -->
+
+
+
+
+
+
 
 <section class="metric-grid">
 
 
+
+
+
+
+
+
+
+
+
     <!-- TECH CENTER PROJECTS -->
 
+
+
+
+
+
+
     <div class="metric-card">
+
+
+
+
+
+
+
+
+
 
 
         <div class="metric-top">
 
 
+
+
+
+
+
+
+
+
+
             <div class="metric-icon">
+
+
+
                 ▣
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
             <div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="metric-label">
-                    Tech Center Projects
+
+
+
+                    Active Projects
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
                 <strong class="metric-number">
+
+
+
                     {{ projects|length }}
+
+
+
                 </strong>
+
+
+
+
+
+
+
+
+
 
 
             </div>
 
 
+
+
+
+
+
+
+
+
+
         </div>
 
 
+
+
+
+
+
+
+
+
+
         <a
+
+
+
             href="#"
+
+
+
             onclick="event.preventDefault(); openProjectFlyout();"
+
+
+
         >
+
+
+
             View projects →
+
+
+
         </a>
 
 
+
+
+
+
+
+
+
+
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
     <!-- WILLIAMS OPEN PO -->
 
+
+
+
+
+
+
     <div class="metric-card">
+
+
+
+
+
+
+
+
+
 
 
         <div class="metric-top">
 
 
+
+
+
+
+
+
+
+
+
             <div class="metric-icon">
+
+
+
                 ▤
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
             <div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="metric-label">
-                    Williams Open POs
+
+
+
+                    Williams Purchase Orders
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
                 <strong class="metric-number">
+
+
+
                     9
+
+
+
                 </strong>
+
+
+
+
+
+
+
+
+
 
 
             </div>
 
 
+
+
+
+
+
+
+
+
+
         </div>
 
 
+
+
+
+
+
+
+
+
+
         <a
+
+
+
             href="{{ url_for('project_purchase_orders', project_slug='williams-aquila') }}"
+
+
+
         >
-            View procurement →
+
+
+
+            View purchase orders →
+
+
+
         </a>
 
 
+
+
+
+
+
+
+
+
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
     <!-- SCHEDULE -->
 
+
+
+
+
+
+
     <div class="metric-card">
+
+
+
+
+
+
+
+
+
 
 
         <div class="metric-top">
 
 
+
+
+
+
+
+
+
+
+
             <div class="metric-icon">
+
+
+
                 ◇
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
             <div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="metric-label">
-                    Projects With Schedules
+
+
+
+                    Project Schedules
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
                 <strong class="metric-number">
+
+
+
                     {{ projects|length }}
+
+
+
                 </strong>
+
+
+
+
+
+
+
+
+
 
 
             </div>
 
 
+
+
+
+
+
+
+
+
+
         </div>
 
 
+
+
+
+
+
+
+
+
+
         <a
+
+
+
             href="#"
+
+
+
             onclick="event.preventDefault(); openProjectFlyout();"
+
+
+
         >
+
+
+
             Review schedules →
+
+
+
         </a>
+
+
+
+
+
+
+
+
+
 
 
     </div>
 
 
 
-    <!-- STAGING -->
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- MATERIALS -->
+
+
+
+
+
+
 
     <div class="metric-card">
+
+
+
+
+
+
+
+
+
 
 
         <div class="metric-top">
 
 
+
+
+
+
+
+
+
+
+
             <div class="metric-icon">
+
+
+
                 ⌂
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
             <div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="metric-label">
-                    Williams Awaiting Staging
+
+
+
+                    Williams Materials
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
                 <strong class="metric-number">
+
+
+
                     3
+
+
+
                 </strong>
+
+
+
+
+
+
+
+
+
 
 
             </div>
 
 
+
+
+
+
+
+
+
+
+
         </div>
 
 
+
+
+
+
+
+
+
+
+
         <a
+
+
+
             href="{{ url_for('project_materials', project_slug='williams-aquila') }}"
+
+
+
         >
-            View staging →
+
+
+
+            View materials →
+
+
+
         </a>
 
 
+
+
+
+
+
+
+
+
+
     </div>
+
+
+
+
+
+
+
+
+
 
 
 </section>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- =====================================================
+
+
+
      MAIN DASHBOARD
-===================================================== -->
+
+
+
+\===================================================== -->
+
+
+
+
+
+
 
 <div class="dashboard-grid">
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- =================================================
+
+
+
          LEFT SIDE
-    ================================================== -->
+
+
+
+    \================================================== -->
+
+
+
+
+
+
 
     <div class="dashboard-left">
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- =============================================
+
+
+
              PROJECTS
+
+
+
         ============================================== -->
 
+
+
+
+
+
+
         <section class="dashboard-card">
+
+
+
+
+
+
+
+
+
 
 
             <div class="card-title-row">
 
 
+
+
+
+
+
+
+
+
+
                 <h2>
+
+
+
                     Tech Center Projects
+
+
+
                 </h2>
 
 
+
+
+
+
+
+
+
+
+
                 <a
+
+
+
                     href="#"
+
+
+
                     onclick="event.preventDefault(); openProjectFlyout();"
+
+
+
                 >
+
+
+
                     Search projects →
+
+
+
                 </a>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <div class="tech-project-list">
 
 
+
+
+
+
+
+
+
+
+
                 {% for slug, project in projects.items() %}
 
 
+
+
+
+
+
+
+
+
+
                 <a
+
+
+
                     href="{{ url_for('project_dashboard', project_slug=slug) }}"
+
+
+
                     class="tech-project-row"
+
+
+
                 >
 
 
+
+
+
+
+
+
+
+
+
                     <div class="tech-project-avatar">
+
+
+
                         {{ project.initials }}
+
+
+
                     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
                     <div class="tech-project-details">
 
 
+
+
+
+
+
+
+
+
+
                         <strong>
+
+
+
                             {{ project.short_name }}
+
+
+
                         </strong>
 
 
+
+
+
+
+
+
+
+
+
                         <span>
+
+
+
                             {{ project.number }} · {{ project.client }}
+
+
+
                         </span>
 
 
+
+
+
+
+
+
+
+
+
                     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
                     <div class="tech-project-pm">
 
 
+
+
+
+
+
+
+
+
+
                         <span>
+
+
+
                             PROJECT MANAGER
+
+
+
                         </span>
 
 
+
+
+
+
+
+
+
+
+
                         <strong>
+
+
+
                             {{ project.pm }}
+
+
+
                         </strong>
+
+
+
+
+
+
+
+
+
 
 
                     </div>
 
 
+
+
+
+
+
+
+
+
+
                 </a>
+
+
+
+
+
+
+
+
+
 
 
                 {% endfor %}
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
         </section>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- =============================================
+
+
+
              RECENT ACTIVITY
+
+
+
         ============================================== -->
 
+
+
+
+
+
+
         <section class="dashboard-card">
+
+
+
+
+
+
+
+
+
 
 
             <div class="card-title-row">
 
 
+
+
+
+
+
+
+
+
+
                 <h2>
-                    Recent Activity
+
+
+
+                    Recent Receiving Activity
+
+
+
                 </h2>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <div class="activity-row">
 
 
+
+
+
+
+
+
+
+
+
                 <div class="activity-icon">
+
+
+
                     ▤
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
 
 
                 <div class="activity-description">
 
 
+
+
+
+
+
+
+
+
+
                     <strong>
-                        Williams material receipt available
+
+
+
+                        Williams receiving activity
+
+
+
                     </strong>
 
 
+
+
+
+
+
+
+
+
+
                     <span>
-                        Receipt and staging workflow
+
+
+
+                        Purchase order receipts and delivery tickets
+
+
+
                     </span>
+
+
+
+
+
+
+
+
+
 
 
                 </div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="activity-time">
+
+
+
                     Today
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <div class="activity-row">
 
 
+
+
+
+
+
+
+
+
+
                 <div class="activity-icon">
+
+
+
                     ◇
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
 
 
                 <div class="activity-description">
 
 
+
+
+
+
+
+
+
+
+
                     <strong>
-                        Tech Center schedule updated
+
+
+
+                        Project schedules available
+
+
+
                     </strong>
 
 
+
+
+
+
+
+
+
+
+
                     <span>
-                        Fabrication project milestones
+
+
+
+                        Review upcoming fabrication milestones
+
+
+
                     </span>
+
+
+
+
+
+
+
+
+
 
 
                 </div>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="activity-time">
+
+
+
                     Today
+
+
+
                 </span>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
         </section>
+
+
+
+
+
+
+
+
+
 
 
     </div>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- =================================================
+
+
+
          RIGHT SIDE
-    ================================================== -->
+
+
+
+    \================================================== -->
+
+
+
+
+
+
 
     <div class="dashboard-right">
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- =============================================
+
+
+
              UPCOMING MILESTONES
+
+
+
         ============================================== -->
 
+
+
+
+
+
+
         <section class="dashboard-card">
+
+
+
+
+
+
+
+
+
 
 
             <div class="card-title-row">
 
 
+
+
+
+
+
+
+
+
+
                 <h2>
+
+
+
                     Upcoming Milestones
+
+
+
                 </h2>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <!-- BP -->
 
+
+
+
+
+
+
             <div class="important-date">
+
+
+
+
+
+
+
+
+
 
 
                 <div class="calendar-box">
 
+
+
+
+
+
+
                     <span>
+
+
+
                         SEP
+
+
+
                     </span>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         04
+
+
+
                     </strong>
 
+
+
+
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
 
 
                 <div>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         BP Kaskida
+
+
+
                     </strong>
 
+
+
+
+
+
+
                     <p>
+
+
+
                         Fabrication milestone
+
+
+
                     </p>
+
+
+
+
+
+
 
                 </div>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <!-- WILLIAMS -->
 
+
+
+
+
+
+
             <div class="important-date">
+
+
+
+
+
+
+
+
+
 
 
                 <div class="calendar-box">
 
+
+
+
+
+
+
                     <span>
+
+
+
                         SEP
+
+
+
                     </span>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         14
+
+
+
                     </strong>
 
+
+
+
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
 
 
                 <div>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         Williams Aquila
+
+
+
                     </strong>
 
+
+
+
+
+
+
                     <p>
+
+
+
                         Internal FAT - RIOs x2
+
+
+
                     </p>
+
+
+
+
+
+
 
                 </div>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <!-- DRONE -->
 
+
+
+
+
+
+
             <div class="important-date">
+
+
+
+
+
+
+
+
+
 
 
                 <div class="calendar-box">
 
+
+
+
+
+
+
                     <span>
+
+
+
                         SEP
+
+
+
                     </span>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         21
+
+
+
                     </strong>
 
+
+
+
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
 
 
                 <div>
 
+
+
+
+
+
+
                     <strong>
+
+
+
                         Drone in the Box
+
+
+
                     </strong>
 
+
+
+
+
+
+
                     <p>
+
+
+
                         Internal FAT
+
+
+
                     </p>
+
+
+
+
+
+
 
                 </div>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
 
 
         </section>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- =============================================
+
+
+
              TECH CENTER NOTES
+
+
+
         ============================================== -->
 
+
+
+
+
+
+
         <section class="dashboard-card">
+
+
+
+
+
+
+
+
+
 
 
             <div class="card-title-row">
 
 
+
+
+
+
+
+
+
+
+
                 <h2>
-                    Tech Center Notes
+
+
+
+                    Workspace Overview
+
+
+
                 </h2>
 
 
+
+
+
+
+
+
+
+
+
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             <div class="announcement-card">
 
 
+
+
+
+
+
+
+
+
+
                 <span class="notice-badge">
+
+
+
                     WORKSPACE
+
+
+
                 </span>
+
+
+
+
+
+
+
+
+
 
 
                 <h3>
-                    Project visibility
+
+
+
+                    Tech Center workflow
+
+
+
                 </h3>
 
 
+
+
+
+
+
+
+
+
+
                 <p>
-                    Project schedules, purchasing,
-                    material receipts, and staging
-                    are organized by Tech Center project.
+
+
+
+                    Projects connect purchasing, material receipts,
+                   delivery tickets, and fabrication schedules
+                   in one Tech Center workspace.
+
+
+
                 </p>
 
 
+
+
+
+
+
+
+
+
+
                 <span class="announcement-meta">
+
+
+
                     AIMS Tech Center Mock
+
+
+
                 </span>
+
+
+
+
+
+
+
+
+
 
 
             </div>
 
 
+
+
+
+
+
+
+
+
+
         </section>
+
+
+
+
+
+
+
+
+
 
 
     </div>
 
 
+
+
+
+
+
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
 
 
 {% endblock %}
