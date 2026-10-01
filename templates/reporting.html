@@ -1,638 +1,1276 @@
 <!DOCTYPE html>
 
+
+
 <html lang="en">
+
+
 
 <head>
 
+
+
 <meta charset="UTF-8">
 
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
 
 <title>AIMS Reporting</title>
 
 
 
+
+
+
+
 <style>
+
 :root{
+
   --green:#176b53;
+
   --green-dark:#125743;
+
   --green-soft:#eaf4f0;
+
   --blue:#2374c6;
+
   --orange:#e66a20;
+
   --border:#d9e1de;
+
   --text:#26343c;
+
   --muted:#6f7b81;
+
   --bg:#f4f6f5;
+
 }
-*{box-sizing:border-box}
+
+\*{box-sizing:border-box}
+
 body{
+
   margin:0;
+
   background:var(--bg);
+
   font-family:Arial,Helvetica,sans-serif;
+
   color:var(--text);
+
 }
+
 button,input,textarea,select{font:inherit}
+
 .aims-shell{min-height:100vh}
 
+
+
 /* AIMS-style top navigation */
+
 .topbar{
+
   height:58px;
+
   background:#fff;
+
   border-bottom:1px solid var(--border);
+
   display:flex;
+
   align-items:center;
+
   padding:0 18px;
+
   gap:12px;
+
 }
+
 .logo-mark{
+
   font-weight:800;
+
   font-size:20px;
+
   color:var(--green);
+
   white-space:nowrap;
+
 }
+
 .logo-sub{
+
   font-size:15px;
+
   font-weight:700;
+
   color:#284c41;
+
   border-left:1px solid var(--border);
+
   padding-left:12px;
+
 }
+
 .project-pill{
+
   border:1px solid #d7dfdc;
+
   border-radius:6px;
+
   background:#fff;
+
   padding:7px 28px 7px 10px;
+
   font-size:11px;
+
   font-weight:700;
+
   color:#35434a;
+
 }
+
 .topbar-section{
+
   font-size:10px;
+
   font-weight:800;
+
   color:var(--orange);
+
   text-transform:uppercase;
+
   letter-spacing:.5px;
+
   margin-left:4px;
+
 }
+
 .topbar-spacer{flex:1}
+
 .user{
+
   font-size:11px;
+
   font-weight:700;
+
   color:#35434a;
+
 }
+
+
 
 /* AIMS-style left navigation */
+
 .aims-layout{
+
   display:flex;
+
   min-height:calc(100vh - 58px);
+
 }
+
 .sidebar{
+
   width:210px;
+
   background:#fff;
+
   border-right:1px solid var(--border);
+
   padding:18px 10px;
+
   flex-shrink:0;
+
 }
+
 .side-item{
+
   display:flex;
+
   align-items:center;
+
   gap:10px;
+
   padding:10px 12px;
+
   margin-bottom:3px;
+
   border-radius:6px;
+
   font-size:12px;
+
   font-weight:700;
+
   color:#46535a;
+
 }
+
 .side-item.active{
+
   background:#fff3e6;
+
   color:#26343c;
+
   border-left:3px solid var(--orange);
+
   padding-left:9px;
+
 }
+
 .side-icon{
+
   width:17px;
+
   text-align:center;
+
   color:#6d777c;
+
   font-size:12px;
+
 }
+
 .side-item.active .side-icon{color:var(--orange)}
+
 .side-label{
+
   margin:16px 8px 7px;
+
   font-size:9px;
+
   font-weight:800;
+
   color:#7c8589;
+
   text-transform:uppercase;
+
   letter-spacing:1.1px;
+
 }
+
 .side-sub{
+
   padding-left:39px;
+
   margin-top:-1px;
+
   margin-bottom:3px;
+
   font-size:11px;
+
   color:#667278;
+
 }
+
+
 
 /* Main content */
+
 .content{
+
   flex:1;
+
   max-width:none;
+
   margin:0;
+
   padding:24px 28px 40px;
+
 }
+
 .eyebrow{
+
   font-size:10px;
+
   letter-spacing:1.2px;
+
   color:var(--orange);
+
   font-weight:800;
+
   text-transform:uppercase;
+
 }
+
 h1{
+
   margin:6px 0 4px;
+
   font-size:26px;
+
   color:#23333b;
+
 }
+
 .subtitle{
+
   margin:0;
+
   color:var(--muted);
+
   font-size:12px;
+
 }
+
 .home-toolbar{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:flex-end;
+
   gap:20px;
+
 }
+
 .live-badge{
+
   display:inline-flex;
+
   align-items:center;
+
   gap:6px;
+
   margin-top:13px;
+
   padding:6px 10px;
+
   border:1px solid #b8d9cb;
+
   border-radius:999px;
+
   color:var(--green);
+
   background:#f5fbf8;
+
   font-size:10px;
+
   font-weight:800;
+
 }
+
 .summary-grid{
+
   display:grid;
+
   grid-template-columns:repeat(3,1fr);
+
   gap:14px;
+
   margin-top:22px;
+
 }
+
 .summary-card{
+
   background:#fff;
+
   border:1px solid var(--border);
+
   border-radius:8px;
+
   padding:15px 17px;
+
   box-shadow:0 1px 2px rgba(0,0,0,.04);
+
 }
+
 .summary-label{
+
   font-size:9px;
+
   letter-spacing:1px;
+
   color:#7a858a;
+
   font-weight:800;
+
   text-transform:uppercase;
+
 }
+
 .summary-number{
+
   font-size:24px;
+
   font-weight:800;
+
   margin-top:5px;
+
 }
+
 .summary-note{
+
   color:var(--muted);
+
   font-size:10px;
+
   margin-top:3px;
+
 }
+
 .report-panel{
+
   margin-top:18px;
+
   background:#fff;
+
   border:1px solid var(--border);
+
   border-radius:9px;
+
   box-shadow:0 1px 2px rgba(0,0,0,.04);
+
 }
+
 .panel-head{
+
   padding:15px 18px;
+
   border-bottom:1px solid var(--border);
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
 }
+
 .panel-head h2{
+
   margin:0;
+
   font-size:15px;
+
 }
+
 .panel-head p{
+
   margin:3px 0 0;
+
   color:var(--muted);
+
   font-size:10px;
+
 }
+
 .report-grid{
+
   display:grid;
+
   grid-template-columns:repeat(3,1fr);
+
   gap:14px;
+
   padding:16px;
+
   margin:0;
+
 }
+
 .report-card{
+
   background:#fff;
+
   border:1px solid var(--border);
+
   border-radius:8px;
+
   padding:17px;
+
   min-height:205px;
+
   display:flex;
+
   flex-direction:column;
+
 }
+
 .report-card:hover{
+
   border-color:#b9cbc5;
+
   box-shadow:0 2px 7px rgba(0,0,0,.05);
+
 }
+
 .report-card h2{
+
   font-size:15px;
+
   margin:12px 0 6px;
+
 }
+
 .report-card p{
+
   font-size:11px;
+
   line-height:1.5;
+
   color:var(--muted);
+
   margin:0;
+
 }
+
 .report-card .card-footer{
+
   margin-top:auto;
+
   padding-top:16px;
+
 }
+
 .report-card button{
+
   border:0;
+
   background:var(--green);
+
   color:#fff;
+
   border-radius:5px;
+
   padding:9px 13px;
+
   font-size:10px;
+
   font-weight:800;
+
   cursor:pointer;
+
 }
+
 .report-card button:hover{background:var(--green-dark)}
+
 .icon{
+
   width:34px;
+
   height:34px;
+
   border-radius:7px;
+
   background:var(--green-soft);
+
   display:flex;
+
   align-items:center;
+
   justify-content:center;
+
   font-size:10px;
+
   font-weight:800;
+
   color:var(--green);
+
 }
+
 .hidden{display:none!important}
 
+
+
 /* Existing report form styling */
+
 .form-shell{
+
   margin-top:24px;
+
   background:#fff;
+
   border:1px solid var(--border);
+
   border-radius:10px;
-}
-.form-head{
-  padding:20px 22px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-.form-head h2{margin:0;font-size:20px}
-.form-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
-.back{
-  margin-left:auto;
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:6px;
-  padding:9px 13px;
-  font-size:11px;
-  font-weight:700;
-  cursor:pointer;
-}
-.form-body{padding:22px}
-.section-title{
-  font-size:13px;
-  font-weight:800;
-  margin:25px 0 12px;
-  padding-bottom:8px;
-  border-bottom:2px solid var(--green);
-}
-.section-title:first-child{margin-top:0}
-.fields{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:13px 16px;
-}
-.field{display:flex;flex-direction:column;gap:5px}
-.field.full{grid-column:1/-1}
-.field label{
-  font-size:10px;
-  font-weight:800;
-  color:#536168;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-}
-input,textarea,select{
-  width:100%;
-  border:1px solid #ccd7d2;
-  border-radius:5px;
-  background:#fff;
-  padding:9px 10px;
-  color:var(--text);
-  font-size:12px;
-}
-textarea{min-height:95px;resize:vertical}
-input:focus,textarea:focus,select:focus{
-  outline:none;
-  border-color:var(--green);
-  box-shadow:0 0 0 2px rgba(23,107,83,.08);
-}
-.check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.check-item{
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:9px;
-  background:#fafcfb;
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  font-size:11px;
-  line-height:1.35;
-}
-.check-item input{width:auto;margin-top:2px}
-.readiness-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.readiness-item{
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:10px;
-  display:grid;
-  grid-template-columns:75px 1fr;
-  gap:10px;
-  align-items:center;
-}
-.readiness-controls{font-size:10px;line-height:1.7;color:#536168}
-.readiness-controls label{display:block;text-transform:none;letter-spacing:0;font-size:10px}
-.readiness-text{font-size:11px;line-height:1.35}
-.signature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.signature-box{border:1px solid var(--border);border-radius:6px;padding:13px}
-.signature-box h4{margin:0 0 10px;font-size:12px}
-.actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:25px;
-  padding-top:18px;
-  border-top:1px solid var(--border);
-}
-.btn-secondary,.btn-primary{
-  border-radius:6px;
-  padding:10px 16px;
-  font-size:11px;
-  font-weight:800;
-  cursor:pointer;
-}
-.btn-secondary{background:#fff;border:1px solid var(--border)}
-.btn-primary{background:var(--green);border:1px solid var(--green);color:#fff}
-.notice{
-  margin:18px 22px 0;
-  padding:12px 14px;
-  border-radius:6px;
-  background:var(--green-soft);
-  color:var(--green-dark);
-  font-size:11px;
-  display:none;
-}
-.ncr-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.option{
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:8px;
-  font-size:11px;
-  display:flex;
-  gap:7px;
-  align-items:center;
-  background:#fff;
-}
-.option input{width:auto}
-.deviation-table{width:100%;border-collapse:collapse;font-size:10px}
-.deviation-table th{
-  background:#eef3f1;
-  text-align:left;
-  padding:8px;
-  border:1px solid var(--border);
-  font-size:9px;
-}
-.deviation-table td{border:1px solid var(--border);padding:5px}
-.deviation-table input{border:0;border-radius:0;padding:6px;font-size:10px}
-.add-row{
-  margin-top:10px;
-  border:1px solid var(--green);
-  background:#fff;
-  color:var(--green);
-  border-radius:5px;
-  padding:8px 12px;
-  font-size:10px;
-  font-weight:800;
-  cursor:pointer;
-}
-@media(max-width:1050px){
-  .sidebar{width:180px}
-  .report-grid,.summary-grid{grid-template-columns:1fr}
-}
-@media(max-width:900px){
-  .sidebar{display:none}
-  .fields,.signature-grid{grid-template-columns:1fr}
-  .readiness-grid{grid-template-columns:1fr}
-  .check-grid,.ncr-options{grid-template-columns:1fr 1fr}
+
 }
 
+.form-head{
+
+  padding:20px 22px;
+
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+
+  align-items:center;
+
+  gap:15px;
+
+}
+
+.form-head h2{margin:0;font-size:20px}
+
+.form-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
+
+.back{
+
+  margin-left:auto;
+
+  border:1px solid var(--border);
+
+  background:#fff;
+
+  border-radius:6px;
+
+  padding:9px 13px;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+}
+
+.form-body{padding:22px}
+
+.section-title{
+
+  font-size:13px;
+
+  font-weight:800;
+
+  margin:25px 0 12px;
+
+  padding-bottom:8px;
+
+  border-bottom:2px solid var(--green);
+
+}
+
+.section-title:first-child{margin-top:0}
+
+.fields{
+
+  display:grid;
+
+  grid-template-columns:repeat(2,1fr);
+
+  gap:13px 16px;
+
+}
+
+.field{display:flex;flex-direction:column;gap:5px}
+
+.field.full{grid-column:1/-1}
+
+.field label{
+
+  font-size:10px;
+
+  font-weight:800;
+
+  color:#536168;
+
+  text-transform:uppercase;
+
+  letter-spacing:.4px;
+
+}
+
+input,textarea,select{
+
+  width:100%;
+
+  border:1px solid #ccd7d2;
+
+  border-radius:5px;
+
+  background:#fff;
+
+  padding:9px 10px;
+
+  color:var(--text);
+
+  font-size:12px;
+
+}
+
+textarea{min-height:95px;resize:vertical}
+
+input:focus,textarea:focus,select:focus{
+
+  outline:none;
+
+  border-color:var(--green);
+
+  box-shadow:0 0 0 2px rgba(23,107,83,.08);
+
+}
+
+.check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
+.check-item{
+
+  border:1px solid var(--border);
+
+  border-radius:6px;
+
+  padding:9px;
+
+  background:#fafcfb;
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:8px;
+
+  font-size:11px;
+
+  line-height:1.35;
+
+}
+
+.check-item input{width:auto;margin-top:2px}
+
+.readiness-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.readiness-item{
+
+  border:1px solid var(--border);
+
+  border-radius:6px;
+
+  padding:10px;
+
+  display:grid;
+
+  grid-template-columns:75px 1fr;
+
+  gap:10px;
+
+  align-items:center;
+
+}
+
+.readiness-controls{font-size:10px;line-height:1.7;color:#536168}
+
+.readiness-controls label{display:block;text-transform:none;letter-spacing:0;font-size:10px}
+
+.readiness-text{font-size:11px;line-height:1.35}
+
+.signature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+.signature-box{border:1px solid var(--border);border-radius:6px;padding:13px}
+
+.signature-box h4{margin:0 0 10px;font-size:12px}
+
+.actions{
+
+  display:flex;
+
+  justify-content:flex-end;
+
+  gap:10px;
+
+  margin-top:25px;
+
+  padding-top:18px;
+
+  border-top:1px solid var(--border);
+
+}
+
+.btn-secondary,.btn-primary{
+
+  border-radius:6px;
+
+  padding:10px 16px;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+.btn-secondary{background:#fff;border:1px solid var(--border)}
+
+.btn-primary{background:var(--green);border:1px solid var(--green);color:#fff}
+
+.notice{
+
+  margin:18px 22px 0;
+
+  padding:12px 14px;
+
+  border-radius:6px;
+
+  background:var(--green-soft);
+
+  color:var(--green-dark);
+
+  font-size:11px;
+
+  display:none;
+
+}
+
+.ncr-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+.option{
+
+  border:1px solid var(--border);
+
+  border-radius:6px;
+
+  padding:8px;
+
+  font-size:11px;
+
+  display:flex;
+
+  gap:7px;
+
+  align-items:center;
+
+  background:#fff;
+
+}
+
+.option input{width:auto}
+
+.deviation-table{width:100%;border-collapse:collapse;font-size:10px}
+
+.deviation-table th{
+
+  background:#eef3f1;
+
+  text-align:left;
+
+  padding:8px;
+
+  border:1px solid var(--border);
+
+  font-size:9px;
+
+}
+
+.deviation-table td{border:1px solid var(--border);padding:5px}
+
+.deviation-table input{border:0;border-radius:0;padding:6px;font-size:10px}
+
+.add-row{
+
+  margin-top:10px;
+
+  border:1px solid var(--green);
+
+  background:#fff;
+
+  color:var(--green);
+
+  border-radius:5px;
+
+  padding:8px 12px;
+
+  font-size:10px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+@media(max-width:1050px){
+
+  .sidebar{width:180px}
+
+  .report-grid,.summary-grid{grid-template-columns:1fr}
+
+}
+
+@media(max-width:900px){
+
+  .sidebar{display:none}
+
+  .fields,.signature-grid{grid-template-columns:1fr}
+
+  .readiness-grid{grid-template-columns:1fr}
+
+  .check-grid,.ncr-options{grid-template-columns:1fr 1fr}
+
+}
+
+
+
 /* Reporting page: compact AIMS navigation + useful demo status metrics */
+
 .sidebar-navigation{display:flex;flex-direction:column;gap:6px}
+
 .nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:#29373c}
+
 .nav-item.active{background:#176b53!important;color:#fff!important}
+
 .project-nav{position:relative}
+
 .project-nav-button{width:100%;border:0;background:transparent;font:inherit;cursor:pointer}
+
 .nav-chevron{margin-left:auto;font-size:19px;transition:transform .15s ease}
+
 .project-nav.open .nav-chevron{transform:rotate(90deg)}
+
 .project-menu{
+
   display:none;position:absolute;left:calc(100% + 8px);top:0;width:310px;
+
   background:#fff;border:1px solid #dce5e1;border-radius:10px;
+
   box-shadow:0 14px 34px rgba(30,55,46,.14);padding:8px;z-index:50
+
 }
+
 .project-nav.open .project-menu{display:block}
+
 .project-menu-title{font-size:9px;font-weight:800;letter-spacing:1px;color:#176b53;padding:6px 9px}
+
 .project-menu a{display:flex;align-items:center;gap:9px;padding:8px;border-radius:7px;text-decoration:none;color:#27363b}
+
 .project-menu a:hover{background:#f2f7f4}
+
 .project-menu strong{display:block;font-size:11px}
+
 .project-menu small{display:block;font-size:9px;color:#7b8588;margin-top:2px}
+
 .project-initial{width:28px;height:28px;border-radius:7px;background:#e9f4ef;color:#176b53;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex:0 0 28px}
+
 .status-strip{
+
   display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px
+
 }
+
 .status-item{
+
   background:#fff;border:1px solid #e1e8e5;border-radius:9px;padding:11px 14px;
+
   display:flex;align-items:center;gap:10px;min-height:54px
+
 }
+
 .status-item strong{display:block;font-size:18px;line-height:1.05;color:#26353b}
+
 .status-item small{display:block;margin-top:3px;font-size:10px;color:#788387}
+
 .status-dot{width:8px;height:8px;border-radius:50%;background:#176b53;flex:0 0 8px}
+
 .status-dot.process{background:#d47a18}
+
 .status-dot.draft{background:#6d7b80}
+
 .status-dot.complete{background:#2d8a68}
+
 .report-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+
 .report-card:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(32,55,48,.08)}
+
 @media(max-width:850px){
+
   .status-strip{grid-template-columns:repeat(2,1fr)}
+
   .project-menu{position:static;width:auto;margin:0 0 5px 34px;box-shadow:none}
+
 }
+
+
+
 
 
 /* Match the Tech Center home interface */
+
 .topbar{
+
   height:88px!important;
+
   padding:0 32px!important;
+
   gap:0!important;
+
   background:#fff!important;
+
 }
+
 .brand-lockup{
+
   display:flex;align-items:center;gap:9px;height:100%;
+
 }
+
 .top-logo{
+
   width:39px!important;height:39px!important;
+
   object-fit:contain!important;
+
   display:block!important;
+
 }
+
 .brand-name{
+
   font-size:22px;font-weight:800;color:#27363b;
+
   letter-spacing:-.4px;
+
 }
+
 .brand-divider{
+
   height:45px;width:1px;background:#dfe5e2;margin:0 24px;
+
 }
+
 .aims-name{
+
   font-size:25px;font-weight:800;color:#176b53;letter-spacing:-.5px;
+
 }
+
 .project-selector{
+
   margin-left:20px;height:48px;min-width:178px;
+
   padding:0 16px;border:1px solid #d4ded9;border-radius:9px;
+
   background:#fff;color:#344148;font-size:16px;font-weight:700;
+
   display:flex;align-items:center;justify-content:space-between;gap:22px;
+
   cursor:pointer;
+
 }
+
 .selector-chevron{font-size:20px;line-height:1;color:#344148}
+
 .topbar-section,.user{display:none!important}
 
+
+
 .aims-layout{
+
   min-height:calc(100vh - 88px)!important;
+
 }
+
 .sidebar{
+
   width:244px!important;
+
   padding:28px 16px 20px!important;
+
   background:#fff!important;
+
   border-right:1px solid #dfe5e2!important;
+
   display:flex!important;
+
   flex-direction:column!important;
+
 }
+
 .sidebar-navigation{
+
   display:flex!important;
+
   flex-direction:column!important;
+
   gap:8px!important;
+
 }
+
 .nav-item{
+
   min-height:48px;
+
   padding:0 16px!important;
+
   border-radius:10px!important;
+
   gap:13px!important;
+
   font-size:15px!important;
+
   font-weight:600!important;
+
   color:#27363b!important;
+
   background:transparent;
+
   transition:background .12s ease, color .12s ease;
+
 }
+
 .nav-item:hover{background:#f3f5f4}
+
 .nav-item.active{
+
   background:#176b53!important;
+
   color:#fff!important;
+
   box-shadow:0 5px 12px rgba(23,107,83,.16);
+
 }
+
 .nav-icon{
+
   width:18px!important;
+
   text-align:center;
+
   font-size:18px!important;
+
   line-height:1;
+
   color:inherit!important;
+
 }
+
 .project-nav-button{
+
   appearance:none;
+
 }
+
 .nav-chevron{
+
   margin-left:auto!important;
+
   font-size:23px!important;
+
   line-height:1;
+
 }
+
 .project-nav.open .nav-chevron{transform:rotate(90deg)}
 
+
+
 .project-menu{
+
   left:calc(100% + 10px)!important;
+
   top:0!important;
+
   width:300px!important;
+
   border-radius:10px!important;
+
   padding:8px!important;
+
 }
+
 .project-menu-title{
+
   padding:7px 9px!important;
+
 }
+
 .project-menu a{
+
   min-height:42px!important;
+
   padding:7px 9px!important;
+
   font-size:12px!important;
+
 }
+
+
 
 .sidebar-footer{
+
   margin-top:auto!important;
+
   padding:18px 10px 4px!important;
+
   min-height:auto!important;
+
   border-top:0!important;
+
 }
+
 .footer-wordmark{
+
   display:flex;align-items:center;gap:6px;
+
   color:#26343c;font-size:16px;font-weight:800;
+
 }
+
 .footer-x{
+
   color:#176b53;font-size:22px;font-weight:900;line-height:1;
+
 }
+
 .mock-label{
+
   display:block!important;
+
   margin-top:5px!important;
+
   font-size:10px!important;
+
   color:#7a858a!important;
+
 }
+
+
 
 .content{
+
   padding:38px 42px 48px!important;
+
 }
+
 .eyebrow{font-size:11px!important;letter-spacing:1.5px!important}
+
 h1{font-size:32px!important;margin-top:6px!important}
+
 .subtitle{font-size:13px!important}
+
 .live-badge{font-size:10px!important;margin-top:14px!important}
+
 .summary-grid{margin-top:24px!important}
+
 .report-panel{margin-top:20px!important}
 
+
+
 @media(max-width:900px){
+
   .sidebar{display:flex!important;width:210px!important}
+
   .content{padding:28px 24px!important}
+
   .brand-divider{margin:0 14px}
+
   .project-selector{min-width:150px}
+
 }
+
+
 
 </style>
 
+
+
 </head>
+
+
+
+
 
 
 
@@ -640,94 +1278,189 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
 <div class="aims-shell">
 
 
 
+
+
+
+
 <header class="topbar">
+
   <div class="brand-lockup">
+
     <img src="{{ url_for('static', filename='images/images.png') }}"
+
          alt="Audubon" class="top-logo">
+
     <span class="brand-name">audubon</span>
+
   </div>
+
   <div class="brand-divider"></div>
+
   <div class="aims-name">AIMS</div>
+
   <div class="brand-divider"></div>
+
   <button type="button" class="project-selector" onclick="toggleProjectMenu(event)">
-    <span>AEC Demo</span><span class="selector-chevron">⌄</span>
+
+    <span>Tech Center</span><span class="selector-chevron">⌄</span>
+
   </button>
+
   <div class="topbar-spacer"></div>
+
 </header>
 
 
 
 
 
+
+
+
+
+
+
 <div class="aims-layout">
+
   <aside class="sidebar">
+
   <nav class="sidebar-navigation">
+
     <a href="{{ url_for('tech_center_home') }}" class="nav-item">
+
       <span class="nav-icon">⌂</span>
+
       <span>Home</span>
+
     </a>
+
+
 
     <a href="{{ url_for('materials') }}" class="nav-item">
+
       <span class="nav-icon">▦</span>
+
       <span>Materials Management</span>
+
     </a>
+
+
 
     <div class="project-nav">
+
       <button type="button" class="nav-item project-nav-button"
+
               aria-expanded="false" onclick="toggleProjectMenu(event)">
+
         <span class="nav-icon">▣</span>
+
         <span>Projects</span>
+
         <span class="nav-chevron">›</span>
+
       </button>
 
+
+
       <div class="project-menu" id="project-menu">
+
         <div class="project-menu-title">PROJECTS</div>
+
         <a href="{{ url_for('project_dashboard', project_slug='targa-butane') }}">
+
           <span class="project-initial">TB</span>
+
           <span><strong>Targa Butane</strong><small>029434-0001-EFAB</small></span>
+
         </a>
+
         <a href="{{ url_for('project_dashboard', project_slug='bp-kaskida') }}">
+
           <span class="project-initial">BP</span>
+
           <span><strong>BP Kaskida</strong><small>028710-0001-EFAB</small></span>
+
         </a>
+
         <a href="{{ url_for('project_dashboard', project_slug='slb-hpu-skids') }}">
+
           <span class="project-initial">SL</span>
+
           <span><strong>SLB HPU Skids</strong><small>027682-0003</small></span>
+
         </a>
+
         <a href="{{ url_for('project_dashboard', project_slug='venture-global') }}">
+
           <span class="project-initial">VG</span>
+
           <span><strong>Venture Global</strong><small>030458-0001</small></span>
+
         </a>
+
         <a href="{{ url_for('project_dashboard', project_slug='williams-aquila') }}">
+
           <span class="project-initial">WA</span>
+
           <span><strong>Williams Aquila</strong><small>031674-0001</small></span>
+
         </a>
+
         <a href="{{ url_for('project_dashboard', project_slug='drone-in-the-box') }}">
+
           <span class="project-initial">DB</span>
+
           <span><strong>Drone in the Box</strong><small>030443-0003-EFAB</small></span>
+
         </a>
+
       </div>
+
     </div>
+
+
 
     <a href="{{ url_for('reporting') }}" class="nav-item active">
+
       <span class="nav-icon">▤</span>
+
       <span>Reporting</span>
+
     </a>
+
   </nav>
 
+
+
   <div class="sidebar-footer">
+
     <div class="footer-wordmark">
+
       <span class="footer-x">×</span><span>audubon</span>
+
     </div>
+
     <span class="mock-label">AIMS Tech Center Mock</span>
+
   </div>
+
 </aside>
 
+
+
 <main class="content">
+
+
+
+
 
 
 
@@ -735,103 +1468,207 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
     <div id="report-home">
+
   <div class="home-toolbar">
+
     <div>
+
       <div class="eyebrow">Field Reporting</div>
+
       <h1>Reports</h1>
+
       <p class="subtitle">Create and submit standardized project quality and reporting forms.</p>
+
       <div class="live-badge">● REPORTING CENTER</div>
+
     </div>
+
   </div>
+
+
 
   <div class="summary-grid">
+
     <div class="summary-card">
+
       <div class="summary-label">Report Types</div>
+
       <div class="summary-number">3</div>
+
       <div class="summary-note">Available for the Tech Center</div>
+
     </div>
+
     <div class="summary-card">
+
       <div class="summary-label">Drafts</div>
+
       <div class="summary-number" id="draft-count">0</div>
+
       <div class="summary-note">Saved locally in this demo</div>
+
     </div>
+
     <div class="summary-card">
+
       <div class="summary-label">Submitted</div>
+
       <div class="summary-number" id="submitted-count">0</div>
+
       <div class="summary-note">Reports submitted in this browser</div>
+
     </div>
+
   </div>
+
+
 
   <div class="status-strip">
+
     <div class="status-item">
+
       <span class="status-dot open"></span>
+
       <div><strong id="open-report-count">0</strong><small>Open Reports</small></div>
+
     </div>
+
     <div class="status-item">
+
       <span class="status-dot process"></span>
+
       <div><strong id="in-process-count">0</strong><small>In Process</small></div>
+
     </div>
+
     <div class="status-item">
+
       <span class="status-dot draft"></span>
+
       <div><strong id="draft-status-count">0</strong><small>Drafts</small></div>
+
     </div>
+
     <div class="status-item">
+
       <span class="status-dot complete"></span>
+
       <div><strong id="submitted-status-count">0</strong><small>Submitted</small></div>
+
     </div>
+
   </div>
 
+
+
   <section class="report-panel">
+
     <div class="panel-head">
+
       <div>
+
         <h2>Available Reports</h2>
+
         <p>Select a report to open its form. The PDF files remain available separately as reference templates.</p>
+
       </div>
+
     </div>
+
+
 
     <div class="report-grid">
+
       <article class="report-card" tabindex="0">
+
         <div class="icon">DR</div>
+
         <h2>Project Deviation Record</h2>
+
         <p>
+
           SFM-QU-0253 — Electrical and Instrumentation Quality Control.
+
           Record project deviations, responsible parties, verification, and comments.
+
         </p>
+
         <div class="card-footer">
+
           <button onclick="openReport('deviation')">Create Report →</button>
+
         </div>
+
       </article>
 
+
+
       <article class="report-card" tabindex="0">
+
         <div class="icon">EP</div>
+
         <h2>Panel Energization Approval</h2>
+
         <p>
+
           Industrial Control Panel Energization Approval Form.
+
           Complete panel information, readiness verification, conditions, and authorization.
+
         </p>
+
         <div class="card-footer">
+
           <button onclick="openReport('energization')">Create Report →</button>
+
         </div>
+
       </article>
 
+
+
       <article class="report-card" tabindex="0">
+
         <div class="icon">NCR</div>
+
         <h2>Nonconformance Report</h2>
+
         <p>
+
           SFM-IS-0202 — Nonconformance Report.
+
           Document the nonconformance, severity, cause, corrective action, disposition,
+
           approval, and closure.
+
         </p>
+
         <div class="card-footer">
+
           <button onclick="openReport('ncr')">Create Report →</button>
+
         </div>
+
       </article>
+
     </div>
+
   </section>
+
 </div>
 
+
+
 <div id="report-form" class="hidden">
+
+
+
+
 
 
 
@@ -839,7 +1676,15 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
             <div class="form-head">
+
+
+
+
 
 
 
@@ -847,11 +1692,23 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
                     <div class="eyebrow" id="form-eyebrow">
+
+
 
                         Reporting
 
+
+
                     </div>
+
+
+
+
 
 
 
@@ -859,7 +1716,15 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
                     <p id="form-subtitle"></p>
+
+
+
+
 
 
 
@@ -867,15 +1732,33 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
                 <button class="back" onclick="showHome()">
 
+
+
                     ← Back to Reports
+
+
 
                 </button>
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -887,15 +1770,33 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
+
+
             <div class="form-body">
+
+
+
+
 
 
 
                 <form id="dynamic-form"
 
+
+
                       onsubmit="submitDemoReport(event)">
 
+
+
                 </form>
+
+
+
+
 
 
 
@@ -903,7 +1804,15 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
         </div>
+
+
+
+
 
 
 
@@ -911,10 +1820,23 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
 </main>
-</div>
 
 </div>
+
+
+
+</div>
+
+
+
+
+
+
 
 
 
@@ -924,15 +1846,31 @@ h1{font-size:32px!important;margin-top:6px!important}
 
 
 
+
+
+
+
 const reports = {
 
 
 
-    /\* =========================================================
+
+
+
+
+    /* =========================================================
+
+
 
        PROJECT DEVIATION RECORD
 
-       \========================================================= \*/
+
+
+       \========================================================= */
+
+
+
+
 
 
 
@@ -940,27 +1878,55 @@ const reports = {
 
 
 
+
+
+
+
         title:
+
+
 
             "Project Deviation (Discrepancy) Record Form",
 
 
 
+
+
+
+
         subtitle:
+
+
 
             "SFM-QU-0253 Rev 3 — Electrical and Instrumentation Quality Control",
 
 
 
-        html: \`
+
+
+
+
+        html: `
+
+
+
+
 
 
 
             <div class="section-title">
 
+
+
                 Project Information
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -968,77 +1934,157 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Audubon Job No.",
 
+
+
                     "audubon_job_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Project Name",
 
+
+
                     "project_name"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Client Rep",
 
+
+
                     "client_rep"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Audubon PM",
 
+
+
                     "audubon_pm"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Audubon Quality Manager",
 
+
+
                     "quality_manager"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Company",
 
+
+
                     "company"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Phone",
+
+
 
                     "company_phone"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -1046,9 +2092,17 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Deviation / Discrepancy Entries
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1056,21 +2110,45 @@ const reports = {
 
 
 
+
+
+
+
                 Use one line for each deviation or discrepancy.
+
+
 
                 The template identifies ID, equipment, drawings,
 
+
+
                 revision, BOM, description, date recorded,
+
+
 
                 responsible party, compliance impact, issue type,
 
+
+
                 assignment, signoff, status, verification,
+
+
 
                 and comments.
 
 
 
+
+
+
+
             </p>
+
+
+
+
+
+
 
 
 
@@ -1080,7 +2158,15 @@ const reports = {
 
 
 
+
+
+
+
                 <thead>
+
+
+
+
 
 
 
@@ -1088,37 +2174,75 @@ const reports = {
 
 
 
+
+
+
+
                         <th>ID</th>
+
+
 
                         <th>Equipment</th>
 
+
+
                         <th>Drawings</th>
+
+
 
                         <th>Revision</th>
 
+
+
                         <th>BOM #</th>
+
+
 
                         <th>Description</th>
 
+
+
                         <th>Date Recorded</th>
+
+
 
                         <th>Responsible Party</th>
 
+
+
                         <th>Compliance Affecting</th>
+
+
 
                         <th>Issue Type</th>
 
+
+
                         <th>Assigned To</th>
+
+
 
                         <th>Signoff</th>
 
+
+
                         <th>Status</th>
+
+
 
                         <th>Verified By</th>
 
+
+
                         <th>Date Verified</th>
 
+
+
                         <th>Comments</th>
+
+
+
+
 
 
 
@@ -1126,11 +2250,23 @@ const reports = {
 
 
 
+
+
+
+
                 </thead>
 
 
 
+
+
+
+
                 <tbody id="deviation-rows"></tbody>
+
+
+
+
 
 
 
@@ -1140,17 +2276,37 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <button
+
+
 
                 type="button"
 
+
+
                 class="add-row"
+
+
 
                 onclick="addDeviationRow()">
 
 
 
+
+
+
+
                 \+ Add Deviation
+
+
+
+
 
 
 
@@ -1160,11 +2316,25 @@ const reports = {
 
 
 
+
+
+
+
+
+
             ${actions()}
 
 
 
-        \`
+
+
+
+
+        `
+
+
+
+
 
 
 
@@ -1174,11 +2344,25 @@ const reports = {
 
 
 
-    /\* =========================================================
+
+
+
+
+
+
+    /* =========================================================
+
+
 
        PANEL ENERGIZATION APPROVAL
 
-       \========================================================= \*/
+
+
+       \========================================================= */
+
+
+
+
 
 
 
@@ -1186,27 +2370,55 @@ const reports = {
 
 
 
+
+
+
+
         title:
+
+
 
             "Industrial Control Panel Energization Approval Form",
 
 
 
+
+
+
+
         subtitle:
+
+
 
             "Document No. [DOCUMENT NO.], Rev 0, 07-Aug-2026",
 
 
 
-        html: \`
+
+
+
+
+        html: `
+
+
+
+
 
 
 
             <div class="section-title">
 
+
+
                 Panel Information
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1214,73 +2426,149 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Client",
 
+
+
                     "client"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Project No.",
 
+
+
                     "project_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Project Name",
 
+
+
                     "project_name"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Site / Area",
 
+
+
                     "site_area"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Panel Tag / ID",
 
+
+
                     "panel_tag"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Panel Description",
 
+
+
                     "panel_description"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Voltage / Source-Feeder",
+
+
 
                     "voltage_source"
 
+
+
                 )}
+
+
+
+
+
+
 
 
 
@@ -1290,11 +2578,23 @@ const reports = {
 
 
 
+
+
+
+
                     <label>
+
+
 
                         Energization Scope
 
+
+
                     </label>
+
+
+
+
 
 
 
@@ -1302,33 +2602,67 @@ const reports = {
 
 
 
+
+
+
+
                         ${check(
+
+
 
                             "Full panel",
 
+
+
                             "scope_full"
+
+
 
                         )}
 
 
 
+
+
+
+
                         ${check(
+
+
 
                             "Control power only",
 
+
+
                             "scope_control"
 
+
+
                         )}
+
+
+
+
 
 
 
                         ${check(
 
+
+
                             "Other",
+
+
 
                             "scope_other"
 
+
+
                         )}
+
+
+
+
 
 
 
@@ -1336,11 +2670,25 @@ const reports = {
 
 
 
+
+
+
+
                 </div>
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -1348,9 +2696,17 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Pre-Energization Readiness Verification
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1358,9 +2714,19 @@ const reports = {
 
 
 
+
+
+
+
                 Mark OK or N/A for each item, following
 
+
+
                 the wording of the provided approval form.
+
+
+
+
 
 
 
@@ -1370,111 +2736,227 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div class="readiness-grid">
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Installation complete; enclosure, doors, barriers, covers, labels, ventilation, and housekeeping are acceptable.",
 
+
+
                     "r1"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Approved one-line, schematics, panel schedule, and manufacturer data are available at the work location.",
 
+
+
                     "r2"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Grounding and bonding inspected; equipment grounding conductor continuity is confirmed.",
 
+
+
                     "r3"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Incoming source, conductor size, voltage, phase, frequency, and interrupting/fault-current ratings are verified.",
 
+
+
                     "r4"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Power and control wiring identified; terminations inspected/torqued; temporary jumpers or grounds removed or documented.",
 
+
+
                     "r5"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Breakers, fuses, overloads, protective settings, and control-power protection match the approved design.",
 
+
+
                     "r6"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "Required continuity, insulation-resistance, loop, I/O, and functional tests are complete with acceptable results.",
 
+
+
                     "r7"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "PLC/HMI/VFD configuration and backups are complete; permissives, trips, and interlocks are checked, as applicable.",
 
+
+
                     "r8"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${readiness(
+
+
 
                     "LOTO boundary, shock/arc-flash controls, PPE, permits/JSA, barricades, and qualified personnel are in place.",
 
+
+
                     "r9"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${readiness(
 
+
+
                     "Downstream loads are controlled; affected personnel are notified; the area is clear; operations is ready for energization.",
+
+
 
                     "r10"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -1482,9 +2964,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Conditions / Limitations
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -1494,27 +2986,57 @@ const reports = {
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "None",
 
+
+
                     "conditions_none"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${check(
 
+
+
                     "Approved subject to",
+
+
 
                     "conditions_subject"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -1522,25 +3044,51 @@ const reports = {
 
             <div
 
+
+
                 class="field full"
+
+
 
                 style="margin-top:10px">
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Additional conditions / limitations",
 
+
+
                     "conditions",
 
+
+
                     "textarea"
+
+
 
                 )}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -1548,9 +3096,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Authorization Signatures
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -1560,33 +3118,67 @@ const reports = {
 
 
 
+
+
+
+
                 ${signature(
+
+
 
                     "Inspected / Verified By",
 
+
+
                     "inspected"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${signature(
+
+
 
                     "Engineering Approval",
 
+
+
                     "engineering"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${signature(
 
+
+
                     "Site / Operations Authorization",
+
+
 
                     "operations"
 
+
+
                 )}
+
+
+
+
 
 
 
@@ -1596,11 +3188,25 @@ const reports = {
 
 
 
+
+
+
+
+
+
             ${actions()}
 
 
 
-        \`
+
+
+
+
+        `
+
+
+
+
 
 
 
@@ -1610,11 +3216,25 @@ const reports = {
 
 
 
-    /\* =========================================================
+
+
+
+
+
+
+    /* =========================================================
+
+
 
        NONCONFORMANCE REPORT
 
-       \========================================================= \*/
+
+
+       \========================================================= */
+
+
+
+
 
 
 
@@ -1622,27 +3242,55 @@ const reports = {
 
 
 
+
+
+
+
         title:
+
+
 
             "Nonconformance Report (NCR)",
 
 
 
+
+
+
+
         subtitle:
+
+
 
             "SFM-IS-0202, Rev 0, 06-Sep-2012",
 
 
 
-        html: \`
+
+
+
+
+        html: `
+
+
+
+
 
 
 
             <div class="section-title">
 
+
+
                 NCR Information
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1650,159 +3298,321 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Date",
 
+
+
                     "date",
+
+
 
                     "date"
 
+
+
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "NCR No.",
 
+
+
                     "ncr_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Project",
 
+
+
                     "project"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Client",
 
+
+
                     "client"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "P.O. No.",
 
+
+
                     "po_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Vendor",
 
+
+
                     "vendor"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Item No.",
 
+
+
                     "item_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Location",
 
+
+
                     "location"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Tag No.",
 
+
+
                     "tag_no"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Contact",
 
+
+
                     "contact"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Description",
 
+
+
                     "description"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Phone No.",
 
+
+
                     "phone"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Specification",
 
+
+
                     "specification"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Drawing",
 
+
+
                     "drawing"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Code",
+
+
 
                     "code"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -1810,9 +3620,17 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Attachments
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1820,23 +3638,47 @@ const reports = {
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "Yes",
 
+
+
                     "attachments_yes"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "No",
 
+
+
                     "attachments_no"
 
+
+
                 )}
+
+
+
+
 
 
 
@@ -1846,11 +3688,25 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div class="section-title">
+
+
 
                 Describe Non-Conformance
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1858,15 +3714,31 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Include document and paragraph. Attach sketch or data, if necessary.",
 
+
+
                     "nonconformance",
+
+
 
                     "textarea"
 
+
+
                 )}
+
+
+
+
 
 
 
@@ -1876,11 +3748,25 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div class="section-title">
+
+
 
                 Issuer / Severity
 
+
+
             </div>
+
+
+
+
 
 
 
@@ -1888,25 +3774,51 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Issuer",
 
+
+
                     "issuer"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Issue Date",
 
+
+
                     "issue_date",
+
+
 
                     "date"
 
+
+
                 )}
+
+
+
+
 
 
 
@@ -1916,31 +3828,65 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div
+
+
 
                 class="check-grid"
 
+
+
                 style="margin-top:12px">
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "Minor",
 
+
+
                     "severity_minor"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${check(
 
+
+
                     "Major (Cost / Schedule, Major Rework Impact)",
+
+
 
                     "severity_major"
 
+
+
                 )}
+
+
+
+
 
 
 
@@ -1950,11 +3896,27 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div class="section-title">
+
+
 
                 Cause / Type of Non-Conformance
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -1964,43 +3926,87 @@ const reports = {
 
 
 
+
+
+
+
                 ${[
+
+
 
                     "Specification Violation",
 
+
+
                     "Code Violation",
+
+
 
                     "Fabrication Error",
 
+
+
                     "Test Failure",
+
+
 
                     "Material Defect",
 
+
+
                     "Major Weld Repair",
+
+
 
                     "Dimensional Error",
 
+
+
                     "Procedural Violation",
+
+
 
                     "Documentation Error",
 
+
+
                     "Missing Items / Parts",
+
+
 
                     "Damaged Items / Parts",
 
+
+
                     "Other"
+
+
 
                 ].map((x,i) =>
 
+
+
                     check(
 
+
+
                         x,
+
+
 
                         "cause\_" + i
 
+
+
                     )
 
+
+
                 ).join("")}
+
+
+
+
 
 
 
@@ -2010,11 +4016,27 @@ const reports = {
 
 
 
+
+
+
+
+
+
             <div class="section-title">
+
+
 
                 Proposed Corrective Action
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2024,31 +4046,65 @@ const reports = {
 
 
 
+
+
+
+
                 ${[
+
+
 
                     "Use As Is",
 
+
+
                     "Rework",
+
+
 
                     "Replace",
 
+
+
                     "Re-Test"
+
+
 
                 ].map((x,i) =>
 
+
+
                     check(
 
+
+
                         x,
+
+
 
                         "corrective\_" + i
 
+
+
                     )
+
+
 
                 ).join("")}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2056,25 +4112,51 @@ const reports = {
 
             <div
 
+
+
                 class="field full"
+
+
 
                 style="margin-top:12px">
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Comments",
 
+
+
                     "corrective_comments",
 
+
+
                     "textarea"
+
+
 
                 )}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2082,9 +4164,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Disposition
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2094,57 +4186,117 @@ const reports = {
 
 
 
+
+
+
+
                 ${[
+
+
 
                     "Use As Is",
 
+
+
                     "Rework",
+
+
 
                     "Replace",
 
+
+
                     "Re-Test"
+
+
 
                 ].map((x,i) =>
 
+
+
                     check(
+
+
 
                         x,
 
+
+
                         "disposition\_" + i
 
+
+
                     )
+
+
 
                 ).join("")}
 
 
 
+
+
+
+
             </div>
 
 
 
 
 
+
+
+
+
+
+
             <div
+
+
 
                 class="field full"
 
+
+
                 style="margin-top:12px">
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Comments",
+
+
 
                     "disposition_comments",
 
+
+
                     "textarea"
+
+
 
                 )}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2152,35 +4304,71 @@ const reports = {
 
             <div
 
+
+
                 class="fields"
+
+
 
                 style="margin-top:12px">
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Vendor",
 
+
+
                     "disposition_vendor"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Date",
+
+
 
                     "disposition_date",
 
+
+
                     "date"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -2188,9 +4376,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Approval
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2200,51 +4398,105 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Approval",
 
+
+
                     "approval"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Approval Date",
 
+
+
                     "approval_date",
 
+
+
                     "date"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Client Approval",
 
+
+
                     "client_approval"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Client Approval Date",
+
+
 
                     "client_approval_date",
 
+
+
                     "date"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -2252,9 +4504,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Closure
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2264,19 +4526,41 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Describe verification process",
 
+
+
                     "closure",
 
+
+
                     "textarea"
+
+
 
                 )}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2284,43 +4568,87 @@ const reports = {
 
             <div
 
+
+
                 class="check-grid"
+
+
 
                 style="margin-top:12px">
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "Follow-up Inspection: Yes",
 
+
+
                     "follow_yes"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${check(
+
+
 
                     "Follow-up Inspection: No",
 
+
+
                     "follow_no"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${check(
 
+
+
                     "Follow-up Inspection: N/A",
+
+
 
                     "follow_na"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -2328,9 +4656,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Closure Signatures
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2340,51 +4678,105 @@ const reports = {
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Inspector",
 
+
+
                     "inspector"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Inspector Date",
 
+
+
                     "inspector_date",
 
+
+
                     "date"
+
+
 
                 )}
 
 
 
+
+
+
+
                 ${field(
+
+
 
                     "Client Representative",
 
+
+
                     "client_rep"
 
+
+
                 )}
+
+
+
+
 
 
 
                 ${field(
 
+
+
                     "Client Representative Date",
+
+
 
                     "client_rep_date",
 
+
+
                     "date"
 
+
+
                 )}
+
+
+
+
 
 
 
             </div>
+
+
+
+
+
+
 
 
 
@@ -2392,9 +4784,19 @@ const reports = {
 
             <div class="section-title">
 
+
+
                 Distribution
 
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2404,37 +4806,77 @@ const reports = {
 
 
 
+
+
+
+
                 ${[
+
+
 
                     "Vendor",
 
+
+
                     "Engineering",
+
+
 
                     "Purchasing",
 
+
+
                     "Expediting",
+
+
 
                     "Inspection",
 
+
+
                     "Job Site",
+
+
 
                     "Client"
 
+
+
                 ].map((x,i) =>
+
+
 
                     check(
 
+
+
                         x,
+
+
 
                         "distribution\_" + i
 
+
+
                     )
+
+
 
                 ).join("")}
 
 
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
 
 
@@ -2444,11 +4886,23 @@ const reports = {
 
 
 
-        \`
+
+
+
+
+        `
+
+
+
+
 
 
 
     }
+
+
+
+
 
 
 
@@ -2458,11 +4912,25 @@ const reports = {
 
 
 
-/\* =========================================================
+
+
+
+
+
+
+/* =========================================================
+
+
 
    FIELD HELPERS
 
-   \========================================================= \*/
+
+
+   \========================================================= */
+
+
+
+
 
 
 
@@ -2470,21 +4938,43 @@ function field(label,name,type="text"){
 
 
 
+
+
+
+
     if(type==="textarea"){
 
 
 
-        return \`
+
+
+
+
+        return `
+
+
 
             <div class="field full">
 
+
+
                 <label>${label}</label>
+
+
 
                 <textarea name="${name}"></textarea>
 
+
+
             </div>
 
-        \`;
+
+
+        `;
+
+
+
+
 
 
 
@@ -2492,25 +4982,53 @@ function field(label,name,type="text"){
 
 
 
-    return \`
+
+
+
+
+    return `
+
+
 
         <div class="field">
 
+
+
             <label>${label}</label>
+
+
 
             <input
 
+
+
                 type="${type}"
+
+
 
                 name="${name}">
 
+
+
         </div>
 
-    \`;
+
+
+    `;
+
+
+
+
 
 
 
 }
+
+
+
+
+
+
 
 
 
@@ -2520,25 +5038,53 @@ function check(label,name){
 
 
 
-    return \`
+
+
+
+
+    return `
+
+
 
         <label class="check-item">
 
+
+
             <input
+
+
 
                 type="checkbox"
 
+
+
                 name="${name}">
+
+
 
             <span>${label}</span>
 
+
+
         </label>
 
-    \`;
+
+
+    `;
+
+
+
+
 
 
 
 }
+
+
+
+
+
+
 
 
 
@@ -2548,9 +5094,19 @@ function readiness(text,name){
 
 
 
-    return \`
+
+
+
+
+    return `
+
+
 
         <div class="readiness-item">
+
+
+
+
 
 
 
@@ -2558,57 +5114,117 @@ function readiness(text,name){
 
 
 
+
+
+
+
                 <label>
+
+
 
                     <input
 
+
+
                         type="radio"
 
+
+
                         name="${name}"
+
+
 
                         value="OK">
 
+
+
                     OK
 
+
+
                 </label>
+
+
+
+
 
 
 
                 <label>
 
+
+
                     <input
+
+
 
                         type="radio"
 
+
+
                         name="${name}"
+
+
 
                         value="N/A">
 
+
+
                     N/A
 
+
+
                 </label>
+
+
+
+
 
 
 
             </div>
+
+
+
+
 
 
 
             <div class="readiness-text">
 
+
+
                 ${text}
+
+
 
             </div>
 
 
 
+
+
+
+
         </div>
 
-    \`;
+
+
+    `;
+
+
+
+
 
 
 
 }
+
+
+
+
+
+
 
 
 
@@ -2618,9 +5234,19 @@ function signature(title,name){
 
 
 
-    return \`
+
+
+
+
+    return `
+
+
 
         <div class="signature-box">
+
+
+
+
 
 
 
@@ -2628,45 +5254,93 @@ function signature(title,name){
 
 
 
+
+
+
+
             ${field(
+
+
 
                 "Name / Title",
 
+
+
                 name + "\_name"
+
+
 
             )}
 
 
 
+
+
+
+
             ${field(
+
+
 
                 "Signature",
 
+
+
                 name + "\_signature"
 
+
+
             )}
+
+
+
+
 
 
 
             ${field(
 
+
+
                 "Date / Time",
+
+
 
                 name + "\_date",
 
+
+
                 "datetime-local"
 
+
+
             )}
+
+
+
+
 
 
 
         </div>
 
-    \`;
+
+
+    `;
+
+
+
+
 
 
 
 }
+
+
+
+
+
+
 
 
 
@@ -2676,19 +5350,39 @@ function actions(){
 
 
 
-    return \`
+
+
+
+
+    return `
+
+
 
         <div class="actions">
 
 
 
+
+
+
+
             <button
+
+
 
                 type="button"
 
+
+
                 class="btn-secondary"
 
+
+
                 onclick="showHome()">
+
+
+
+
 
 
 
@@ -2696,15 +5390,31 @@ function actions(){
 
 
 
+
+
+
+
             </button>
+
+
+
+
 
 
 
             <button
 
+
+
                 type="submit"
 
+
+
                 class="btn-primary">
+
+
+
+
 
 
 
@@ -2712,13 +5422,27 @@ function actions(){
 
 
 
+
+
+
+
             </button>
+
+
+
+
 
 
 
         </div>
 
-    \`;
+
+
+    `;
+
+
+
+
 
 
 
@@ -2728,19 +5452,41 @@ function actions(){
 
 
 
-/\* =========================================================
+
+
+
+
+
+
+/* =========================================================
+
+
 
    OPEN REPORT
 
+
+
    \=========================================================
+
+
 
    IMPORTANT:
 
+
+
    This intentionally DOES NOT open the PDF.
+
+
 
    It restores the original AIMS-style form interface.
 
-   \========================================================= \*/
+
+
+   \========================================================= */
+
+
+
+
 
 
 
@@ -2748,7 +5494,15 @@ function openReport(type){
 
 
 
+
+
+
+
     const report = reports[type];
+
+
+
+
 
 
 
@@ -2756,11 +5510,23 @@ function openReport(type){
 
 
 
+
+
+
+
         alert("Report type could not be found.");
 
 
 
+
+
+
+
         return;
+
+
+
+
 
 
 
@@ -2770,11 +5536,23 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
+
+
 
         .getElementById("report-home")
 
+
+
         .classList
+
+
 
         .add("hidden");
 
@@ -2782,11 +5560,23 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
+
+
 
         .getElementById("report-form")
 
+
+
         .classList
+
+
 
         .remove("hidden");
 
@@ -2794,9 +5584,19 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
 
+
+
         .getElementById("form-eyebrow")
+
+
 
         .textContent = "Reporting";
 
@@ -2804,9 +5604,19 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
 
+
+
         .getElementById("form-title")
+
+
 
         .textContent = report.title;
 
@@ -2814,9 +5624,19 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
 
+
+
         .getElementById("form-subtitle")
+
+
 
         .textContent = report.subtitle;
 
@@ -2824,9 +5644,23 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     const form =
 
+
+
         document.getElementById("dynamic-form");
+
+
+
+
+
+
 
 
 
@@ -2838,7 +5672,19 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     form.dataset.reportType = type;
+
+
+
+
+
+
 
 
 
@@ -2848,7 +5694,15 @@ function openReport(type){
 
 
 
+
+
+
+
         addDeviationRow();
+
+
+
+
 
 
 
@@ -2858,11 +5712,23 @@ function openReport(type){
 
 
 
+
+
+
+
+
+
     document
+
+
 
         .getElementById("success-notice")
 
+
+
         .style
+
+
 
         .display = "none";
 
@@ -2870,47 +5736,95 @@ function openReport(type){
 
 
 
-    window\.scrollTo({
+
+
+
+
+
+
+    window.scrollTo({
+
+
 
         top:0,
 
+
+
         behavior:"smooth"
+
+
 
     });
 
 
 
+
+
+
+
 }
 
 
 
 
 
-/\* =========================================================
+
+
+
+
+
+
+/* =========================================================
+
+
 
    RETURN TO REPORT HOME
 
-   \========================================================= \*/
+
+
+   \========================================================= */
+
+
+
+
 
 
 
 function updateReportCounts(){
+
   const saved = JSON.parse(localStorage.getItem("aims_demo_reports") || "[]");
+
   const count = document.getElementById("submitted-count");
+
   if(count) count.textContent = saved.length;
+
 }
 
+
+
 function showHome(){
+
+
 
   updateReportCounts();
 
 
 
+
+
+
+
     document
+
+
 
         .getElementById("report-form")
 
+
+
         .classList
+
+
 
         .add("hidden");
 
@@ -2918,11 +5832,23 @@ function showHome(){
 
 
 
+
+
+
+
+
+
     document
+
+
 
         .getElementById("report-home")
 
+
+
         .classList
+
+
 
         .remove("hidden");
 
@@ -2930,11 +5856,23 @@ function showHome(){
 
 
 
+
+
+
+
+
+
     document
+
+
 
         .getElementById("success-notice")
 
+
+
         .style
+
+
 
         .display = "none";
 
@@ -2942,13 +5880,29 @@ function showHome(){
 
 
 
-    window\.scrollTo({
+
+
+
+
+
+
+    window.scrollTo({
+
+
 
         top:0,
 
+
+
         behavior:"smooth"
 
+
+
     });
+
+
+
+
 
 
 
@@ -2958,11 +5912,25 @@ function showHome(){
 
 
 
-/\* =========================================================
+
+
+
+
+
+
+/* =========================================================
+
+
 
    ADD DEVIATION ROW
 
-   \========================================================= \*/
+
+
+   \========================================================= */
+
+
+
+
 
 
 
@@ -2970,9 +5938,21 @@ function addDeviationRow(){
 
 
 
+
+
+
+
     const tbody =
 
+
+
         document.getElementById("deviation-rows");
+
+
+
+
+
+
 
 
 
@@ -2982,7 +5962,15 @@ function addDeviationRow(){
 
 
 
+
+
+
+
         return;
+
+
+
+
 
 
 
@@ -2992,9 +5980,23 @@ function addDeviationRow(){
 
 
 
+
+
+
+
+
+
     const tr =
 
+
+
         document.createElement("tr");
+
+
+
+
+
+
 
 
 
@@ -3004,37 +6006,75 @@ function addDeviationRow(){
 
 
 
+
+
+
+
         "id",
+
+
 
         "equipment",
 
+
+
         "drawings",
+
+
 
         "revision",
 
+
+
         "bom",
+
+
 
         "description",
 
+
+
         "date",
+
+
 
         "responsible",
 
+
+
         "compliance",
+
+
 
         "issue",
 
+
+
         "assigned",
+
+
 
         "signoff",
 
+
+
         "status",
+
+
 
         "verified",
 
+
+
         "verified_date",
 
+
+
         "comments"
+
+
+
+
 
 
 
@@ -3044,7 +6084,17 @@ function addDeviationRow(){
 
 
 
-    tr.innerHTML = fields.map(n => \`
+
+
+
+
+
+
+    tr.innerHTML = fields.map(n => `
+
+
+
+
 
 
 
@@ -3052,15 +6102,31 @@ function addDeviationRow(){
 
 
 
+
+
+
+
             <input
+
+
 
                 name="deviation\_${n}[]"
 
+
+
                 ${n === "date" || n === "verified_date"
+
+
 
                     ? 'type="date"'
 
+
+
                     : ''}>
+
+
+
+
 
 
 
@@ -3068,7 +6134,17 @@ function addDeviationRow(){
 
 
 
-    \`).join("");
+
+
+
+
+    `).join("");
+
+
+
+
+
+
 
 
 
@@ -3078,21 +6154,43 @@ function addDeviationRow(){
 
 
 
+
+
+
+
 }
 
 
 
 
 
-/\* =========================================================
+
+
+
+
+
+
+/* =========================================================
+
+
 
    SUBMIT DEMONSTRATION REPORT
 
-   \========================================================= \*/
+
+
+   \========================================================= */
+
+
+
+
 
 
 
 function submitDemoReport(event){
+
+
+
+
 
 
 
@@ -3102,7 +6200,15 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     const form =
+
+
 
         event.currentTarget;
 
@@ -3110,7 +6216,15 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     const type =
+
+
 
         form.dataset.reportType;
 
@@ -3118,9 +6232,23 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     const data =
 
+
+
         new FormData(form);
+
+
+
+
+
+
 
 
 
@@ -3130,17 +6258,35 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
         reportType:type,
+
+
+
+
 
 
 
         submittedAt:
 
+
+
             new Date().toISOString(),
 
 
 
+
+
+
+
         fields:{}
+
+
+
+
 
 
 
@@ -3150,7 +6296,17 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     for(const [key,value] of data.entries()){
+
+
+
+
 
 
 
@@ -3158,23 +6314,47 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
             if(
+
+
 
                 !Array.isArray(
 
+
+
                     record.fields[key]
 
+
+
                 )
+
+
 
             ){
 
 
 
+
+
+
+
                 record.fields[key] = [
+
+
 
                     record.fields[key]
 
+
+
                 ];
+
+
+
+
 
 
 
@@ -3184,11 +6364,25 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
             record.fields[key].push(value);
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -3196,11 +6390,23 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
             record.fields[key] = value;
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -3210,17 +6416,39 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     const existing =
+
+
 
         JSON.parse(
 
+
+
             localStorage.getItem(
+
+
 
                 "aims_demo_reports"
 
+
+
             ) || "[]"
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -3232,11 +6460,23 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     localStorage.setItem(
+
+
 
         "aims_demo_reports",
 
+
+
         JSON.stringify(existing)
+
+
 
     );
 
@@ -3244,11 +6484,23 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     const notice =
+
+
 
         document.getElementById(
 
+
+
             "success-notice"
+
+
 
         );
 
@@ -3256,7 +6508,15 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     notice.textContent =
+
+
 
         "Report submitted successfully. This demonstration stores the completed report in this browser only.";
 
@@ -3264,7 +6524,15 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
+
+
     notice.style.display =
+
+
 
         "block";
 
@@ -3272,13 +6540,29 @@ function submitDemoReport(event){
 
 
 
-    window\.scrollTo({
+
+
+
+
+
+
+    window.scrollTo({
+
+
 
         top:0,
 
+
+
         behavior:"smooth"
 
+
+
     });
+
+
+
+
 
 
 
@@ -3286,73 +6570,146 @@ function submitDemoReport(event){
 
 
 
+
+
+
+
 updateReportCounts();
+
 </script>
 
 
 
 
+
+
+
+
+
 <script>
+
 (function(){
+
   function getArray(key){
+
     try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+
     catch(e){ return []; }
+
   }
+
+
 
   function updateReportingMetrics(){
+
     const drafts = getArray("aims_reporting_drafts");
+
     const submitted = getArray("aims_reporting_submitted");
+
     const draftCount = document.getElementById("draft-count");
+
     const submittedCount = document.getElementById("submitted-count");
 
+
+
     if (draftCount) draftCount.textContent = drafts.length;
+
     if (submittedCount) submittedCount.textContent = submitted.length;
 
+
+
     const open = drafts.length;
+
     const inProcess = submitted.filter(x => x && x.status === "In Process").length;
+
     const done = submitted.filter(x => !x || x.status !== "In Process").length;
 
+
+
     const a = document.getElementById("open-report-count");
+
     const b = document.getElementById("in-process-count");
+
     const c = document.getElementById("draft-status-count");
+
     const d = document.getElementById("submitted-status-count");
+
     if (a) a.textContent = open;
+
     if (b) b.textContent = inProcess;
+
     if (c) c.textContent = drafts.length;
+
     if (d) d.textContent = done;
+
   }
 
+
+
   window.toggleProjectMenu = function(event){
+
     if (event) event.stopPropagation();
+
     const nav = document.querySelector(".project-nav");
+
     if (!nav) return;
+
     const isOpen = nav.classList.toggle("open");
+
     const btn = nav.querySelector(".project-nav-button");
+
     if (btn) btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
   };
 
+
+
   document.addEventListener("click", function(e){
+
     const nav = document.querySelector(".project-nav");
+
     if (nav && !nav.contains(e.target)) nav.classList.remove("open");
+
   });
 
+
+
   document.addEventListener("DOMContentLoaded", updateReportingMetrics);
+
 })();
+
 </script>
+
+
+
 
 
 <script>
+
 document.addEventListener("DOMContentLoaded", function(){
+
   const selector = document.querySelector(".project-selector");
+
   if(selector){
+
     selector.addEventListener("click", function(e){
+
       const nav = document.querySelector(".project-nav");
+
       if(nav) nav.classList.toggle("open");
+
     });
+
   }
+
 });
+
 </script>
 
+
+
 </body>
+
+
 
 </html>
