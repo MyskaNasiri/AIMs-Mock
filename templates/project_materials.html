@@ -2,325 +2,6802 @@
 
 
 
-{% block title %}Materials | {{ project.name }} | AIMS{% endblock %}
+
+
+
+
+
+
+
+
+{% block title %}
+
+
+
+Materials | {{ project.name }} | AIMS
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
 
 
 
 {% block content %}
 
+
+
+
+
+
+
+
+
+
+
 <style>
 
-.proc-page{padding:18px 24px 32px;color:#26352f}
 
-.project-kicker{font-size:11px;font-weight:800;letter-spacing:.08em;color:#27705a}
 
-.project-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 
-.project-head h1{font-size:28px;margin:3px 0 2px}.muted{color:#6b7772;font-size:12px}
 
-.project-tabs{display:flex;gap:8px;border:1px solid #d8dfdc;background:#fff;border-radius:6px;padding:6px;margin-bottom:20px}
 
-.project-tabs a{text-decoration:none;color:#4c5b55;font-weight:700;font-size:12px;padding:9px 14px;border-radius:4px}
 
-.project-tabs a.active{background:#276b55;color:#fff}
+    /* =========================================
 
-.page-row{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:14px}
 
-.page-row h2{margin:0 0 3px;font-size:20px}.source-tag{font-size:10px;font-weight:800;letter-spacing:.05em;border:1px solid #cddbd5;background:#eef5f2;color:#315f50;border-radius:3px;padding:5px 7px}
 
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+       PAGE
 
-.card{background:#fff;border:1px solid #d8dfdc;border-top:3px solid #8aa79b;padding:12px 14px}.card.received{border-top-color:#39805f}.card.partial{border-top-color:#c59635}.card.outstanding{border-top-color:#b95555}
 
-.card-label{font-size:9px;font-weight:800;letter-spacing:.07em;color:#6b7772}.card-value{font-size:24px;font-weight:800;margin-top:3px}.card-note{font-size:10px;color:#7a8580}
 
-.workspace{background:#fff;border:1px solid #d8dfdc}
+    ========================================= */
 
-.toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #d8dfdc;gap:10px}
 
-.toolbar-title{font-size:13px;font-weight:800}.toolbar-controls{display:flex;gap:7px}.search,.filter{height:34px;border:1px solid #cfd8d4;background:#fff;padding:0 10px;font-size:11px}.search{width:290px}
 
-.table-wrap{overflow-x:auto}.proc-table{width:100%;border-collapse:collapse;min-width:1260px;font-size:10px}.proc-table th{background:#f4f6f5;color:#5e6c66;text-align:left;font-size:8px;letter-spacing:.05em;text-transform:uppercase;padding:9px 8px;border-bottom:1px solid #d8dfdc;white-space:nowrap}.proc-table td{padding:9px 8px;border-bottom:1px solid #e5e9e7;vertical-align:middle}.material-row{cursor:pointer}.material-row:hover{background:#f7faf8}.part{font-weight:800;color:#275c4b}.desc{max-width:310px}.qty{text-align:right;font-variant-numeric:tabular-nums}.po{font-weight:700}.badge{display:inline-flex;border-radius:3px;padding:3px 6px;font-size:8px;font-weight:800;white-space:nowrap}.b-received{background:#e8f4ed;color:#2c6c50}.b-partial{background:#fff3d8;color:#8b6518}.b-outstanding{background:#fbeaea;color:#994545}.b-not-needed{background:#eef0ef;color:#69736f}.chev{font-size:16px;color:#718079}
 
-.detail-row{display:none}.detail-row.open{display:table-row}.detail-cell{padding:0!important;background:#f8faf9}.detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px 18px}.detail-box{background:#fff;border:1px solid #dfe5e2;padding:12px}.detail-title{font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:#31634f;margin-bottom:8px}.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:10px;padding:4px 0;border-bottom:1px solid #eef1ef}.kv:last-child{border:0}.kv span:first-child{color:#6f7a76}.kv span:last-child{font-weight:700;text-align:right}.ticket{color:#28664f;font-weight:800}
 
-.empty{padding:28px;text-align:center;color:#718079}
 
-@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.detail-grid{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.toolbar-controls{width:100%}.search{width:100%}}
+
+    .project-material-page {
+
+
+
+        margin-top: 22px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-page-heading {
+
+
+
+        margin-bottom: 16px;
+
+
+
+
+
+
+
+        display: flex;
+
+
+
+        align-items: center;
+
+
+
+        justify-content: space-between;
+
+
+
+
+
+
+
+        gap: 18px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-page-heading h2 {
+
+
+
+        margin: 0 0 4px;
+
+
+
+
+
+
+
+        color: #2f3e36;
+
+
+
+
+
+
+
+        font-size: 20px;
+
+
+
+        font-weight: 650;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-page-heading p {
+
+
+
+        margin: 0;
+
+
+
+
+
+
+
+        color: #748087;
+
+
+
+
+
+
+
+        font-size: 11px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .aims-source-label {
+
+
+
+        padding: 4px 8px;
+
+
+
+
+
+
+
+        background: #eef4f0;
+
+
+
+
+
+
+
+        border: 1px solid #d7e2db;
+
+
+
+        border-radius: 3px;
+
+
+
+
+
+
+
+        color: #486052;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+
+
+
+
+        letter-spacing: .35px;
+
+
+
+        text-transform: uppercase;
+
+
+
+
+
+
+
+        white-space: nowrap;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       SUMMARY
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-summary-grid {
+
+
+
+        margin-bottom: 14px;
+
+
+
+
+
+
+
+        display: grid;
+
+
+
+
+
+
+
+        grid-template-columns:
+
+
+
+            repeat(4, minmax(0, 1fr));
+
+
+
+
+
+
+
+        gap: 8px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card {
+
+
+
+        padding: 11px 13px;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        border: 1px solid #dfe4e1;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.here {
+
+
+
+        border-left: 3px solid #579269;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.partial {
+
+
+
+        border-left: 3px solid #5c86a5;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.missing {
+
+
+
+        border-left: 3px solid #b94d4d;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-label {
+
+
+
+        color: #7a837f;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+
+
+
+
+        letter-spacing: .45px;
+
+
+
+        text-transform: uppercase;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-value {
+
+
+
+        margin-top: 5px;
+
+
+
+
+
+
+
+        color: #34433b;
+
+
+
+
+
+
+
+        font-size: 21px;
+
+
+
+        font-weight: 650;
+
+
+
+
+
+
+
+        font-variant-numeric: tabular-nums;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-note {
+
+
+
+        margin-top: 2px;
+
+
+
+
+
+
+
+        color: #89918d;
+
+
+
+
+
+
+
+        font-size: 8px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.here
+
+
+
+    .material-summary-value {
+
+
+
+        color: #4f765b;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.partial
+
+
+
+    .material-summary-value {
+
+
+
+        color: #4c718d;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-summary-card.missing
+
+
+
+    .material-summary-value {
+
+
+
+        color: #994545;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       NEEDS ATTENTION
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .attention-section {
+
+
+
+        margin-bottom: 14px;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        border: 1px solid #dfe4e1;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-header {
+
+
+
+        padding: 9px 11px;
+
+
+
+
+
+
+
+        display: flex;
+
+
+
+        align-items: center;
+
+
+
+        justify-content: space-between;
+
+
+
+
+
+
+
+        background: #faf7f5;
+
+
+
+
+
+
+
+        border-bottom: 1px solid #e8dfda;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-title {
+
+
+
+        color: #684c43;
+
+
+
+
+
+
+
+        font-size: 11px;
+
+
+
+        font-weight: 700;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-count {
+
+
+
+        padding: 2px 6px;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        border: 1px solid #e1d3ce;
+
+
+
+        border-radius: 3px;
+
+
+
+
+
+
+
+        color: #865b50;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-list {
+
+
+
+        display: flex;
+
+
+
+        flex-direction: column;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-row {
+
+
+
+        padding: 8px 11px;
+
+
+
+
+
+
+
+        display: grid;
+
+
+
+
+
+
+
+        grid-template-columns:
+
+
+
+            150px
+
+
+
+            minmax(180px, 1fr)
+
+
+
+            120px
+
+
+
+            85px
+
+
+
+            90px;
+
+
+
+
+
+
+
+        gap: 12px;
+
+
+
+
+
+
+
+        align-items: center;
+
+
+
+
+
+
+
+        border-bottom: 1px solid #edf0ee;
+
+
+
+
+
+
+
+        font-size: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-row:last-child {
+
+
+
+        border-bottom: none;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-part {
+
+
+
+        color: #344d40;
+
+
+
+
+
+
+
+        font-weight: 700;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-description {
+
+
+
+        color: #5d6862;
+
+
+
+
+
+
+
+        overflow: hidden;
+
+
+
+
+
+
+
+        text-overflow: ellipsis;
+
+
+
+
+
+
+
+        white-space: nowrap;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-po {
+
+
+
+        color: #69756f;
+
+
+
+    }
+
+
+
+
+
+
+
+    .attention-qty {
+
+
+
+        text-align: right;
+
+
+
+
+
+
+
+        font-variant-numeric: tabular-nums;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       WORKSPACE
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-workspace {
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        border: 1px solid #dfe4e1;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-workspace-header {
+
+
+
+        padding: 11px 12px;
+
+
+
+
+
+
+
+        border-bottom: 1px solid #dfe4e1;
+
+
+
+
+
+
+
+        display: flex;
+
+
+
+        align-items: center;
+
+
+
+        justify-content: space-between;
+
+
+
+
+
+
+
+        gap: 15px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .workspace-title {
+
+
+
+        color: #34433b;
+
+
+
+
+
+
+
+        font-size: 12px;
+
+
+
+        font-weight: 700;
+
+
+
+    }
+
+
+
+
+
+
+
+    .workspace-subtitle {
+
+
+
+        margin-top: 2px;
+
+
+
+
+
+
+
+        color: #7c8580;
+
+
+
+
+
+
+
+        font-size: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       TOOLBAR
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-toolbar {
+
+
+
+        display: flex;
+
+
+
+        align-items: center;
+
+
+
+
+
+
+
+        gap: 7px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-search {
+
+
+
+        width: 315px;
+
+
+
+        height: 32px;
+
+
+
+
+
+
+
+        padding: 0 9px;
+
+
+
+
+
+
+
+        border: 1px solid #ccd5d0;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        color: #34433b;
+
+
+
+
+
+
+
+        font-family: inherit;
+
+
+
+        font-size: 11px;
+
+
+
+
+
+
+
+        outline: none;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-search:focus,
+
+
+
+    .material-filter:focus {
+
+
+
+        border-color: #738f7f;
+
+
+
+
+
+
+
+        box-shadow:
+
+
+
+            0 0 0 2px
+
+
+
+            rgba(82, 111, 94, .08);
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-filter {
+
+
+
+        height: 32px;
+
+
+
+
+
+
+
+        padding: 0 8px;
+
+
+
+
+
+
+
+        border: 1px solid #ccd5d0;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        color: #4d5b54;
+
+
+
+
+
+
+
+        font-family: inherit;
+
+
+
+        font-size: 10px;
+
+
+
+
+
+
+
+        outline: none;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       TABLE
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-table-wrap {
+
+
+
+        width: 100%;
+
+
+
+
+
+
+
+        overflow-x: auto;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table {
+
+
+
+        width: 100%;
+
+
+
+
+
+
+
+        min-width: 1000px;
+
+
+
+
+
+
+
+        border-collapse: collapse;
+
+
+
+
+
+
+
+        table-layout: auto;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table th {
+
+
+
+        padding: 7px 9px;
+
+
+
+
+
+
+
+        background: #f5f7f6;
+
+
+
+
+
+
+
+        border-right: 1px solid #e7ebe8;
+
+
+
+        border-bottom: 1px solid #dce2de;
+
+
+
+
+
+
+
+        color: #5e6963;
+
+
+
+
+
+
+
+        text-align: left;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+
+
+
+
+        letter-spacing: .4px;
+
+
+
+        text-transform: uppercase;
+
+
+
+
+
+
+
+        white-space: nowrap;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table td {
+
+
+
+        padding: 7px 9px;
+
+
+
+
+
+
+
+        border-right: 1px solid #eef1ef;
+
+
+
+        border-bottom: 1px solid #e8ece9;
+
+
+
+
+
+
+
+        color: #3f4944;
+
+
+
+
+
+
+
+        font-size: 11px;
+
+
+
+
+
+
+
+        white-space: nowrap;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table th:last-child,
+
+
+
+    .material-table td:last-child {
+
+
+
+        border-right: 0;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table tbody tr {
+
+
+
+        transition: background .12s ease;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table tbody tr:hover {
+
+
+
+        background: #f7faf8;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-part {
+
+
+
+        color: #315c46;
+
+
+
+
+
+
+
+        font-weight: 700;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-description {
+
+
+
+        max-width: 300px;
+
+
+
+
+
+
+
+        overflow: hidden;
+
+
+
+
+
+
+
+        text-overflow: ellipsis;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-po {
+
+
+
+        color: #586a60;
+
+
+
+
+
+
+
+        font-weight: 650;
+
+
+
+    }
+
+
+
+
+
+
+
+    .qty {
+
+
+
+        text-align: right;
+
+
+
+
+
+
+
+        font-variant-numeric: tabular-nums;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-table th.qty {
+
+
+
+        text-align: right;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       STATUS
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-status {
+
+
+
+        display: inline-flex;
+
+
+
+        align-items: center;
+
+
+
+
+
+
+
+        gap: 5px;
+
+
+
+
+
+
+
+        padding: 3px 6px;
+
+
+
+
+
+
+
+        border: 1px solid transparent;
+
+
+
+        border-radius: 3px;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+
+
+
+
+        white-space: nowrap;
+
+
+
+    }
+
+
+
+
+
+
+
+    .material-status::before {
+
+
+
+        content: "";
+
+
+
+
+
+
+
+        width: 5px;
+
+
+
+        height: 5px;
+
+
+
+
+
+
+
+        border-radius: 50%;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* HERE */
+
+
+
+
+
+
+
+    .status-here {
+
+
+
+        color: #3f684e;
+
+
+
+
+
+
+
+        background: #eef7f1;
+
+
+
+
+
+
+
+        border-color: #cfe3d5;
+
+
+
+    }
+
+
+
+
+
+
+
+    .status-here::before {
+
+
+
+        background: #579269;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* PARTIAL */
+
+
+
+
+
+
+
+    .status-partial {
+
+
+
+        color: #3c5f7b;
+
+
+
+
+
+
+
+        background: #eef5fa;
+
+
+
+
+
+
+
+        border-color: #cfdfe9;
+
+
+
+    }
+
+
+
+
+
+
+
+    .status-partial::before {
+
+
+
+        background: #5c86a5;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* NOT HERE */
+
+
+
+
+
+
+
+    .status-not-here {
+
+
+
+        color: #884040;
+
+
+
+
+
+
+
+        background: #fceeee;
+
+
+
+
+
+
+
+        border-color: #efcccc;
+
+
+
+    }
+
+
+
+
+
+
+
+    .status-not-here::before {
+
+
+
+        background: #b84d4d;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       DELIVERY TICKET
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .delivery-ticket {
+
+
+
+        display: inline-block;
+
+
+
+
+
+
+
+        padding: 3px 6px;
+
+
+
+
+
+
+
+        background: #f1f5f3;
+
+
+
+
+
+
+
+        border: 1px solid #d5dfda;
+
+
+
+        border-radius: 3px;
+
+
+
+
+
+
+
+        color: #355b48;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+        font-weight: 700;
+
+
+
+
+
+
+
+        cursor: pointer;
+
+
+
+    }
+
+
+
+
+
+
+
+    .delivery-ticket:hover {
+
+
+
+        background: #e8f0ec;
+
+
+
+
+
+
+
+        border-color: #bdcec4;
+
+
+
+    }
+
+
+
+
+
+
+
+    .no-ticket {
+
+
+
+        color: #9aa19d;
+
+
+
+
+
+
+
+        font-size: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       FOOTER
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .material-table-footer {
+
+
+
+        padding: 7px 10px;
+
+
+
+
+
+
+
+        background: #fafbfa;
+
+
+
+
+
+
+
+        border-top: 1px solid #e2e7e4;
+
+
+
+
+
+
+
+        color: #7b837f;
+
+
+
+
+
+
+
+        font-size: 9px;
+
+
+
+
+
+
+
+        display: flex;
+
+
+
+        justify-content: space-between;
+
+
+
+
+
+
+
+        gap: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       EMPTY
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    .empty-materials {
+
+
+
+        padding: 50px 20px;
+
+
+
+
+
+
+
+        background: #ffffff;
+
+
+
+
+
+
+
+        border: 1px solid #dce4e1;
+
+
+
+
+
+
+
+        text-align: center;
+
+
+
+    }
+
+
+
+
+
+
+
+    .empty-materials h3 {
+
+
+
+        margin: 0 0 6px;
+
+
+
+
+
+
+
+        color: #3e4d45;
+
+
+
+
+
+
+
+        font-size: 14px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .empty-materials p {
+
+
+
+        margin: 0;
+
+
+
+
+
+
+
+        color: #748087;
+
+
+
+
+
+
+
+        font-size: 11px;
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* =========================================
+
+
+
+       RESPONSIVE
+
+
+
+    ========================================= */
+
+
+
+
+
+
+
+    @media (max-width: 950px) {
+
+
+
+
+
+
+
+        .material-summary-grid {
+
+
+
+            grid-template-columns:
+
+
+
+                repeat(2, 1fr);
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-workspace-header {
+
+
+
+            align-items: flex-start;
+
+
+
+
+
+
+
+            flex-direction: column;
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-toolbar {
+
+
+
+            width: 100%;
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-search {
+
+
+
+            flex: 1;
+
+
+
+
+
+
+
+            width: auto;
+
+
+
+        }
+
+
+
+
+
+
+
+        .attention-row {
+
+
+
+            grid-template-columns:
+
+
+
+                130px
+
+
+
+                1fr
+
+
+
+                100px
+
+
+
+                70px
+
+
+
+                80px;
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    @media (max-width: 620px) {
+
+
+
+
+
+
+
+        .material-page-heading {
+
+
+
+            align-items: flex-start;
+
+
+
+
+
+
+
+            flex-direction: column;
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-summary-grid {
+
+
+
+            grid-template-columns: 1fr;
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-toolbar {
+
+
+
+            flex-direction: column;
+
+
+
+
+
+
+
+            align-items: stretch;
+
+
+
+        }
+
+
+
+
+
+
+
+        .material-search,
+
+
+
+        .material-filter {
+
+
+
+            width: 100%;
+
+
+
+        }
+
+
+
+
+
+
+
+        .attention-row {
+
+
+
+            grid-template-columns: 1fr;
+
+
+
+        }
+
+
+
+
+
+
+
+        .attention-qty {
+
+
+
+            text-align: left;
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
 
 </style>
 
 
 
-<div class="proc-page">
-
-  <div class="project-head">
-
-    <div><div class="project-kicker">PROJECT {{ project.short_name|default(project.name) }}</div><h1>{{ project.name }}</h1><div class="muted">Material procurement and receiving visibility</div></div>
-
-  </div>
 
 
 
-  <nav class="project-tabs">
 
-    <a href="{{ url_for('project_dashboard', project_slug=project_slug) }}">Overview</a>
 
-    <a href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}">Purchase Orders</a>
 
-    <a href="{{ url_for('project_schedule', project_slug=project_slug) }}">Project Schedule</a>
 
-    <a class="active" href="{{ url_for('project_materials', project_slug=project_slug) }}">Materials</a>
+
+
+
+
+
+<!-- =========================================
+
+
+
+     PROJECT HEADER
+
+
+
+========================================== -->
+
+
+
+
+
+
+
+<section class="project-dashboard-header">
+
+
+
+
+
+
+
+    <div>
+
+
+
+
+
+
+
+        <span class="page-eyebrow">
+
+
+
+            PROJECT {{ project.number }}
+
+
+
+        </span>
+
+
+
+
+
+
+
+        <h1>
+
+
+
+            {{ project.name }}
+
+
+
+        </h1>
+
+
+
+
+
+
+
+        <p>
+
+
+
+            Material receipt and delivery verification
+
+
+
+        </p>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <span class="status-badge active-status-badge">
+
+
+
+        {{ project.status }}
+
+
+
+    </span>
+
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- =========================================
+
+
+
+     PROJECT NAVIGATION
+
+
+
+========================================== -->
+
+
+
+
+
+
+
+<nav class="project-dashboard-nav">
+
+
+
+
+
+
+
+    <a
+
+
+
+        href="{{ url_for(
+
+
+
+            'project_dashboard',
+
+
+
+            project_slug=project_slug
+
+
+
+        ) }}"
+
+
+
+        class="project-dashboard-tab"
+
+
+
+    >
+
+
+
+        Overview
+
+
+
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+    <a
+
+
+
+        href="{{ url_for(
+
+
+
+            'project_purchase_orders',
+
+
+
+            project_slug=project_slug
+
+
+
+        ) }}"
+
+
+
+        class="project-dashboard-tab"
+
+
+
+    >
+
+
+
+        Purchase Orders
+
+
+
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+    <a
+
+
+
+        href="{{ url_for(
+
+
+
+            'project_schedule',
+
+
+
+            project_slug=project_slug
+
+
+
+        ) }}"
+
+
+
+        class="project-dashboard-tab"
+
+
+
+    >
+
+
+
+        Project Schedule
+
+
+
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+    <a
+
+
+
+        href="{{ url_for(
+
+
+
+            'project_materials',
+
+
+
+            project_slug=project_slug
+
+
+
+        ) }}"
+
+
+
+        class="project-dashboard-tab active"
+
+
+
+    >
+
+
+
+        Materials
+
+
+
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+    <a
+
+
+
+        href="#"
+
+
+
+        class="project-dashboard-tab"
+
+
+
+    >
+
+
+
+        Reports
+
+
+
+    </a>
+
+
+
+
+
+
+
 </nav>
 
 
 
-  <div class="page-row">
 
-    <div><h2>Materials</h2><div class="muted">Procurement log view based on the RIO material tracker.</div></div>
 
-    <div class="source-tag">PROCUREMENT LOG</div>
 
-  </div>
 
 
 
-  <div class="cards">
 
-    <div class="card"><div class="card-label">TOTAL MATERIAL LINES</div><div class="card-value">{{ material_metrics.total_lines|default(materials|length) }}</div><div class="card-note">Tracked procurement items</div></div>
 
-    <div class="card received"><div class="card-label">RECEIVED</div><div class="card-value">{{ material_metrics.received_lines|default(0) }}</div><div class="card-note">{{ material_metrics.total_received_qty|default(0) }} units received</div></div>
 
-    <div class="card partial"><div class="card-label">PARTIAL</div><div class="card-value">{{ material_metrics.partial_lines|default(0) }}</div><div class="card-note">Some quantity received</div></div>
 
-    <div class="card outstanding"><div class="card-label">OUTSTANDING</div><div class="card-value">{{ material_metrics.outstanding_lines|default(0) }}</div><div class="card-note">{{ material_metrics.total_remaining_qty|default(0) }} units remaining</div></div>
 
-  </div>
 
+<div class="project-material-page">
 
 
-  <section class="workspace">
 
-    <div class="toolbar">
 
-      <div><div class="toolbar-title">Material Procurement Log</div><div class="muted">Click any row to view procurement, cost, and delivery details.</div></div>
 
-      <div class="toolbar-controls">
 
-        <input id="materialSearch" class="search" type="search" placeholder="Search part, description, vendor, PO...">
 
-        <select id="materialFilter" class="filter">
 
-          <option value="all">All Materials</option>
 
-          <option value="Received">Received</option>
 
-          <option value="Partial">Partial</option>
 
-          <option value="Outstanding">Outstanding</option>
+    <!-- =========================================
 
-          <option value="Not Needed">Not Needed</option>
 
-        </select>
 
-      </div>
+         PAGE HEADING
 
-    </div>
 
 
+    ========================================== -->
 
-    <div class="table-wrap">
 
-      <table class="proc-table">
 
-        <thead><tr>
 
-          <th>Part Number</th><th>Description</th><th>Manufacturer</th><th>Vendor</th>
 
-          <th class="qty">Qty</th><th class="qty">Received</th><th class="qty">Remaining</th>
 
-          <th>PO Number</th><th>PO Status</th><th>Calculated Delivery</th><th>Actual Delivery</th><th></th>
 
-        </tr></thead>
+    <section class="material-page-heading">
 
-        <tbody>
 
-        {% for m in materials %}
 
-          {% set status = m.material_status|default('Outstanding') %}
 
-          <tr class="material-row" data-status="{{ status }}" data-search="{{ (m.part_number ~ ' ' ~ m.description ~ ' ' ~ m.manufacturer ~ ' ' ~ m.vendor ~ ' ' ~ m.po_number ~ ' ' ~ status)|lower }}">
 
-            <td><span class="part">{{ m.part_number }}</span></td>
 
-            <td class="desc">{{ m.description }}</td>
 
-            <td>{{ m.manufacturer }}</td>
+        <div>
 
-            <td>{{ m.vendor }}</td>
 
-            <td class="qty">{{ m.qty }}</td>
 
-            <td class="qty">{{ m.received }}</td>
 
-            <td class="qty">{{ m.remaining }}</td>
 
-            <td class="po">{{ m.po_number or '—' }}</td>
 
-            <td>
 
-              {% if status == 'Received' %}<span class="badge b-received">Received</span>
+            <h2>
 
-              {% elif status == 'Partial' %}<span class="badge b-partial">Partial</span>
 
-              {% elif status == 'Not Needed' %}<span class="badge b-not-needed">Not Needed</span>
 
-              {% else %}<span class="badge b-outstanding">Outstanding</span>{% endif %}
+                Material Status
 
-            </td>
 
-            <td>{{ m.calculated_delivery or '—' }}</td>
 
-            <td>{{ m.actual_delivery or '—' }}</td>
+            </h2>
 
-            <td class="chev">›</td>
 
-          </tr>
 
-          <tr class="detail-row">
 
-            <td class="detail-cell" colspan="12">
 
-              <div class="detail-grid">
 
-                <div class="detail-box">
 
-                  <div class="detail-title">Procurement</div>
+            <p>
 
-                  <div class="kv"><span>Quote Status</span><span>{{ m.quote_status or '—' }}</span></div>
 
-                  <div class="kv"><span>PO Status</span><span>{{ m.po_status or '—' }}</span></div>
 
-                  <div class="kv"><span>PO Issue Date</span><span>{{ m.po_issue_date or '—' }}</span></div>
+                Verify what material is here, partially
 
-                  <div class="kv"><span>Invoice Status</span><span>{{ m.invoice_status or '—' }}</span></div>
 
-                </div>
 
-                <div class="detail-box">
+                received, or still missing.
 
-                  <div class="detail-title">Cost</div>
 
-                  <div class="kv"><span>Proposal Cost Each</span><span>{% if m.proposal_cost_each %}${{ m.proposal_cost_each }}{% else %}—{% endif %}</span></div>
 
-                  <div class="kv"><span>Total Cost</span><span>{% if m.total_cost %}${{ m.total_cost }}{% else %}—{% endif %}</span></div>
+            </p>
 
-                  <div class="kv"><span>Actual Cost Each</span><span>{% if m.actual_cost_each %}${{ m.actual_cost_each }}{% else %}—{% endif %}</span></div>
 
-                  <div class="kv"><span>Actual Cost Total</span><span>{% if m.actual_cost_total %}${{ m.actual_cost_total }}{% else %}—{% endif %}</span></div>
 
-                  <div class="kv"><span>Price Difference</span><span>{{ m.price_difference or '—' }}</span></div>
 
-                </div>
 
-                <div class="detail-box">
 
-                  <div class="detail-title">Delivery & Receiving</div>
 
-                  <div class="kv"><span>Estimated Lead Time</span><span>{% if m.lead_weeks %}{{ m.lead_weeks }} wk{% else %}—{% endif %}</span></div>
+        </div>
 
-                  <div class="kv"><span>Actual Lead Time</span><span>{% if m.actual_lead_days %}{{ m.actual_lead_days }} days{% else %}—{% endif %}</span></div>
 
-                  <div class="kv"><span>Shipment Tracking</span><span>{{ m.shipment_tracking or '—' }}</span></div>
 
-                  <div class="kv"><span>Packing Slip</span><span>{{ m.packing_slip or '—' }}</span></div>
 
-                  <div class="kv"><span>Delivery Ticket</span><span class="ticket">{% if m.delivery_tickets %}{{ m.delivery_tickets|join(', ') }}{% else %}—{% endif %}</span></div>
 
-                  <div class="kv"><span>Important Notes</span><span>{{ m.important_notes or '—' }}</span></div>
 
-                </div>
 
-              </div>
 
-            </td>
 
-          </tr>
 
-        {% else %}
 
-          <tr><td class="empty" colspan="12">No material records found.</td></tr>
+        <span class="aims-source-label">
+
+
+
+            AIMS Verification
+
+
+
+        </span>
+
+
+
+
+
+
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {% if materials %}
+
+
+
+
+
+
+
+
+
+
+
+        <!-- =========================================
+
+
+
+             CALCULATE STATUS TOTALS
+
+
+
+        ========================================== -->
+
+
+
+
+
+
+
+        {% set totals = namespace(
+
+
+
+            total=0,
+
+
+
+            here=0,
+
+
+
+            partial=0,
+
+
+
+            missing=0
+
+
+
+        ) %}
+
+
+
+
+
+
+
+
+
+
+
+        {% for material in materials %}
+
+
+
+
+
+
+
+
+
+
+
+            {% set ordered =
+
+
+
+                material.ordered_qty
+
+
+
+                |default(
+
+
+
+                    material.received_qty
+
+
+
+                    |default(0)
+
+
+
+                )
+
+
+
+                |int
+
+
+
+            %}
+
+
+
+
+
+
+
+
+
+
+
+            {% set received =
+
+
+
+                material.received_qty
+
+
+
+                |default(0)
+
+
+
+                |int
+
+
+
+            %}
+
+
+
+
+
+
+
+
+
+
+
+            {% set totals.total =
+
+
+
+                totals.total + 1
+
+
+
+            %}
+
+            {% set source_status = material.display_status | default('', true) %}
+
+            {% if source_status == "Received" or (source_status == "" and received >= ordered and ordered > 0) %}
+                {% set totals.here = totals.here + 1 %}
+            {% elif source_status == "Partially Received" or (source_status == "" and received > 0) %}
+                {% set totals.partial = totals.partial + 1 %}
+            {% else %}
+                {% set totals.missing = totals.missing + 1 %}
+            {% endif %}
+
+
+
+
+
+
+
+
+
+
 
         {% endfor %}
 
-        </tbody>
 
-      </table>
 
-    </div>
 
-  </section>
+
+
+
+
+
+
+
+
+
+
+
+        <!-- =========================================
+
+
+
+             SUMMARY CARDS
+
+
+
+        ========================================== -->
+
+
+
+
+
+
+
+        <section class="material-summary-grid">
+
+
+
+
+
+
+
+
+
+
+
+            <div class="material-summary-card">
+
+
+
+
+
+
+
+                <div class="material-summary-label">
+
+
+
+                    Total Materials
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-value">
+
+
+
+                    {{ totals.total }}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-note">
+
+
+
+                    Project material lines
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            <div class="material-summary-card here">
+
+
+
+
+
+
+
+                <div class="material-summary-label">
+
+
+
+                    Here
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-value">
+
+
+
+                    {{ totals.here }}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-note">
+
+
+
+                    Fully verified
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            <div class="material-summary-card partial">
+
+
+
+
+
+
+
+                <div class="material-summary-label">
+
+
+
+                    Partial
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-value">
+
+
+
+                    {{ totals.partial }}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-note">
+
+
+
+                    Some quantity received
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            <div class="material-summary-card missing">
+
+
+
+
+
+
+
+                <div class="material-summary-label">
+
+
+
+                    Not Here
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-value">
+
+
+
+                    {{ totals.missing }}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="material-summary-note">
+
+
+
+                    No quantity verified
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- =========================================
+
+
+
+             NEEDS ATTENTION
+
+
+
+        ========================================== -->
+
+
+
+
+
+
+
+        {% if totals.partial > 0 or totals.missing > 0 %}
+
+
+
+
+
+
+
+
+
+
+
+            <section class="attention-section">
+
+
+
+
+
+
+
+
+
+
+
+                <div class="attention-header">
+
+
+
+
+
+
+
+                    <span class="attention-title">
+
+
+
+                        Needs Attention
+
+
+
+                    </span>
+
+
+
+
+
+
+
+
+
+
+
+                    <span class="attention-count">
+
+
+
+
+
+
+
+                        {{
+
+
+
+                            totals.partial +
+
+
+
+                            totals.missing
+
+
+
+                        }}
+
+
+
+
+
+
+
+                        material line{% if
+
+
+
+                            totals.partial +
+
+
+
+                            totals.missing != 1
+
+
+
+                        %}s{% endif %}
+
+
+
+
+
+
+
+                    </span>
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+                <div class="attention-list">
+
+
+
+
+
+
+
+
+
+
+
+                    {% for material in materials %}
+
+
+
+
+
+
+
+
+
+
+
+                        {% set ordered =
+
+
+
+                            material.ordered_qty
+
+
+
+                            |default(
+
+
+
+                                material.received_qty
+
+
+
+                                |default(0)
+
+
+
+                            )
+
+
+
+                            |int
+
+
+
+                        %}
+
+
+
+
+
+
+
+
+
+
+
+                        {% set received =
+
+
+
+                            material.received_qty
+
+
+
+                            |default(0)
+
+
+
+                            |int
+
+
+
+                        %}
+
+
+
+
+
+
+
+
+
+
+
+                        {% set missing =
+
+
+
+                            ordered - received
+
+
+
+                        %}
+
+
+
+
+
+
+
+
+
+
+
+                        {% if missing < 0 %}
+
+
+
+
+
+
+
+                            {% set missing = 0 %}
+
+
+
+
+
+
+
+                        {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                        {% if received < ordered %}
+
+
+
+
+
+
+
+
+
+
+
+                            <div class="attention-row">
+
+
+
+
+
+
+
+
+
+
+
+                                <span class="attention-part">
+
+
+
+
+
+
+
+                                    {{
+
+
+
+                                        material.part_number
+
+
+
+                                        |default("—", true)
+
+
+
+                                    }}
+
+
+
+
+
+
+
+                                </span>
+
+
+
+
+
+
+
+
+
+
+
+                                <span
+
+
+
+                                    class="attention-description"
+
+
+
+                                    title="{{
+
+
+
+                                        material.description
+
+
+
+                                        |default('', true)
+
+
+
+                                    }}"
+
+
+
+                                >
+
+
+
+
+
+
+
+                                    {{
+
+
+
+                                        material.description
+
+
+
+                                        |default("—", true)
+
+
+
+                                    }}
+
+
+
+
+
+
+
+                                </span>
+
+
+
+
+
+
+
+
+
+
+
+                                <span class="attention-po">
+
+
+
+
+
+
+
+                                    {{
+
+
+
+                                        material.po_number
+
+
+
+                                        |default("—", true)
+
+
+
+                                    }}
+
+
+
+
+
+
+
+                                </span>
+
+
+
+
+
+
+
+
+
+
+
+                                <span class="attention-qty">
+
+
+
+
+
+
+
+                                    {{ received }}
+
+
+
+                                    /
+
+
+
+                                    {{ ordered }}
+
+
+
+
+
+
+
+                                    here
+
+
+
+
+
+
+
+                                </span>
+
+
+
+
+
+
+
+
+
+
+
+                                <span>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% if received > 0 %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="
+
+
+
+                                                material-status
+
+
+
+                                                status-partial
+
+
+
+                                            "
+
+
+
+                                        >
+
+
+
+                                            Partial
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+                                    {% else %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="
+
+
+
+                                                material-status
+
+
+
+                                                status-not-here
+
+
+
+                                            "
+
+
+
+                                        >
+
+
+
+                                            Not Here
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+                                    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                                </span>
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+
+
+
+
+
+
+
+
+
+                        {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                    {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+            </section>
+
+
+
+
+
+
+
+
+
+
+
+        {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- =========================================
+
+
+
+             MATERIAL STATUS WORKSPACE
+
+
+
+        ========================================== -->
+
+
+
+
+
+
+
+        <section class="material-workspace">
+
+
+
+
+
+
+
+
+
+
+
+            <div class="material-workspace-header">
+
+
+
+
+
+
+
+
+
+
+
+                <div>
+
+
+
+
+
+
+
+                    <div class="workspace-title">
+
+
+
+                        Material Verification
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                    <div class="workspace-subtitle">
+
+
+
+                        Current project material status
+
+
+
+                        based on verified receipts.
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+                <div class="material-toolbar">
+
+
+
+
+
+
+
+
+
+
+
+                    <input
+
+
+
+                        id="materialSearch"
+
+
+
+                        class="material-search"
+
+
+
+                        type="search"
+
+
+
+                        placeholder="Search part, description, PO, ticket..."
+
+
+
+                        autocomplete="off"
+
+
+
+                    >
+
+
+
+
+
+
+
+
+
+
+
+                    <select
+
+
+
+                        id="materialStatusFilter"
+
+
+
+                        class="material-filter"
+
+
+
+                    >
+
+
+
+
+
+
+
+                        <option value="all">
+
+
+
+                            All Materials
+
+
+
+                        </option>
+
+
+
+
+
+
+
+                        <option value="Here">
+
+
+
+                            Here
+
+
+
+                        </option>
+
+
+
+
+
+
+
+                        <option value="Partial">
+
+
+
+                            Partial
+
+
+
+                        </option>
+
+
+
+
+
+
+
+                        <option value="Not Here">
+
+
+
+                            Not Here
+
+
+
+                        </option>
+
+
+
+
+
+
+
+                    </select>
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- =====================================
+
+
+
+                 MATERIAL TABLE
+
+
+
+            ====================================== -->
+
+
+
+
+
+
+
+            <div class="material-table-wrap">
+
+
+
+
+
+
+
+
+
+
+
+                <table class="material-table">
+
+
+
+
+
+
+
+
+
+
+
+                    <thead>
+
+
+
+
+
+
+
+
+
+
+
+                        <tr>
+
+
+
+
+
+
+
+                            <th>
+
+
+
+                                Part Number
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th>
+
+
+
+                                Description
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th>
+
+
+
+                                PO Number
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th class="qty">
+
+
+
+                                Ordered
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th class="qty">
+
+
+
+                                Verified Here
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th class="qty">
+
+
+
+                                Missing
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th>
+
+
+
+                                Material Status
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                            <th>
+
+
+
+                                Delivery Ticket
+
+
+
+                            </th>
+
+
+
+
+
+
+
+                        </tr>
+
+
+
+
+
+
+
+
+
+
+
+                    </thead>
+
+
+
+
+
+
+
+
+
+
+
+                    <tbody id="materialTableBody">
+
+
+
+
+
+
+
+
+
+
+
+                        {% for material in materials %}
+
+
+
+
+
+
+
+
+
+
+
+                            {% set ordered =
+
+
+
+                                material.ordered_qty
+
+
+
+                                |default(
+
+
+
+                                    material.received_qty
+
+
+
+                                    |default(0)
+
+
+
+                                )
+
+
+
+                                |int
+
+
+
+                            %}
+
+
+
+
+
+
+
+
+
+
+
+                            {% set received =
+
+
+
+                                material.received_qty
+
+
+
+                                |default(0)
+
+
+
+                                |int
+
+
+
+                            %}
+
+
+
+
+
+
+
+
+
+
+
+                            {% set missing =
+
+
+
+                                ordered - received
+
+
+
+                            %}
+
+
+
+
+
+
+
+
+
+
+
+                            {% if missing < 0 %}
+
+
+
+
+
+
+
+                                {% set missing = 0 %}
+
+
+
+
+
+
+
+                            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                            {% set source_status = material.display_status | default('', true) %}
+
+                            {% if source_status == "Received" or (source_status == "" and received >= ordered and ordered > 0) %}
+                                {% set material_status = "Here" %}
+                                {% set material_status_label = "Here" %}
+                            {% elif source_status == "Partially Received" or (source_status == "" and received > 0) %}
+                                {% set material_status = "Partial" %}
+                                {% set material_status_label = "Partial" %}
+                            {% elif source_status == "Backordered" %}
+                                {% set material_status = "Not Here" %}
+                                {% set material_status_label = "Backordered" %}
+                            {% elif source_status == "Overdue" %}
+                                {% set material_status = "Not Here" %}
+                                {% set material_status_label = "Overdue" %}
+                            {% elif source_status == "Awaiting Receipt" %}
+                                {% set material_status = "Not Here" %}
+                                {% set material_status_label = "Awaiting Receipt" %}
+                            {% else %}
+                                {% set material_status = "Not Here" %}
+                                {% set material_status_label = "Not Here" %}
+                            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <!--
+
+
+
+                                Temporary demo ticket.
+
+
+
+
+
+
+
+                                Once delivery-ticket data is
+
+
+
+                                added to app.py, this should
+
+
+
+                                use material.delivery_ticket
+
+
+
+                                instead.
+
+
+
+                            \\-->
+
+
+
+
+
+
+
+                            {% if received > 0 %}
+
+
+
+
+
+
+
+                                {% if
+
+
+
+                                    material.delivery_ticket
+
+
+
+                                    |default("")
+
+
+
+                                %}
+
+
+
+
+
+
+
+                                    {% set ticket =
+
+
+
+                                        material.delivery_ticket
+
+
+
+                                    %}
+
+
+
+
+
+
+
+                                {% else %}
+
+
+
+
+
+
+
+                                    {% set ticket =
+
+
+
+                                        "DT-" ~
+
+
+
+                                        (1040 + loop.index)
+
+
+
+                                    %}
+
+
+
+
+
+
+
+                                {% endif %}
+
+
+
+
+
+
+
+                            {% else %}
+
+
+
+
+
+
+
+                                {% set ticket = "" %}
+
+
+
+
+
+
+
+                            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <tr
+
+
+
+                                class="material-row"
+
+
+
+
+
+
+
+                                data-search="
+
+
+
+                                    {{ material.part_number|default('') }}
+
+
+
+                                    {{ material.description|default('') }}
+
+
+
+                                    {{ material.po_number|default('') }}
+
+
+
+                                    {{ ticket }}
+
+
+
+                                "
+
+
+
+
+
+
+
+                                data-status="{{
+
+
+
+                                    material_status
+
+
+
+                                }}"
+
+
+
+                            >
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- PART -->
+
+
+
+
+
+
+
+                                <td>
+
+
+
+
+
+
+
+                                    <span class="material-part">
+
+
+
+
+
+
+
+                                        {{
+
+
+
+                                            material.part_number
+
+
+
+                                            |default("—", true)
+
+
+
+                                        }}
+
+
+
+
+
+
+
+                                    </span>
+
+
+
+
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- DESCRIPTION -->
+
+
+
+
+
+
+
+                                <td
+
+
+
+                                    class="material-description"
+
+
+
+                                    title="{{
+
+
+
+                                        material.description
+
+
+
+                                        |default('', true)
+
+
+
+                                    }}"
+
+
+
+                                >
+
+
+
+
+
+
+
+                                    {{
+
+
+
+                                        material.description
+
+
+
+                                        |default("—", true)
+
+
+
+                                    }}
+
+
+
+
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- PO -->
+
+
+
+
+
+
+
+                                <td>
+
+
+
+
+
+
+
+                                    <span class="material-po">
+
+
+
+
+
+
+
+                                        {{
+
+
+
+                                            material.po_number
+
+
+
+                                            |default("—", true)
+
+
+
+                                        }}
+
+
+
+
+
+
+
+                                    </span>
+
+
+
+
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- ORDERED -->
+
+
+
+
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ ordered }}
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- VERIFIED -->
+
+
+
+
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ received }}
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- MISSING -->
+
+
+
+
+
+
+
+                                <td class="qty">
+
+
+
+                                    {{ missing }}
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- STATUS -->
+
+
+
+
+
+
+
+                                <td>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% if
+
+
+
+                                        material_status ==
+
+
+
+                                        "Here"
+
+
+
+                                    %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="
+
+
+
+                                                material-status
+
+
+
+                                                status-here
+
+
+
+                                            "
+
+
+
+                                        >
+
+
+
+                                            Here
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% elif
+
+
+
+                                        material_status ==
+
+
+
+                                        "Partial"
+
+
+
+                                    %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="
+
+
+
+                                                material-status
+
+
+
+                                                status-partial
+
+
+
+                                            "
+
+
+
+                                        >
+
+
+
+                                            Partial
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% else %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="
+
+
+
+                                                material-status
+
+
+
+                                                status-not-here
+
+
+
+                                            "
+
+
+
+                                        >
+
+
+
+                                            Not Here
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+                                    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- DELIVERY TICKET -->
+
+
+
+
+
+
+
+                                <td>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% if ticket %}
+
+
+
+
+
+
+
+                                        <span
+
+
+
+                                            class="delivery-ticket"
+
+
+
+                                            title="Demo delivery ticket"
+
+
+
+                                        >
+
+
+
+                                            {{ ticket }}
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+
+
+
+
+                                    {% else %}
+
+
+
+
+
+
+
+                                        <span class="no-ticket">
+
+
+
+                                            —
+
+
+
+                                        </span>
+
+
+
+
+
+
+
+                                    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                                </td>
+
+
+
+
+
+
+
+
+
+
+
+                            </tr>
+
+
+
+
+
+
+
+
+
+
+
+                        {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+                    </tbody>
+
+
+
+
+
+
+
+
+
+
+
+                </table>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- =====================================
+
+
+
+                 FOOTER
+
+
+
+            ====================================== -->
+
+
+
+
+
+
+
+            <div class="material-table-footer">
+
+
+
+
+
+
+
+
+
+
+
+                <span id="visibleMaterialCount">
+
+
+
+
+
+
+
+                    {{ totals.total }}
+
+
+
+
+
+
+
+                    material line{% if
+
+
+
+                        totals.total != 1
+
+
+
+                    %}s{% endif %}
+
+
+
+
+
+
+
+                </span>
+
+
+
+
+
+
+
+
+
+
+
+                <span>
+
+
+
+                    Project {{ project.number }}
+
+
+
+                </span>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+    {% else %}
+
+
+
+
+
+
+
+
+
+
+
+        <!-- =========================================
+
+
+
+             EMPTY STATE
+
+
+
+        ========================================== -->
+
+
+
+
+
+
+
+        <div class="empty-materials">
+
+
+
+
+
+
+
+
+
+
+
+            <h3>
+
+
+
+                Material status not available yet
+
+
+
+            </h3>
+
+
+
+
+
+
+
+
+
+
+
+            <p>
+
+
+
+                Material verification information has
+
+
+
+                not been added for this project.
+
+
+
+            </p>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+    {% endif %}
+
+
+
+
+
+
+
+
+
+
 
 </div>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 
-(function(){
-
-  const search=document.getElementById("materialSearch");
-
-  const filter=document.getElementById("materialFilter");
-
-  const rows=Array.from(document.querySelectorAll(".material-row"));
 
 
 
-  function apply(){
-
-    const q=(search.value||"").trim().toLowerCase();
-
-    const status=filter.value;
-
-    rows.forEach(function(row){
-
-      const detail=row.nextElementSibling;
-
-      const matchesText=!q||(row.dataset.search||"").includes(q);
-
-      const matchesStatus=status==="all"||row.dataset.status===status;
-
-      const show=matchesText&&matchesStatus;
-
-      row.style.display=show?"":"none";
-
-      if(!show&&detail) detail.classList.remove("open");
-
-    });
-
-  }
 
 
 
-  rows.forEach(function(row){
+document.addEventListener(
 
-    row.addEventListener("click",function(){
 
-      const detail=row.nextElementSibling;
 
-      if(detail&&detail.classList.contains("detail-row")) detail.classList.toggle("open");
 
-    });
 
-  });
 
-  search.addEventListener("input",apply);
 
-  filter.addEventListener("change",apply);
+    "DOMContentLoaded",
 
-})();
+
+
+
+
+
+
+    function () {
+
+
+
+
+
+
+
+
+
+
+
+        const searchInput =
+
+
+
+            document.getElementById(
+
+
+
+                "materialSearch"
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+        const statusFilter =
+
+
+
+            document.getElementById(
+
+
+
+                "materialStatusFilter"
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+        const rows =
+
+
+
+            Array.from(
+
+
+
+
+
+
+
+                document.querySelectorAll(
+
+
+
+                    ".material-row"
+
+
+
+                )
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+        const visibleCount =
+
+
+
+            document.getElementById(
+
+
+
+                "visibleMaterialCount"
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+        function filterMaterials() {
+
+
+
+
+
+
+
+
+
+
+
+            if (!searchInput ||
+
+
+
+                !statusFilter) {
+
+
+
+
+
+
+
+                return;
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+            const searchValue =
+
+
+
+                searchInput.value
+
+
+
+                    .trim()
+
+
+
+                    .toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+            const selectedStatus =
+
+
+
+                statusFilter.value;
+
+
+
+
+
+
+
+
+
+
+
+            let count = 0;
+
+
+
+
+
+
+
+
+
+
+
+            rows.forEach(
+
+
+
+
+
+
+
+                function (row) {
+
+
+
+
+
+
+
+
+
+
+
+                    const searchText =
+
+
+
+                        (
+
+
+
+                            row.dataset.search ||
+
+
+
+                            ""
+
+
+
+                        ).toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+                    const rowStatus =
+
+
+
+                        row.dataset.status ||
+
+
+
+                        "";
+
+
+
+
+
+
+
+
+
+
+
+                    const matchesSearch =
+
+
+
+                        !searchValue ||
+
+
+
+                        searchText.includes(
+
+
+
+                            searchValue
+
+
+
+                        );
+
+
+
+
+
+
+
+
+
+
+
+                    const matchesStatus =
+
+
+
+                        selectedStatus === "all" ||
+
+
+
+                        rowStatus ===
+
+
+
+                            selectedStatus;
+
+
+
+
+
+
+
+
+
+
+
+                    const visible =
+
+
+
+                        matchesSearch &&
+
+
+
+                        matchesStatus;
+
+
+
+
+
+
+
+
+
+
+
+                    row.style.display =
+
+
+
+                        visible
+
+
+
+                            ? ""
+
+
+
+                            : "none";
+
+
+
+
+
+
+
+
+
+
+
+                    if (visible) {
+
+
+
+                        count += 1;
+
+
+
+                    }
+
+
+
+
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+            if (visibleCount) {
+
+
+
+
+
+
+
+                visibleCount.textContent =
+
+
+
+                    count +
+
+
+
+                    (
+
+
+
+                        count === 1
+
+
+
+                            ? " material line"
+
+
+
+                            : " material lines"
+
+
+
+                    );
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        if (searchInput) {
+
+
+
+
+
+
+
+            searchInput.addEventListener(
+
+
+
+                "input",
+
+
+
+                filterMaterials
+
+
+
+            );
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        if (statusFilter) {
+
+
+
+
+
+
+
+            statusFilter.addEventListener(
+
+
+
+                "change",
+
+
+
+                filterMaterials
+
+
+
+            );
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
 
 </script>
+
+
+
+
+
+
+
+
+
+
 
 {% endblock %}

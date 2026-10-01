@@ -734,6 +734,180 @@ background 0.15s ease;
 
 
 
+
+
+/* =========================================================
+   PROJECT MANAGER OVERVIEW ADDITIONS
+========================================================= */
+.pm-metric-grid {
+    margin-bottom: 18px;
+}
+.pm-procurement-card {
+    overflow: hidden;
+}
+.pm-overview-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.35fr);
+    gap: 28px;
+    align-items: center;
+}
+.pm-donut-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    min-height: 210px;
+}
+.pm-donut {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    position: relative;
+    flex: 0 0 auto;
+    box-shadow: inset 0 0 0 1px #dfe7e3;
+}
+.pm-donut-center {
+    position: absolute;
+    inset: 34px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.pm-donut-center strong {
+    font-size: 28px;
+    line-height: 1;
+    color: #263238;
+}
+.pm-donut-center span {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #77837f;
+}
+.pm-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+}
+.pm-legend div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.pm-legend strong {
+    margin-left: auto;
+    color: #34423e;
+}
+.pm-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 auto;
+}
+.pm-dot.received { background: #2b6f59; }
+.pm-dot.partial { background: #4f86b8; }
+.pm-dot.awaiting { background: #d49a2a; }
+.pm-dot.overdue { background: #c45b5b; }
+.pm-dot.backordered { background: #7a5c9e; }
+.pm-section-label {
+    margin-bottom: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #7b8783;
+    font-weight: 700;
+}
+.pm-attention-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid #e8ecea;
+    text-decoration: none;
+    color: inherit;
+}
+.pm-attention-row strong {
+    display: block;
+    font-size: 13px;
+    color: #2b393e;
+}
+.pm-attention-row span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    color: #7a8782;
+}
+.pm-attention-row b {
+    align-self: center;
+    white-space: nowrap;
+    font-size: 10px;
+    color: #a14c4c;
+}
+.pm-empty {
+    padding: 24px 0;
+    color: #6f7d78;
+    font-size: 12px;
+}
+@media (max-width: 900px) {
+    .pm-overview-grid {
+        grid-template-columns: 1fr;
+    }
+    .pm-donut-wrap {
+        justify-content: flex-start;
+    }
+}
+
+
+.pm-simple-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.pm-compact-procurement {
+    margin-bottom: 18px;
+}
+.pm-subnote {
+    display: block;
+    margin-top: 3px;
+    color: #7a8782;
+    font-size: 10px;
+}
+.pm-status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid #e5ebe8;
+}
+.pm-status-item {
+    padding: 16px 18px;
+    border-right: 1px solid #e5ebe8;
+}
+.pm-status-item:last-child { border-right: 0; }
+.pm-status-item span {
+    display: block;
+    color: #6f7d78;
+    font-size: 10px;
+}
+.pm-status-item strong {
+    display: block;
+    margin-top: 5px;
+    color: #263238;
+    font-size: 22px;
+}
+.pm-status-item.received { border-top: 3px solid #2f7d62; }
+.pm-status-item.partial { border-top: 3px solid #4b8fd8; }
+.pm-status-item.awaiting { border-top: 3px solid #c99a2e; }
+.pm-status-item.backordered { border-top: 3px solid #8b4b78; }
+@media (max-width: 1000px) {
+    .pm-simple-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pm-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pm-status-item:nth-child(2) { border-right: 0; }
+}
+
 </style>
 
 
@@ -766,829 +940,111 @@ background 0.15s ease;
 
 
 
-<section class="tech-home-intro">
 
+<style>
+.pm-home{margin-bottom:28px}
+.pm-home-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:22px}
+.pm-home-eyebrow{display:block;margin-bottom:8px;color:#19704f;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.pm-home-head h1{margin:0 0 7px;color:#263238;font-size:30px;line-height:1.12}
+.pm-home-head p{margin:0;color:#687570;font-size:14px}
+.pm-home-actions{display:flex;gap:9px;flex-shrink:0}
+.pm-home-actions a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border:1px solid #d7e1dc;border-radius:7px;background:#fff;color:#176d50;font-size:12px;font-weight:700;text-decoration:none}
+.pm-home-actions a:hover{background:#f5f9f7;border-color:#bfd0c8}
+.pm-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.pm-kpi{min-height:116px;padding:18px 19px;border:1px solid #dfe6e3;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(25,45,38,.04)}
+.pm-kpi-label{display:block;color:#71807a;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pm-kpi-value{display:block;margin-top:8px;color:#263238;font-size:30px;font-weight:700;line-height:1}
+.pm-kpi-note{display:block;margin-top:8px;color:#7b8783;font-size:11px}
+.pm-snapshot{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(420px,1.65fr);gap:16px;margin-bottom:22px}
+.pm-snapshot-card{border:1px solid #dfe6e3;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(25,45,38,.04)}
+.pm-snapshot-card>header{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid #edf1ef}
+.pm-snapshot-card h2{margin:0;color:#263238;font-size:15px}
+.pm-snapshot-card>header span{color:#87928e;font-size:11px}
+.pm-readiness{padding:16px 17px}
+.pm-readiness-row{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:12px}
+.pm-readiness-row:last-child{margin-bottom:0}
+.pm-readiness-name{color:#4e5c57;font-size:12px}
+.pm-readiness-value{color:#263238;font-size:13px;font-weight:700}
+.pm-bar{height:6px;margin-top:5px;overflow:hidden;border-radius:99px;background:#edf2ef}
+.pm-bar-fill{height:100%;border-radius:inherit}
+.pm-bar-received{background:#2f7d62}.pm-bar-partial{background:#4b8fd8}.pm-bar-awaiting{background:#c99a2e}.pm-bar-backordered{background:#9a557e}
+.pm-focus{display:grid;grid-template-columns:1fr 1fr;min-height:151px}
+.pm-focus-item{padding:16px 18px}
+.pm-focus-item+.pm-focus-item{border-left:1px solid #edf1ef}
+.pm-focus-item span{display:block;color:#7b8783;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pm-focus-item strong{display:block;margin-top:9px;color:#263238;font-size:24px}
+.pm-focus-item p{margin:5px 0 0;color:#7b8783;font-size:11px;line-height:1.45}
+.pm-focus-link{display:inline-block;margin-top:11px;color:#176d50;font-size:11px;font-weight:700;text-decoration:none}
+@media(max-width:1050px){.pm-kpis{grid-template-columns:1fr}.pm-snapshot{grid-template-columns:1fr}}
+@media(max-width:700px){.pm-home-head{display:block}.pm-home-actions{margin-top:14px}.pm-focus{grid-template-columns:1fr}.pm-focus-item+.pm-focus-item{border-left:0;border-top:1px solid #edf1ef}}
+</style>
 
+<section class="pm-home">
+  <div class="pm-home-head">
+    <div>
+      <span class="pm-home-eyebrow">TECH CENTER</span>
+      <h1>Good morning, Myska</h1>
+      <p>Portfolio overview for projects, procurement, and material readiness.</p>
+    </div>
+    <div class="pm-home-actions">
+      <a href="#" onclick="event.preventDefault(); openProjectFlyout();">Projects</a>
+      <a href="{{ url_for('materials') }}">Materials</a>
+    </div>
+  </div>
 
+  <section class="pm-kpis">
+    <div class="pm-kpi">
+      <span class="pm-kpi-label">Active Projects</span>
+      <strong class="pm-kpi-value">{{ active_projects }}</strong>
+      <span class="pm-kpi-note">Projects currently in the Tech Center portfolio</span>
+    </div>
+    <div class="pm-kpi">
+      <span class="pm-kpi-label">Open Purchase Orders</span>
+      <strong class="pm-kpi-value">{{ open_purchase_orders }}</strong>
+      <span class="pm-kpi-note">POs with material still outstanding</span>
+    </div>
+    <div class="pm-kpi">
+      <span class="pm-kpi-label">Materials Outstanding</span>
+      <strong class="pm-kpi-value">{{ materials_outstanding }}</strong>
+      <span class="pm-kpi-note">Units still outstanding across open POs</span>
+    </div>
+  </section>
 
+  <section class="pm-snapshot">
+    <div class="pm-snapshot-card">
+      <header><h2>Procurement Readiness</h2><span>{{ procurement_total }} POs</span></header>
+      <div class="pm-readiness">
+        {% set received_count = procurement_status_counts['Received'] %}
+        {% set partial_count = procurement_status_counts['Partially Received'] %}
+        {% set awaiting_count = procurement_status_counts['Awaiting Receipt'] %}
+        {% set backordered_count = procurement_status_counts['Backordered'] %}
 
+        <div class="pm-readiness-row"><div style="flex:1"><span class="pm-readiness-name">Received</span><div class="pm-bar"><div class="pm-bar-fill pm-bar-received" style="width:{{ ((received_count / procurement_total) * 100) if procurement_total else 0 }}%"></div></div></div><strong class="pm-readiness-value">{{ received_count }}</strong></div>
+        <div class="pm-readiness-row"><div style="flex:1"><span class="pm-readiness-name">Partially Received</span><div class="pm-bar"><div class="pm-bar-fill pm-bar-partial" style="width:{{ ((partial_count / procurement_total) * 100) if procurement_total else 0 }}%"></div></div></div><strong class="pm-readiness-value">{{ partial_count }}</strong></div>
+        <div class="pm-readiness-row"><div style="flex:1"><span class="pm-readiness-name">Awaiting Receipt</span><div class="pm-bar"><div class="pm-bar-fill pm-bar-awaiting" style="width:{{ ((awaiting_count / procurement_total) * 100) if procurement_total else 0 }}%"></div></div></div><strong class="pm-readiness-value">{{ awaiting_count }}</strong></div>
+        <div class="pm-readiness-row"><div style="flex:1"><span class="pm-readiness-name">Backordered</span><div class="pm-bar"><div class="pm-bar-fill pm-bar-backordered" style="width:{{ ((backordered_count / procurement_total) * 100) if procurement_total else 0 }}%"></div></div></div><strong class="pm-readiness-value">{{ backordered_count }}</strong></div>
+      </div>
+    </div>
 
-
-
-
-
-
-    <span class="page-eyebrow">
-
-
-
-        TECH CENTER
-
-
-
-    </span>
-
-
-
-
-
-
-
-
-
-
-
-    <h1>
-
-
-
-        Good morning, Myska
-
-
-
-    </h1>
-
-
-
-
-
-
-
-
-
-
-
-    <p>
-
-
-
-        Material, fabrication, and project management overview
-
-
-
-    </p>
-
-
-
-
-
-
-
-
-
-
-
+    <div class="pm-snapshot-card">
+      <header><h2>PM Focus</h2><span>Quick access</span></header>
+      <div class="pm-focus">
+        <div class="pm-focus-item">
+          <span>Receiving History</span>
+          <strong>{{ delivery_ticket_count }}</strong>
+          <p>Delivery tickets recorded across the Tech Center.</p>
+          <a class="pm-focus-link" href="{{ url_for('delivery_ticket_history') }}">View receiving history →</a>
+        </div>
+        <div class="pm-focus-item">
+          <span>Project Portfolio</span>
+          <strong>{{ active_projects }}</strong>
+          <p>Open the project selector to review individual project dashboards.</p>
+          <a class="pm-focus-link" href="#" onclick="event.preventDefault(); openProjectFlyout();">Search projects →</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- =====================================================
-
-
-
-     DASHBOARD METRICS
-
-
-
-\===================================================== -->
-
-
-
-
-
-
-
-<section class="metric-grid">
-
-
-
-
-
-
-
-
-
-
-
-    <!-- TECH CENTER PROJECTS -->
-
-
-
-
-
-
-
-    <div class="metric-card">
-
-
-
-
-
-
-
-
-
-
-
-        <div class="metric-top">
-
-
-
-
-
-
-
-
-
-
-
-            <div class="metric-icon">
-
-
-
-                ▣
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-            <div>
-
-
-
-
-
-
-
-
-
-
-
-                <span class="metric-label">
-
-
-
-                    Active Projects
-
-
-
-                </span>
-
-
-
-
-
-
-
-
-
-
-
-                <strong class="metric-number">
-
-
-
-                    {{ projects|length }}
-
-
-
-                </strong>
-
-
-
-
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <a
-
-
-
-            href="#"
-
-
-
-            onclick="event.preventDefault(); openProjectFlyout();"
-
-
-
-        >
-
-
-
-            View projects →
-
-
-
-        </a>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- WILLIAMS OPEN PO -->
-
-
-
-
-
-
-
-    <div class="metric-card">
-
-
-
-
-
-
-
-
-
-
-
-        <div class="metric-top">
-
-
-
-
-
-
-
-
-
-
-
-            <div class="metric-icon">
-
-
-
-                ▤
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-            <div>
-
-
-
-
-
-
-
-
-
-
-
-                <span class="metric-label">
-
-
-
-                    Williams Purchase Orders
-
-
-
-                </span>
-
-
-
-
-
-
-
-
-
-
-
-                <strong class="metric-number">
-
-
-
-                    9
-
-
-
-                </strong>
-
-
-
-
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <a
-
-
-
-            href="{{ url_for('project_purchase_orders', project_slug='williams-aquila') }}"
-
-
-
-        >
-
-
-
-            View purchase orders →
-
-
-
-        </a>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- SCHEDULE -->
-
-
-
-
-
-
-
-    <div class="metric-card">
-
-
-
-
-
-
-
-
-
-
-
-        <div class="metric-top">
-
-
-
-
-
-
-
-
-
-
-
-            <div class="metric-icon">
-
-
-
-                ◇
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-            <div>
-
-
-
-
-
-
-
-
-
-
-
-                <span class="metric-label">
-
-
-
-                    Project Schedules
-
-
-
-                </span>
-
-
-
-
-
-
-
-
-
-
-
-                <strong class="metric-number">
-
-
-
-                    {{ projects|length }}
-
-
-
-                </strong>
-
-
-
-
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <a
-
-
-
-            href="#"
-
-
-
-            onclick="event.preventDefault(); openProjectFlyout();"
-
-
-
-        >
-
-
-
-            Review schedules →
-
-
-
-        </a>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- MATERIALS -->
-
-
-
-
-
-
-
-    <div class="metric-card">
-
-
-
-
-
-
-
-
-
-
-
-        <div class="metric-top">
-
-
-
-
-
-
-
-
-
-
-
-            <div class="metric-icon">
-
-
-
-                ⌂
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-            <div>
-
-
-
-
-
-
-
-
-
-
-
-                <span class="metric-label">
-
-
-
-                    Williams Materials
-
-
-
-                </span>
-
-
-
-
-
-
-
-
-
-
-
-                <strong class="metric-number">
-
-
-
-                    3
-
-
-
-                </strong>
-
-
-
-
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <a
-
-
-
-            href="{{ url_for('project_materials', project_slug='williams-aquila') }}"
-
-
-
-        >
-
-
-
-            View materials →
-
-
-
-        </a>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- =====================================================
 

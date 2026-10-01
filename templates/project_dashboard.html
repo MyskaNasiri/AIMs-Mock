@@ -1,534 +1,941 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.name }} | AIMS</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-{% block title %}
-{{ project.name }} | AIMS
-{% endblock %}
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7f6;
+            color: #25313a;
+        }
 
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-{% block content %}
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 34px 38px 60px;
+        }
 
+        /* =====================================================
+           PROJECT HEADER
+        ====================================================== */
 
-<section class="project-dashboard-header">
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
 
-    <div>
+        .eyebrow {
+            color: #24745d;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.1px;
+            margin-bottom: 8px;
+        }
 
-        <span class="page-eyebrow">
-            PROJECT {{ project.number }}
-        </span>
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.15;
+            color: #25313a;
+        }
 
-        <h1>
-            {{ project.name }}
-        </h1>
+        .project-subtitle {
+            margin: 8px 0 0;
+            color: #66737b;
+            font-size: 15px;
+        }
 
-        <p>
-            Tech Center project workspace
-        </p>
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #e8f3ef;
+            color: #176b53;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
 
-    </div>
+        /* =====================================================
+           PROJECT NAVIGATION
+        ====================================================== */
 
+        .project-nav {
+            display: flex;
+            gap: 4px;
+            padding: 5px;
+            margin-bottom: 26px;
+            background: #ffffff;
+            border: 1px solid #e1e7e4;
+            border-radius: 8px;
+        }
 
-    <span class="status-badge active-status-badge">
-        {{ project.status }}
-    </span>
+        .project-tab {
+            padding: 10px 16px;
+            border-radius: 6px;
+            color: #53616a;
+            font-size: 13px;
+            font-weight: 600;
+        }
 
-</section>
+        .project-tab:hover {
+            background: #f1f5f3;
+        }
 
+        .project-tab.active {
+            background: #216b57;
+            color: #ffffff;
+        }
 
+        /* =====================================================
+           SECTION HEADINGS
+        ====================================================== */
 
-<nav class="project-dashboard-nav">
+        .section {
+            margin-top: 26px;
+        }
 
-    <a
-        href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
-        class="project-dashboard-tab active"
-    >
-        Overview
-    </a>
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
 
-    <a
-        href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Purchase Orders
-    </a>
+        .section-heading h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #25313a;
+        }
 
-    <a
-        href="{{ url_for('project_schedule', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Project Schedule
-    </a>
+        .section-heading p {
+            margin: 4px 0 0;
+            color: #758087;
+            font-size: 13px;
+        }
 
-    <a
-        href="{{ url_for('project_materials', project_slug=project_slug) }}"
-        class="project-dashboard-tab"
-    >
-        Materials
-    </a>
+        /* =====================================================
+           SUMMARY METRICS
+        ====================================================== */
 
-    <a
-        href="#"
-        class="project-dashboard-tab"
-    >
-        Reports
-    </a>
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
 
-</nav>
+        .summary-card {
+            min-height: 128px;
+            padding: 18px 20px;
+            background: #ffffff;
+            border: 1px solid #e1e7e4;
+            border-radius: 9px;
+        }
 
+        .summary-label {
+            color: #66737b;
+            font-size: 13px;
+            font-weight: 600;
+        }
 
+        .summary-value {
+            margin-top: 9px;
+            color: #25313a;
+            font-size: 29px;
+            font-weight: 700;
+        }
 
-<section class="metric-grid">
+        .summary-note {
+            margin-top: 6px;
+            color: #7b858b;
+            font-size: 11px;
+        }
 
+        /* =====================================================
+           TWO-COLUMN CONTENT
+        ====================================================== */
 
-    <div class="metric-card">
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 18px;
+        }
 
-        <div class="metric-top">
+        .panel {
+            background: #ffffff;
+            border: 1px solid #e1e7e4;
+            border-radius: 9px;
+            padding: 20px;
+        }
 
-            <div class="metric-icon">
-                ▤
+        /* =====================================================
+           SCHEDULE
+        ====================================================== */
+
+        .schedule-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 0;
+            border-bottom: 1px solid #edf0ef;
+        }
+
+        .schedule-row:last-child {
+            border-bottom: 0;
+        }
+
+        .schedule-date {
+            min-width: 76px;
+            padding: 8px 9px;
+            border: 1px solid #e2e9e6;
+            border-radius: 7px;
+            background: #f7faf8;
+            text-align: center;
+        }
+
+        .schedule-date-day {
+            color: #25313a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .schedule-date-month {
+            margin-top: 2px;
+            color: #24745d;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .schedule-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .schedule-name {
+            color: #25313a;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .schedule-detail {
+            margin-top: 4px;
+            color: #748087;
+            font-size: 11px;
+        }
+
+        .empty-state {
+            padding: 25px 5px;
+            color: #78848b;
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           MATERIAL STATUS
+        ====================================================== */
+
+        .status-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 13px;
+            border: 1px solid #e6ebe9;
+            border-radius: 7px;
+        }
+
+        .status-name {
+            color: #4e5c64;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-count {
+            color: #25313a;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           PROJECT DETAILS
+        ====================================================== */
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0;
+        }
+
+        .detail {
+            padding: 13px 0;
+            border-bottom: 1px solid #edf0ef;
+        }
+
+        .detail:nth-last-child(-n+2) {
+            border-bottom: 0;
+        }
+
+        .detail-label {
+            color: #7a858b;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            margin-top: 5px;
+            color: #35424a;
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           WORKSPACES
+        ====================================================== */
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .workspace-card {
+            display: block;
+            padding: 18px;
+            background: #ffffff;
+            border: 1px solid #e1e7e4;
+            border-radius: 9px;
+        }
+
+        .workspace-card:hover {
+            border-color: #b9d7cd;
+            background: #fbfdfc;
+        }
+
+        .workspace-title {
+            color: #25313a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .workspace-description {
+            margin-top: 7px;
+            color: #707c83;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .workspace-link {
+            display: inline-block;
+            margin-top: 13px;
+            color: #176b53;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 950px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .page {
+                padding: 24px 16px 45px;
+            }
+
+            .project-header {
+                flex-direction: column;
+            }
+
+            .project-nav {
+                overflow-x: auto;
+            }
+
+            .project-tab {
+                white-space: nowrap;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail:nth-last-child(-n+2) {
+                border-bottom: 1px solid #edf0ef;
+            }
+
+            .detail:last-child {
+                border-bottom: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- =====================================================
+         PROJECT HEADER
+    ====================================================== -->
+
+    <section class="project-header">
+        <div>
+            <div class="eyebrow">
+                PROJECT {{ project.number }}
             </div>
 
-            <div>
+            <h1>{{ project.name }}</h1>
 
-                <span class="metric-label">
-                    Open POs
-                </span>
-
-                <strong class="metric-number">
-                    {{ project.open_pos }}
-                </strong>
-
-            </div>
-
+            <p class="project-subtitle">
+                Project summary and current operational status
+            </p>
         </div>
+
+        <span class="status-badge">
+            {{ project.status }}
+        </span>
+    </section>
+
+
+    <!-- =====================================================
+         PROJECT NAVIGATION
+    ====================================================== -->
+
+    <nav class="project-nav">
+
+        <a
+            href="{{ url_for('project_dashboard', project_slug=project_slug) }}"
+            class="project-tab active"
+        >
+            Overview
+        </a>
 
         <a
             href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
+            class="project-tab"
         >
-            View purchase orders →
+            Purchase Orders
         </a>
-
-    </div>
-
-
-
-    <div class="metric-card">
-
-        <div class="metric-top">
-
-            <div class="metric-icon">
-                ▣
-            </div>
-
-            <div>
-
-                <span class="metric-label">
-                    Recent Receipts
-                </span>
-
-                <strong class="metric-number">
-                    {{ project.recent_receipts }}
-                </strong>
-
-            </div>
-
-        </div>
-
-        <a
-            href="{{ url_for('project_materials', project_slug=project_slug) }}"
-        >
-            View receipts →
-        </a>
-
-    </div>
-
-
-
-    <div class="metric-card">
-
-        <div class="metric-top">
-
-            <div class="metric-icon">
-                ⌂
-            </div>
-
-            <div>
-
-                <span class="metric-label">
-                    Awaiting Staging
-                </span>
-
-                <strong class="metric-number">
-                    {{ project.awaiting_staging }}
-                </strong>
-
-            </div>
-
-        </div>
-
-        <a
-            href="{{ url_for('project_materials', project_slug=project_slug) }}"
-        >
-            View staging →
-        </a>
-
-    </div>
-
-
-
-    <div class="metric-card">
-
-        <div class="metric-top">
-
-            <div class="metric-icon">
-                ◇
-            </div>
-
-            <div>
-
-                <span class="metric-label">
-                    Project Schedule
-                </span>
-
-                <strong class="metric-number">
-                    →
-                </strong>
-
-            </div>
-
-        </div>
 
         <a
             href="{{ url_for('project_schedule', project_slug=project_slug) }}"
+            class="project-tab"
         >
-            View milestones →
+            Project Schedule
         </a>
 
-    </div>
+        <a
+            href="{{ url_for('project_materials', project_slug=project_slug) }}"
+            class="project-tab"
+        >
+            Materials
+        </a>
 
+        <a href="{{ url_for('reporting') }}" class="project-tab">
+            Reports
+        </a>
 
-</section>
+    </nav>
 
+    <!-- =====================================================
+         PROJECT SUMMARY
+         Uses only data already supplied by the existing
+         project_dashboard route: project, schedule, receipts.
+    ====================================================== -->
 
+    <section class="section">
 
-<div class="dashboard-grid">
-
-
-    <div class="dashboard-left">
-
-
-        <section class="dashboard-card">
-
-            <div class="card-title-row">
-
-                <h2>
-                    Project Workflow
-                </h2>
-
+        <div class="section-heading">
+            <div>
+                <h2>Project Summary</h2>
+                <p>Key information for the project manager at a glance.</p>
             </div>
-
-
-            <div class="material-status-row">
-
-                <div>
-
-                    <strong>
-                        Procurement
-                    </strong>
-
-                    <span>
-                        Purchase order visibility
-                    </span>
-
-                </div>
-
-                <a
-                    href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
-                >
-                    View →
-                </a>
-
-            </div>
-
-
-            <div class="material-status-row">
-
-                <div>
-
-                    <strong>
-                        Fabrication Schedule
-                    </strong>
-
-                    <span>
-                        Milestones, FATs, shipment, and risks
-                    </span>
-
-                </div>
-
-                <a
-                    href="{{ url_for('project_schedule', project_slug=project_slug) }}"
-                >
-                    View →
-                </a>
-
-            </div>
-
-
-            <div class="material-status-row">
-
-                <div>
-
-                    <strong>
-                        Materials
-                    </strong>
-
-                    <span>
-                        Receipt, staging, and storage visibility
-                    </span>
-
-                </div>
-
-                <a
-                    href="{{ url_for('project_materials', project_slug=project_slug) }}"
-                >
-                    View →
-                </a>
-
-            </div>
-
-
-        </section>
-
-
-
-        <section class="dashboard-card">
-
-            <div class="card-title-row">
-
-                <h2>
-                    Recent Project Activity
-                </h2>
-
-            </div>
-
-
-            {% if project_slug == "williams-aquila" %}
-
-
-            <div class="activity-row">
-
-                <div class="activity-icon">
-                    ▤
-                </div>
-
-                <div class="activity-description">
-
-                    <strong>
-                        Receipt RC-10482 available
-                    </strong>
-
-                    <span>
-                        Williams Aquila
-                    </span>
-
-                </div>
-
-                <span class="activity-time">
-                    Mock
-                </span>
-
-            </div>
-
-
-            <div class="activity-row">
-
-                <div class="activity-icon">
-                    ⌂
-                </div>
-
-                <div class="activity-description">
-
-                    <strong>
-                        Material staging activity
-                    </strong>
-
-                    <span>
-                        Rack 1 / Shelf B
-                    </span>
-
-                </div>
-
-                <span class="activity-time">
-                    Mock
-                </span>
-
-            </div>
-
-
-            {% else %}
-
-
-            <div class="activity-row">
-
-                <div class="activity-icon">
-                    ◇
-                </div>
-
-                <div class="activity-description">
-
-                    <strong>
-                        Schedule available
-                    </strong>
-
-                    <span>
-                        Review current fabrication milestones
-                    </span>
-
-                </div>
-
-                <span class="activity-time">
-                    Current
-                </span>
-
-            </div>
-
-
+        </div>
+
+        {% set received_qty = namespace(value=0) %}
+        {% set remaining_qty = namespace(value=0) %}
+        {% set staged_qty = namespace(value=0) %}
+        {% set ticket_numbers = [] %}
+
+        {% for receipt in receipts %}
+            {% set received_qty.value = received_qty.value + (receipt.get('receipt_qty', 0) or 0) %}
+            {% set remaining_qty.value = remaining_qty.value + (receipt.get('remaining_to_stage', 0) or 0) %}
+            {% set staged_qty.value = staged_qty.value + (receipt.get('staged_qty', 0) or 0) %}
+
+            {% set ticket = receipt.get('receipt_nbr', receipt.get('ticket_number', '')) %}
+            {% if ticket and ticket not in ticket_numbers %}
+                {% set _ = ticket_numbers.append(ticket) %}
             {% endif %}
+        {% endfor %}
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">Project Packages</div>
+                <div class="summary-value">{{ schedule|length }}</div>
+                <div class="summary-note">Packages currently tracked in the project schedule</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">Delivery Records</div>
+                <div class="summary-value">{{ ticket_numbers|length }}</div>
+                <div class="summary-note">Receiving records currently associated with this project</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">Received Quantity</div>
+                <div class="summary-value">{{ received_qty.value }}</div>
+                <div class="summary-note">Quantity recorded through receiving</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">Remaining to Stage</div>
+                <div class="summary-value">{{ remaining_qty.value }}</div>
+                <div class="summary-note">Received material still awaiting staging</div>
+            </div>
+
+        </div>
+
+    </section>
 
 
-        </section>
+    <!-- =====================================================
+         PROJECT SCHEDULE
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Project Schedule</h2>
+                <p>Package milestones, completion, and current schedule status.</p>
+            </div>
+        </div>
+
+        {% if schedule %}
+
+            {% for package in schedule %}
+
+                <div class="panel schedule-package">
+
+                    <div class="package-header">
+
+                        <div>
+                            <div class="package-name">
+                                {{ package.get('package', 'Project Package') }}
+                            </div>
+
+                            <div class="package-meta">
+                                {{ package.get('project_number', '—') }}
+                                {% if package.get('pm') %}
+                                    · PM: {{ package.get('pm') }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% if package.get('milestones') %}
+
+                        <div class="milestone-list">
+
+                            {% for milestone in package.get('milestones', []) %}
+
+                                <div class="milestone-row">
+
+                                    <div class="milestone-main">
+
+                                        <div class="milestone-name">
+                                            {{ milestone.get('description', 'Milestone') }}
+                                        </div>
+
+                                        <div class="milestone-date">
+                                            {{ milestone.get('date', '—') }}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="milestone-progress">
+
+                                        <div class="progress-value">
+                                            {{ milestone.get('percent', 0) }}%
+                                        </div>
+
+                                        <div class="progress-track">
+                                            <div
+                                                class="progress-fill"
+                                                style="width: {{ milestone.get('percent', 0) }}%;"
+                                            ></div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="milestone-status">
+                                        {{ milestone.get('status', '—') }}
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            No milestones are currently listed for this package.
+                        </div>
+
+                    {% endif %}
+
+                    {% if package.get('risk') %}
+                        <div class="package-risk">
+                            <strong>Risk / Note:</strong>
+                            {{ package.get('risk') }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="panel">
+                <div class="empty-state">
+                    No project schedule information is currently available.
+                </div>
+            </div>
+
+        {% endif %}
+
+    </section>
 
 
-    </div>
+    <!-- =====================================================
+         RECEIVING + STAGING
+    ====================================================== -->
 
+    <section class="section">
 
+        <div class="content-grid">
 
-    <div class="dashboard-right">
+            <div class="panel">
 
+                <div class="section-heading">
+                    <div>
+                        <h2>Receiving &amp; Staging</h2>
+                        <p>Current material movement based on the project's receiving records.</p>
+                    </div>
+                </div>
 
-        <section class="dashboard-card">
+                {% set received_records = namespace(value=0) %}
+                {% set partial_records = namespace(value=0) %}
+                {% set awaiting_records = namespace(value=0) %}
+                {% set staged_records = namespace(value=0) %}
 
-            <div class="card-title-row">
+                {% for receipt in receipts %}
 
-                <h2>
-                    Project Information
-                </h2>
+                    {% set status = (receipt.get('staging_status', '') or '')|lower %}
+
+                    {% if 'complete' in status or 'staged' in status %}
+                        {% set staged_records.value = staged_records.value + 1 %}
+                    {% elif 'partial' in status %}
+                        {% set partial_records.value = partial_records.value + 1 %}
+                    {% elif 'await' in status or 'pending' in status %}
+                        {% set awaiting_records.value = awaiting_records.value + 1 %}
+                    {% else %}
+                        {% set received_records.value = received_records.value + 1 %}
+                    {% endif %}
+
+                {% endfor %}
+
+                <div class="status-list">
+
+                    <div class="status-item">
+                        <span class="status-name">Staged Records</span>
+                        <span class="status-count">{{ staged_records.value }}</span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-name">Partially Staged</span>
+                        <span class="status-count">{{ partial_records.value }}</span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-name">Awaiting / Pending</span>
+                        <span class="status-count">{{ awaiting_records.value }}</span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-name">Received / Recorded</span>
+                        <span class="status-count">{{ received_records.value }}</span>
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="project-info-row">
+            <div class="panel">
 
-                <span>
-                    Project
-                </span>
+                <div class="section-heading">
+                    <div>
+                        <h2>Project Information</h2>
+                        <p>Basic project ownership and identification.</p>
+                    </div>
+                </div>
 
-                <strong>
-                    {{ project.number }}
-                </strong>
+                <div class="details-grid">
 
-            </div>
+                    <div class="detail">
+                        <div class="detail-label">Project</div>
+                        <div class="detail-value">
+                            {{ project.get('name', '—') }}
+                        </div>
+                    </div>
 
+                    <div class="detail">
+                        <div class="detail-label">Client</div>
+                        <div class="detail-value">
+                            {{ project.get('client', '—') }}
+                        </div>
+                    </div>
 
-            <div class="project-info-row">
+                    <div class="detail">
+                        <div class="detail-label">Project Manager</div>
+                        <div class="detail-value">
+                            {{ project.get('pm', '—') }}
+                        </div>
+                    </div>
 
-                <span>
-                    Client
-                </span>
+                    <div class="detail">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value">
+                            {{ project.get('status', '—') }}
+                        </div>
+                    </div>
 
-                <strong>
-                    {{ project.client }}
-                </strong>
+                    <div class="detail">
+                        <div class="detail-label">Package Count</div>
+                        <div class="detail-value">
+                            {{ schedule|length }}
+                        </div>
+                    </div>
 
-            </div>
+                    <div class="detail">
+                        <div class="detail-label">Tracked Receiving</div>
+                        <div class="detail-value">
+                            {{ ticket_numbers|length }} record{% if ticket_numbers|length != 1 %}s{% endif %}
+                        </div>
+                    </div>
 
-
-            <div class="project-info-row">
-
-                <span>
-                    Project Manager
-                </span>
-
-                <strong>
-                    {{ project.pm }}
-                </strong>
-
-            </div>
-
-
-            <div class="project-info-row">
-
-                <span>
-                    Status
-                </span>
-
-                <strong>
-                    {{ project.status }}
-                </strong>
-
-            </div>
-
-
-            <div class="project-info-row">
-
-                <span>
-                    Workspace
-                </span>
-
-                <strong>
-                    Tech Center
-                </strong>
+                </div>
 
             </div>
 
+        </div>
 
-        </section>
+    </section>
 
 
+    <!-- =====================================================
+         PROJECT WORKSPACES
+    ====================================================== -->
 
-        <section class="dashboard-card">
+    <section class="section">
 
-            <div class="card-title-row">
-
-                <h2>
-                    Schedule
-                </h2>
-
+        <div class="section-heading">
+            <div>
+                <h2>Project Workspaces</h2>
+                <p>Open the detailed workspace when you need to work with project records.</p>
             </div>
+        </div>
 
+        <div class="workspace-grid">
 
-            <div class="announcement-card">
+            <a
+                href="{{ url_for('project_purchase_orders', project_slug=project_slug) }}"
+                class="workspace-card"
+            >
+                <div class="workspace-title">Purchase Orders</div>
+                <div class="workspace-description">
+                    Review project purchase orders, outstanding material, and receiving activity.
+                </div>
+                <div class="workspace-link">Open purchase orders →</div>
+            </a>
 
-                <span class="notice-badge">
-                    FABRICATION
-                </span>
+            <a
+                href="{{ url_for('project_schedule', project_slug=project_slug) }}"
+                class="workspace-card"
+            >
+                <div class="workspace-title">Project Schedule</div>
+                <div class="workspace-description">
+                    Review package milestones, completion percentages, dates, and schedule risks.
+                </div>
+                <div class="workspace-link">Open schedule →</div>
+            </a>
 
-                <h3>
-                    {{ project.short_name }}
-                </h3>
+            <a
+                href="{{ url_for('project_materials', project_slug=project_slug) }}"
+                class="workspace-card"
+            >
+                <div class="workspace-title">Materials</div>
+                <div class="workspace-description">
+                    Review material status, receiving records, staging, and remaining quantities.
+                </div>
+                <div class="workspace-link">Open materials →</div>
+            </a>
 
-                <p>
-                    View current engineering, procurement,
-                    fabrication, FAT, shipment, and as-built
-                    milestones for this Tech Center project.
-                </p>
+        </div>
 
-                <a
-                    href="{{ url_for('project_schedule', project_slug=project_slug) }}"
-                >
-                    Open project schedule →
-                </a>
-
-            </div>
-
-
-        </section>
-
-
-    </div>
+    </section>
 
 
 </div>
 
+<style>
+    .schedule-package {
+        margin-bottom: 14px;
+    }
 
-{% endblock %}
+    .schedule-package:last-child {
+        margin-bottom: 0;
+    }
+
+    .package-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 13px;
+        border-bottom: 1px solid #edf0ef;
+    }
+
+    .package-name {
+        color: #25313a;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .package-meta {
+        margin-top: 4px;
+        color: #7a858b;
+        font-size: 11px;
+    }
+
+    .milestone-list {
+        margin-top: 4px;
+    }
+
+    .milestone-row {
+        display: grid;
+        grid-template-columns: minmax(180px, 1.5fr) minmax(150px, 1fr) 105px;
+        gap: 18px;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #edf0ef;
+    }
+
+    .milestone-row:last-child {
+        border-bottom: 0;
+    }
+
+    .milestone-name {
+        color: #35424a;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .milestone-date {
+        margin-top: 4px;
+        color: #7a858b;
+        font-size: 10px;
+    }
+
+    .progress-value {
+        margin-bottom: 5px;
+        color: #52616a;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 6px;
+        overflow: hidden;
+        background: #e9eeec;
+        border-radius: 6px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #24745d;
+        border-radius: 6px;
+    }
+
+    .milestone-status {
+        color: #24745d;
+        font-size: 10px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .package-risk {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: #f7f9f8;
+        color: #66737b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 800px) {
+        .milestone-row {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .milestone-status {
+            text-align: left;
+        }
+    }
+</style>
+
+</body>
+</html>
