@@ -40,7 +40,7 @@
 
            PAGE HEADER
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -96,7 +96,7 @@
 
            SOURCE INFORMATION
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -184,7 +184,7 @@
 
            METRICS
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -296,7 +296,7 @@
 
            STATUS SUMMARY
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -416,7 +416,7 @@
 
            OVERDUE WORKSPACE
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -502,7 +502,7 @@
 
            PURCHASE ORDER WORKSPACE
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -570,7 +570,7 @@
 
            SEARCH / FILTERS
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -585,6 +585,28 @@
         }
 
 
+
+        .delivery-ticket-button {
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 0 12px;
+            border: 1px solid #2b6e5a;
+            background: #ffffff;
+            color: #245f4d;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            border-radius: 3px;
+        }
+
+        .delivery-ticket-button:hover {
+            background: #f2f7f4;
+        }
 
         .search-box,
 
@@ -652,7 +674,7 @@
 
            TABLES
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -882,7 +904,7 @@
 
            STATUS COLORS
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -1094,7 +1116,7 @@
 
            EMPTY STATE
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -1118,7 +1140,7 @@
 
            TABLE FOOTER
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -1164,7 +1186,7 @@
 
            RESPONSIVE
 
-        ========================================= */
+        \========================================= */
 
 
 
@@ -1338,6 +1360,211 @@
         .material-view-tab.active { color: #245f4d; border-bottom-color: #2b6e5a; }
 
     
+        .po-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .po-detail-header strong {
+            margin-right: 10px;
+            color: #245f4d;
+        }
+
+        .po-detail-header span {
+            color: #6b7773;
+            font-size: 11px;
+        }
+
+        .delivery-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .record-delivery-btn {
+            border: 1px solid #2b6e5a;
+            background: #ffffff;
+            color: #245f4d;
+            padding: 7px 12px;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .record-delivery-btn:hover {
+            background: #f1f7f4;
+        }
+
+        .delivery-history-link {
+            color: #245f4d;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .delivery-history-link:hover {
+            text-decoration: underline;
+        }
+
+        .delivery-form-panel {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            border: 1px solid #d9e2dd;
+            background: #ffffff;
+            border-radius: 4px;
+        }
+
+        .delivery-form-panel.open {
+            display: block;
+        }
+
+        .delivery-form-heading {
+            margin-bottom: 14px;
+        }
+
+        .delivery-form-heading strong {
+            display: block;
+            color: #245f4d;
+            font-size: 13px;
+        }
+
+        .delivery-form-heading span,
+        .delivery-lines-heading span {
+            display: block;
+            margin-top: 3px;
+            color: #68736e;
+            font-size: 10px;
+        }
+
+        .delivery-form-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .delivery-form label > span {
+            display: block;
+            margin-bottom: 5px;
+            color: #53605a;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .delivery-form input,
+        .delivery-form textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cfd9d4;
+            border-radius: 3px;
+            padding: 8px;
+            background: #ffffff;
+            color: #27332e;
+            font-family: inherit;
+            font-size: 11px;
+        }
+
+        .delivery-form input:focus,
+        .delivery-form textarea:focus {
+            outline: none;
+            border-color: #2b6e5a;
+        }
+
+        .delivery-lines-heading {
+            margin: 4px 0 8px;
+        }
+
+        .delivery-entry-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #dfe6e2;
+        }
+
+        .delivery-entry-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .delivery-entry-table th {
+            padding: 8px;
+            background: #f1f5f3;
+            border-bottom: 1px solid #dfe6e2;
+            color: #596660;
+            font-size: 9px;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .delivery-entry-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e8eeeb;
+            color: #3d4944;
+            font-size: 10px;
+        }
+
+        .delivery-entry-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .qty-input-cell {
+            width: 120px;
+        }
+
+        .qty-input-cell input {
+            width: 90px;
+            text-align: center;
+        }
+
+        .delivery-notes {
+            display: block;
+            margin-top: 12px;
+        }
+
+        .delivery-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .delivery-cancel-btn,
+        .delivery-submit-btn {
+            padding: 8px 13px;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .delivery-cancel-btn {
+            border: 1px solid #ccd6d1;
+            background: #ffffff;
+            color: #52605a;
+        }
+
+        .delivery-submit-btn {
+            border: 1px solid #1f6c55;
+            background: #1f6c55;
+            color: #ffffff;
+        }
+
+        .delivery-submit-btn:hover {
+            background: #185943;
+        }
+
+        @media (max-width: 800px) {
+            .delivery-form-top {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .po-detail-row { display: none; background: #fbfcfb; }
         .po-detail-row.open { display: table-row; }
         .po-detail-cell { padding: 12px 14px 14px !important; white-space: normal !important; }
@@ -1363,7 +1590,7 @@
 
              PAGE HEADER
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -1405,7 +1632,7 @@
 
              DATA SOURCE
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -1459,7 +1686,7 @@
 
              METRICS
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -1615,7 +1842,7 @@
 
              STATUS SUMMARY
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -1812,7 +2039,7 @@
 
              OVERDUE MATERIALS
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -2267,7 +2494,7 @@
 
              ALL PURCHASE ORDERS
 
-        ========================================== -->
+        \========================================== -->
 
 
 
@@ -2322,6 +2549,13 @@
 
 
                 <div class="controls">
+
+                    <a
+                        class="delivery-ticket-button"
+                        href="{{ url_for('delivery_ticket_history') }}"
+                    >
+                        Delivery Tickets
+                    </a>
 
 
 
@@ -2439,7 +2673,7 @@
 
                  PO TABLE
 
-            ====================================== -->
+            \====================================== -->
 
 
 
@@ -2551,395 +2785,108 @@
 
                     <tbody id="poTableBody">
 
-
-
-
-
                         {% for po in all_pos %}
 
-
-
-
-
                             <tr
-
                                 class="po-row"
                                 data-po="{{ po.po_number }}"
-
-
-
                                 tabindex="0"
-
-
-
                                 data-status="{{ po.status }}"
-
-
-
                                 data-search="{{ po.search_text }}"
-
                             >
-
-
-
-
-
-                                <!-- PO NUMBER -->
-
-
-
                                 <td>
-
-
-
                                     <span class="po-number">
-
                                         {{ po.po_number }}
-
                                     </span>
-
-
-
                                 </td>
-
-
-
-
-
-                                <!-- PROJECT -->
-
-
 
                                 <td class="project-name">
-
-
-
                                     {{ po.project_name }}
-
-
-
-
-
                                     {% if po.package_name %}
-
-
-
                                         <div class="secondary-text">
-
-
-
                                             {{ po.package_name }}
-
-
-
                                         </div>
-
-
-
                                     {% endif %}
-
-
-
                                 </td>
 
-
-
-
-
-                                <!-- VENDOR -->
-
-
-
                                 <td>
-
-
-
                                     {{ po.vendor }}
-
-
-
                                 </td>
 
-
-
-
-
-                                <!-- ORDERED -->
-
-
-
                                 <td class="qty">
-
-
-
                                     {{ po.total_ordered }}
-
-
-
                                 </td>
 
-
-
-
-
-                                <!-- RECEIVED -->
-
-
-
                                 <td class="qty">
-
-
-
                                     {{ po.total_received }}
-
-
-
                                 </td>
-
-
-
-
-
-                                <!-- OUTSTANDING -->
-
-
 
                                 <td class="qty">
-
-
-
                                     {{ po.total_outstanding }}
-
-
-
                                 </td>
-
-
-
-
-
-                                <!-- STATUS -->
-
-
 
                                 <td>
-
-
-
-
-
                                     {% if po.status == "Overdue" %}
-
-
-
-
-
-                                        <span
-
-                                            class="
-
-                                                status-pill
-
-                                                status-overdue
-
-                                            "
-
-                                        >
-
-
-
+                                        <span class="status-pill status-overdue">
                                             Overdue
-
-
-
                                         </span>
-
-
-
-
-
                                     {% elif po.status == "Backordered" %}
-
-
-
-
-
-                                        <span
-
-                                            class="
-
-                                                status-pill
-
-                                                status-backordered
-
-                                            "
-
-                                        >
-
-
-
+                                        <span class="status-pill status-backordered">
                                             Backordered
-
-
-
                                         </span>
-
-
-
-
-
-                                        {% if
-
-                                            po.backordered_items > 1
-
-                                        %}
-
-
-
-                                            <span
-
-                                                class="backorder-count"
-
-                                            >
-
-
-
-                                                {{
-
-                                                    po.backordered_items
-
-                                                }}
-
-
-
-                                                items
-
-
-
+                                        {% if po.backordered_items > 1 %}
+                                            <span class="backorder-count">
+                                                {{ po.backordered_items }} items
                                             </span>
-
-
-
                                         {% endif %}
-
-
-
-
-
-                                    {% elif po.status ==
-
-                                        "Awaiting Receipt"
-
-                                    %}
-
-
-
-
-
-                                        <span
-
-                                            class="
-
-                                                status-pill
-
-                                                status-awaiting
-
-                                            "
-
-                                        >
-
-
-
+                                    {% elif po.status == "Awaiting Receipt" %}
+                                        <span class="status-pill status-awaiting">
                                             Awaiting Receipt
-
-
-
                                         </span>
-
-
-
-
-
-                                    {% elif po.status ==
-
-                                        "Partially Received"
-
-                                    %}
-
-
-
-
-
-                                        <span
-
-                                            class="
-
-                                                status-pill
-
-                                                status-partial
-
-                                            "
-
-                                        >
-
-
-
+                                    {% elif po.status == "Partially Received" %}
+                                        <span class="status-pill status-partial">
                                             Partially Received
-
-
-
                                         </span>
-
-
-
-
-
                                     {% else %}
-
-
-
-
-
-                                        <span
-
-                                            class="
-
-                                                status-pill
-
-                                                status-received
-
-                                            "
-
-                                        >
-
-
-
+                                        <span class="status-pill status-received">
                                             Received
-
-
-
                                         </span>
-
-
-
-
-
                                     {% endif %}
-
-
-
-
-
                                 </td>
-
-
-
-
-
                             </tr>
 
-<tr class="po-detail-row" data-detail-for="{{ po.po_number }}">
+                            <tr
+                                class="po-detail-row"
+                                data-detail-for="{{ po.po_number }}"
+                            >
                                 <td colspan="7" class="po-detail-cell">
+
+                                    <div class="po-detail-header">
+                                        <div>
+                                            <strong>{{ po.po_number }}</strong>
+                                            <span>
+                                                {{ po.vendor }}
+                                            </span>
+                                        </div>
+
+                                        <div class="delivery-actions">
+                                            <button
+                                                type="button"
+                                                class="record-delivery-btn"
+                                                onclick="toggleDeliveryForm('{{ po.po_number }}')"
+                                            >
+                                                Create Delivery Ticket
+                                            </button>
+
+                                            <a
+                                                class="delivery-history-link"
+                                                href="{{ url_for('project_purchase_orders', project_slug=po.project_slug) }}"
+                                            >
+                                                View Ticket History
+                                            </a>
+                                        </div>
+                                    </div>
+
                                     <table class="po-detail-table">
                                         <thead>
                                             <tr>
@@ -2952,78 +2899,194 @@
                                                 <th>Status</th>
                                             </tr>
                                         </thead>
+
                                         <tbody>
                                             {% for line in po.lines %}
                                                 <tr>
-                                                    <td class="part-number">{{ line.part_number or "—" }}</td>
-                                                    <td>{{ line.description or "—" }}</td>
-                                                    <td>{{ line.delivery_date or "—" }}</td>
-                                                    <td class="qty">{{ line.ordered_qty }}</td>
-                                                    <td class="qty">{{ line.received_qty }}</td>
-                                                    <td class="qty">{{ line.outstanding_qty }}</td>
-                                                    <td>{{ line.display_status }}</td>
+                                                    <td class="part-number">
+                                                        {{ line.part_number or "—" }}
+                                                    </td>
+                                                    <td>
+                                                        {{ line.description or "—" }}
+                                                    </td>
+                                                    <td>
+                                                        {{ line.delivery_date or "—" }}
+                                                    </td>
+                                                    <td class="qty">
+                                                        {{ line.ordered_qty }}
+                                                    </td>
+                                                    <td class="qty">
+                                                        {{ line.received_qty }}
+                                                    </td>
+                                                    <td class="qty">
+                                                        {{ line.outstanding_qty }}
+                                                    </td>
+                                                    <td>
+                                                        {{ line.display_status }}
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="7" class="empty-state">
+                                                        No material lines found for this purchase order.
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
+
+                                    <!-- =====================================
+                                         DELIVERY TICKET ENTRY
+                                    ====================================== -->
+
+                                    <div
+                                        id="delivery-form-{{ po.po_number }}"
+                                        class="delivery-form-panel"
+                                    >
+                                        <div class="delivery-form-heading">
+                                            <div>
+                                                <strong>Create Delivery Ticket</strong>
+                                                <span>
+                                                    Record the material received against {{ po.po_number }}.
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'record_project_po_delivery',
+                                                project_slug=po.project_slug,
+                                                po_number=po.po_number
+                                            ) }}"
+                                            class="delivery-form"
+                                        >
+                                            <div class="delivery-form-top">
+                                                <label>
+                                                    <span>Delivery Ticket #</span>
+                                                    <input
+                                                        type="text"
+                                                        name="ticket_number"
+                                                        placeholder="DT-####"
+                                                        required
+                                                    >
+                                                </label>
+
+                                                <label>
+                                                    <span>Delivery Date</span>
+                                                    <input
+                                                        type="date"
+                                                        name="delivery_date"
+                                                        class="delivery-date-input"
+                                                        required
+                                                    >
+                                                </label>
+
+                                                <label>
+                                                    <span>Received By</span>
+                                                    <input
+                                                        type="text"
+                                                        name="received_by"
+                                                        value="Tech Center Receiving"
+                                                        required
+                                                    >
+                                                </label>
+                                            </div>
+
+                                            <div class="delivery-lines-heading">
+                                                <strong>Materials Received</strong>
+                                                <span>
+                                                    Enter only the quantity received on this delivery.
+                                                </span>
+                                            </div>
+
+                                            <div class="delivery-entry-table-wrap">
+                                                <table class="delivery-entry-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Part Number</th>
+                                                            <th>Description</th>
+                                                            <th>Outstanding</th>
+                                                            <th>Received Now</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        {% for line in po.lines %}
+                                                            <tr>
+                                                                <td class="part-number">
+                                                                    {{ line.part_number or "—" }}
+                                                                </td>
+
+                                                                <td>
+                                                                    {{ line.description or "—" }}
+                                                                </td>
+
+                                                                <td class="qty">
+                                                                    {{ line.outstanding_qty }}
+                                                                </td>
+
+                                                                <td class="qty-input-cell">
+                                                                    <input
+                                                                        type="number"
+                                                                        name="qty_{{ loop.index0 }}"
+                                                                        min="0"
+                                                                        max="{{ line.outstanding_qty }}"
+                                                                        value="0"
+                                                                        {% if line.outstanding_qty <= 0 %}disabled{% endif %}
+                                                                    >
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <label class="delivery-notes">
+                                                <span>Notes</span>
+                                                <textarea
+                                                    name="notes"
+                                                    rows="2"
+                                                    placeholder="Optional receiving notes..."
+                                                ></textarea>
+                                            </label>
+
+                                            <div class="delivery-form-actions">
+                                                <button
+                                                    type="button"
+                                                    class="delivery-cancel-btn"
+                                                    onclick="toggleDeliveryForm('{{ po.po_number }}')"
+                                                >
+                                                    Cancel
+                                                </button>
+
+                                                <button
+                                                    type="submit"
+                                                    class="delivery-submit-btn"
+                                                >
+                                                    Save Delivery Ticket
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                 </td>
                             </tr>
-
-
-
-
-
-
 
                         {% else %}
 
-
-
-
-
                             <tr>
-
-
-
                                 <td
-
                                     colspan="7"
-
                                     class="empty-state"
-
                                 >
-
-
-
-                                    No purchase orders
-
-                                    were found.
-
-
-
+                                    No purchase orders were found.
                                 </td>
-
-
-
                             </tr>
-                            
-
-
-
-
-
 
                         {% endfor %}
 
-
-
-
-
                     </tbody>
-
-
-
-
 
                 </table>
 
@@ -3041,7 +3104,7 @@
 
                  TABLE FOOTER
 
-            ====================================== -->
+            \====================================== -->
 
 
 
@@ -3109,7 +3172,39 @@
 
 
 
-        document.addEventListener(
+        function toggleDeliveryForm(poNumber) {
+    const form = document.getElementById(
+        "delivery-form-" + poNumber
+    );
+
+    if (!form) {
+        return;
+    }
+
+    form.classList.toggle("open");
+
+    if (form.classList.contains("open")) {
+        const dateInput = form.querySelector(".delivery-date-input");
+
+        if (dateInput && !dateInput.value) {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const day = String(now.getDate()).padStart(2, "0");
+            dateInput.value =
+                now.getFullYear() + "-" + month + "-" + day;
+        }
+
+        const firstEditableQty = form.querySelector(
+            'input[name^="qty_"]:not([disabled])'
+        );
+
+        if (firstEditableQty) {
+            firstEditableQty.focus();
+        }
+    }
+}
+
+document.addEventListener(
 
 
 
@@ -3127,7 +3222,7 @@
 
                    ELEMENTS
 
-                ====================================== */
+                \====================================== */
 
 
 
@@ -3183,7 +3278,7 @@
 
                         document.querySelectorAll(
 
-                            ".overdue-row[data-url]"
+                            ".po-row"
 
                         )
 
@@ -3211,7 +3306,7 @@
 
                    SEARCH + STATUS FILTER
 
-                ====================================== */
+                \====================================== */
 
 
 
@@ -3373,185 +3468,80 @@
 
                 
                 /* =====================================
-                   EXPAND / COLLAPSE ALL PURCHASE ORDERS
+                   EXPAND / COLLAPSE PURCHASE ORDERS
                 ====================================== */
 
-                rows.forEach(
-                    function (row) {
-                        function togglePurchaseOrder() {
-                            const poNumber = row.dataset.po;
-                            const detailRow =
-                                document.querySelector(
-                                    '.po-detail-row[data-detail-for="' +
-                                    poNumber +
-                                    '"]'
-                                );
+                rows.forEach(function (row) {
 
-                            if (!detailRow) {
+                    function togglePurchaseOrder() {
+
+                        const poNumber = row.dataset.po;
+
+                        const detailRow = document.querySelector(
+                            '.po-detail-row[data-detail-for="' +
+                            poNumber +
+                            '"]'
+                        );
+
+                        if (!detailRow) {
+                            return;
+                        }
+
+                        const shouldOpen =
+                            !detailRow.classList.contains("open");
+
+                        detailRow.classList.toggle(
+                            "open",
+                            shouldOpen
+                        );
+
+                        row.classList.toggle(
+                            "expanded",
+                            shouldOpen
+                        );
+                    }
+
+                    row.addEventListener(
+                        "click",
+                        function (event) {
+
+                            if (
+                                event.target.closest(
+                                    "a, button, input, select"
+                                )
+                            ) {
                                 return;
                             }
 
-                            const isOpen =
-                                detailRow.classList.contains("open");
-
-                            detailRow.classList.toggle("open", !isOpen);
-                            row.classList.toggle("expanded", !isOpen);
+                            togglePurchaseOrder();
                         }
+                    );
 
-                        row.addEventListener("click", togglePurchaseOrder);
+                    row.addEventListener(
+                        "keydown",
+                        function (event) {
 
-                        row.addEventListener(
-                            "keydown",
-                            function (event) {
-                                if (event.key === "Enter" || event.key === " ") {
-                                    event.preventDefault();
-                                    togglePurchaseOrder();
-                                }
+                            if (
+                                event.key === "Enter" ||
+                                event.key === " "
+                            ) {
+                                event.preventDefault();
+                                togglePurchaseOrder();
                             }
-                        );
-                    }
-                );
+                        }
+                    );
+                });
 
 
-/* =====================================
-
-                   OPEN PO
-
+                /* =====================================
+                   EVENT LISTENERS
                 ====================================== */
-
-
-
-                clickableRows.forEach(
-
-
-
-                    function (row) {
-
-
-
-
-
-                        function openPurchaseOrder() {
-
-
-
-
-
-                            const target =
-
-                                row.dataset.url;
-
-
-
-
-
-                            if (target) {
-
-
-
-                                window.location.href =
-
-                                    target;
-
-
-
-                            }
-
-
-
-
-
-                        }
-
-
-
-
-
-                        row.addEventListener(
-
-
-
-                            "click",
-
-
-
-                            openPurchaseOrder
-
-
-
-                        );
-
-
-
-
-
-                        row.addEventListener(
-
-
-
-                            "keydown",
-
-
-
-                            function (event) {
-
-
-
-
-
-                                if (
-
-
-
-                                    event.key === "Enter" ||
-
-                                    event.key === " "
-
-
-
-                                ) {
-
-
-
-                                    event.preventDefault();
-
-
-
-                                    openPurchaseOrder();
-
-
-
-                                }
-
-
-
-
-
-                            }
-
-
-
-                        );
-
-
-
-
-
-                    }
-
-
-
-                );
-
-
-
-
 
                 /* =====================================
 
                    EVENT LISTENERS
 
-                ====================================== */
+                \====================================== */
 
 
 

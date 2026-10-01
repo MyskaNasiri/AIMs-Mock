@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,108 @@
     <title>{{ project.name }} | AIMS</title>
 
     <style>
+
+        /* ===== GLOBAL AIMS SHELL ===== */
+        .topbar {
+            height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            background: #fff;
+            border-bottom: 1px solid #e2e7e4;
+        }
+        .brand-area,.header-actions,.audubon-brand { display:flex; align-items:center; }
+        .brand-area { gap:14px; }
+        .audubon-brand { gap:8px; }
+        .audubon-logo { width:32px; height:32px; object-fit:contain; }
+        .audubon-name { color:#26332e; font-size:20px; font-weight:700; }
+        .aims-title { color:#176b53; font-size:21px; font-weight:700; }
+        .header-divider { width:1px; height:28px; background:#dfe5e2; }
+        .header-divider.small { height:25px; }
+        .workspace-selector {
+            min-width:180px; height:42px; padding:0 14px;
+            border:1px solid #d7dfdb; border-radius:7px;
+            background:#fff; color:#26332e; font:700 13px Arial, sans-serif;
+        }
+        .header-actions { gap:14px; }
+        .notification-button { border:0; background:transparent; color:#52605a; font-size:18px; cursor:pointer; }
+        .user-avatar {
+            width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+            border-radius:50%; background:#26765d; color:#fff; font-size:11px; font-weight:700;
+        }
+        .user-info { display:flex; flex-direction:column; gap:2px; }
+        .user-info strong { color:#26332e; font-size:12px; }
+        .user-info span { color:#77817d; font-size:10px; }
+
+        .app-layout { min-height:calc(100vh - 78px); display:flex; }
+        .sidebar {
+            position:relative; width:244px; flex:0 0 244px;
+            display:flex; flex-direction:column; justify-content:space-between;
+            background:#fff; border-right:1px solid #e2e7e4;
+        }
+        .sidebar-navigation { padding:30px 16px 20px; }
+        .nav-item {
+            width:100%; min-height:48px; display:flex; align-items:center; gap:14px;
+            padding:0 16px; margin-bottom:7px; border:0; border-radius:10px;
+            background:transparent; color:#27332f; font:600 14px Arial,sans-serif;
+            text-align:left; text-decoration:none; cursor:pointer;
+        }
+        .nav-item:hover { background:#f0f3f1; }
+        .nav-item.active { background:#216b57; color:#fff; }
+        .nav-icon { width:20px; flex:0 0 20px; text-align:center; font-size:16px; }
+        .project-nav-wrapper { position:relative; }
+        .project-nav-button { justify-content:flex-start; }
+        .nav-label { flex:1; }
+        .flyout-arrow { margin-left:auto; font-size:20px; line-height:1; }
+
+        .project-flyout {
+            position:absolute; left:calc(100% + 8px); top:0; z-index:1000;
+            width:350px; padding:16px; display:none; background:#fff;
+            border:1px solid #dfe6e2; border-radius:10px;
+            box-shadow:0 14px 30px rgba(30,50,42,.14);
+        }
+        .project-flyout.open { display:block; }
+        .project-flyout-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+        .flyout-eyebrow { color:#28745e; font-size:9px; font-weight:800; letter-spacing:1px; }
+        .project-flyout-header h3 { margin:3px 0 0; color:#27332f; font-size:16px; }
+        .project-count { padding:5px 8px; border-radius:12px; background:#e8f3ef; color:#24745d; font-size:9px; font-weight:700; }
+        .flyout-search { display:flex; align-items:center; gap:7px; padding:8px 10px; margin-bottom:10px; border:1px solid #dfe6e2; border-radius:6px; }
+        .flyout-search input { width:100%; border:0; outline:0; font:11px Arial,sans-serif; }
+        .flyout-project-list { max-height:380px; overflow-y:auto; }
+        .flyout-project { display:flex; align-items:center; gap:10px; padding:9px; border-radius:7px; }
+        .flyout-project:hover { background:#f3f7f5; }
+        .flyout-project-icon {
+            width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+            border-radius:7px; background:#e6f2ed; color:#216b57; font-size:9px; font-weight:800;
+        }
+        .flyout-project-info { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
+        .flyout-project-info strong { color:#28352f; font-size:11px; }
+        .flyout-project-info span { color:#7b8580; font-size:9px; }
+        .flyout-project-status { color:#26765d; font-size:9px; font-weight:700; }
+        .flyout-project-arrow { color:#26765d; font-size:15px; }
+        .flyout-no-results { display:none; padding:16px; color:#7a8580; font-size:11px; text-align:center; }
+
+        .sidebar-footer { padding:20px 22px 25px; border-top:1px solid #edf0ef; }
+        .sidebar-brand { display:flex; align-items:center; gap:7px; color:#27332f; font-size:13px; font-weight:700; }
+        .sidebar-logo { width:25px; height:25px; object-fit:contain; }
+        .mock-label { display:block; margin-top:7px; color:#7a8580; font-size:10px; }
+        .main-content { min-width:0; flex:1; }
+
+        /* The project page content now lives inside the global shell. */
+        .page {
+            max-width:none;
+            margin:0;
+            padding:34px 38px 60px;
+        }
+
+        @media (max-width:850px) {
+            .sidebar { width:200px; flex-basis:200px; }
+            .topbar { padding:0 18px; }
+            .user-info { display:none; }
+            .workspace-selector { min-width:140px; }
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -407,6 +510,125 @@
 
 <body>
 
+<header class="topbar">
+    <div class="brand-area">
+        <div class="audubon-brand">
+            <img src="{{ url_for('static', filename='images/images.png') }}" alt="Audubon Logo" class="audubon-logo">
+            <span class="audubon-name">audubon</span>
+        </div>
+        <div class="header-divider"></div>
+        <span class="aims-title">AIMS</span>
+        <div class="header-divider"></div>
+        <select class="workspace-selector" onchange="changeWorkspace(this.value)">
+            <option value="/tech-center" selected>Tech Center</option>
+        </select>
+    </div>
+
+    <div class="header-actions">
+        <button class="notification-button" title="Notifications" aria-label="Notifications" type="button">◇</button>
+        <div class="header-divider small"></div>
+        <div class="user-avatar">MN</div>
+        <div class="user-info">
+            <strong>Myska Nasiri</strong>
+            <span>Tech Center</span>
+        </div>
+    </div>
+</header>
+
+<div class="app-layout">
+
+<aside class="sidebar">
+    <div class="sidebar-navigation">
+
+        <a href="{{ url_for('tech_center_home') }}"
+           class="nav-item {% if request.endpoint == 'tech_center_home' %}active{% endif %}">
+            <span class="nav-icon">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <a href="{{ url_for('materials') }}"
+           class="nav-item {% if request.endpoint == 'materials' %}active{% endif %}">
+            <span class="nav-icon">▦</span>
+            <span>Materials Management</span>
+        </a>
+
+        <div class="project-nav-wrapper"
+             id="projectNavWrapper"
+             onmouseenter="openProjectFlyout()"
+             onmouseleave="scheduleProjectFlyoutClose()">
+
+            <button type="button"
+                    class="nav-item project-nav-button active"
+                    onclick="toggleProjectFlyout(event)">
+                <span class="nav-icon">▣</span>
+                <span class="nav-label">Projects</span>
+                <span class="flyout-arrow">›</span>
+            </button>
+
+            <div class="project-flyout"
+                 id="projectFlyout"
+                 onmouseenter="cancelProjectFlyoutClose()"
+                 onmouseleave="scheduleProjectFlyoutClose()">
+
+                <div class="project-flyout-header">
+                    <div>
+                        <span class="flyout-eyebrow">TECH CENTER</span>
+                        <h3>Projects</h3>
+                    </div>
+                    <span class="project-count">{{ projects_menu|length }} Projects</span>
+                </div>
+
+                <div class="flyout-search">
+                    <span class="flyout-search-icon">⌕</span>
+                    <input type="text"
+                           id="flyoutProjectSearch"
+                           placeholder="Search projects..."
+                           oninput="filterFlyoutProjects()"
+                           onclick="event.stopPropagation()">
+                </div>
+
+                <div class="flyout-project-list">
+                    {% for slug, project_item in projects_menu.items() %}
+                    <a href="{{ url_for('project_dashboard', project_slug=slug) }}"
+                       class="flyout-project"
+                       data-project="{{ project_item.name }} {{ project_item.short_name }} {{ project_item.number }} {{ project_item.client }} {{ project_item.pm }}">
+                        <div class="flyout-project-icon">{{ project_item.initials }}</div>
+                        <div class="flyout-project-info">
+                            <strong>{{ project_item.short_name }}</strong>
+                            <span>{{ project_item.number }}</span>
+                        </div>
+                        <span class="flyout-project-status">{{ project_item.status }}</span>
+                        <span class="flyout-project-arrow">→</span>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <div class="flyout-no-results" id="flyoutNoResults">
+                    No matching projects found.
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('reporting') }}"
+           class="nav-item {% if request.endpoint == 'reporting' %}active{% endif %}">
+            <span class="nav-icon">▤</span>
+            <span>Reporting</span>
+        </a>
+
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='images/images.png') }}"
+                 alt="Audubon Logo"
+                 class="sidebar-logo">
+            <span>audubon</span>
+        </div>
+        <span class="mock-label">AIMS Tech Center Mock</span>
+    </div>
+</aside>
+
+<main class="main-content">
 <div class="page">
 
     <!-- =====================================================
@@ -472,10 +694,9 @@
 
     </nav>
 
+
     <!-- =====================================================
          PROJECT SUMMARY
-         Uses only data already supplied by the existing
-         project_dashboard route: project, schedule, receipts.
     ====================================================== -->
 
     <section class="section">
@@ -483,50 +704,47 @@
         <div class="section-heading">
             <div>
                 <h2>Project Summary</h2>
-                <p>Key information for the project manager at a glance.</p>
+                <p>Current project activity based on the information available in AIMS.</p>
             </div>
         </div>
+
+        {% set schedule_count = schedule|length %}
+        {% set material_lines = receipts|length %}
 
         {% set received_qty = namespace(value=0) %}
         {% set remaining_qty = namespace(value=0) %}
         {% set staged_qty = namespace(value=0) %}
-        {% set ticket_numbers = [] %}
 
         {% for receipt in receipts %}
             {% set received_qty.value = received_qty.value + (receipt.get('receipt_qty', 0) or 0) %}
             {% set remaining_qty.value = remaining_qty.value + (receipt.get('remaining_to_stage', 0) or 0) %}
             {% set staged_qty.value = staged_qty.value + (receipt.get('staged_qty', 0) or 0) %}
-
-            {% set ticket = receipt.get('receipt_nbr', receipt.get('ticket_number', '')) %}
-            {% if ticket and ticket not in ticket_numbers %}
-                {% set _ = ticket_numbers.append(ticket) %}
-            {% endif %}
         {% endfor %}
 
         <div class="summary-grid">
 
             <div class="summary-card">
-                <div class="summary-label">Project Packages</div>
-                <div class="summary-value">{{ schedule|length }}</div>
-                <div class="summary-note">Packages currently tracked in the project schedule</div>
+                <div class="summary-label">Schedule Milestones</div>
+                <div class="summary-value">{{ schedule_count }}</div>
+                <div class="summary-note">Milestones currently listed for this project</div>
             </div>
 
             <div class="summary-card">
-                <div class="summary-label">Delivery Records</div>
-                <div class="summary-value">{{ ticket_numbers|length }}</div>
-                <div class="summary-note">Receiving records currently associated with this project</div>
+                <div class="summary-label">Material Lines</div>
+                <div class="summary-value">{{ material_lines }}</div>
+                <div class="summary-note">Receipt lines associated with this project</div>
             </div>
 
             <div class="summary-card">
                 <div class="summary-label">Received Quantity</div>
                 <div class="summary-value">{{ received_qty.value }}</div>
-                <div class="summary-note">Quantity recorded through receiving</div>
+                <div class="summary-note">Quantity recorded as received</div>
             </div>
 
             <div class="summary-card">
                 <div class="summary-label">Remaining to Stage</div>
                 <div class="summary-value">{{ remaining_qty.value }}</div>
-                <div class="summary-note">Received material still awaiting staging</div>
+                <div class="summary-note">Received material still needing staging</div>
             </div>
 
         </div>
@@ -535,120 +753,7 @@
 
 
     <!-- =====================================================
-         PROJECT SCHEDULE
-    ====================================================== -->
-
-    <section class="section">
-
-        <div class="section-heading">
-            <div>
-                <h2>Project Schedule</h2>
-                <p>Package milestones, completion, and current schedule status.</p>
-            </div>
-        </div>
-
-        {% if schedule %}
-
-            {% for package in schedule %}
-
-                <div class="panel schedule-package">
-
-                    <div class="package-header">
-
-                        <div>
-                            <div class="package-name">
-                                {{ package.get('package', 'Project Package') }}
-                            </div>
-
-                            <div class="package-meta">
-                                {{ package.get('project_number', '—') }}
-                                {% if package.get('pm') %}
-                                    · PM: {{ package.get('pm') }}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {% if package.get('milestones') %}
-
-                        <div class="milestone-list">
-
-                            {% for milestone in package.get('milestones', []) %}
-
-                                <div class="milestone-row">
-
-                                    <div class="milestone-main">
-
-                                        <div class="milestone-name">
-                                            {{ milestone.get('description', 'Milestone') }}
-                                        </div>
-
-                                        <div class="milestone-date">
-                                            {{ milestone.get('date', '—') }}
-                                        </div>
-
-                                    </div>
-
-                                    <div class="milestone-progress">
-
-                                        <div class="progress-value">
-                                            {{ milestone.get('percent', 0) }}%
-                                        </div>
-
-                                        <div class="progress-track">
-                                            <div
-                                                class="progress-fill"
-                                                style="width: {{ milestone.get('percent', 0) }}%;"
-                                            ></div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="milestone-status">
-                                        {{ milestone.get('status', '—') }}
-                                    </div>
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="empty-state">
-                            No milestones are currently listed for this package.
-                        </div>
-
-                    {% endif %}
-
-                    {% if package.get('risk') %}
-                        <div class="package-risk">
-                            <strong>Risk / Note:</strong>
-                            {{ package.get('risk') }}
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            {% endfor %}
-
-        {% else %}
-
-            <div class="panel">
-                <div class="empty-state">
-                    No project schedule information is currently available.
-                </div>
-            </div>
-
-        {% endif %}
-
-    </section>
-
-
-    <!-- =====================================================
-         RECEIVING + STAGING
+         SCHEDULE + MATERIAL STATUS
     ====================================================== -->
 
     <section class="section">
@@ -659,55 +764,50 @@
 
                 <div class="section-heading">
                     <div>
-                        <h2>Receiving &amp; Staging</h2>
-                        <p>Current material movement based on the project's receiving records.</p>
+                        <h2>Upcoming Schedule</h2>
+                        <p>Current milestones associated with this project.</p>
                     </div>
                 </div>
 
-                {% set received_records = namespace(value=0) %}
-                {% set partial_records = namespace(value=0) %}
-                {% set awaiting_records = namespace(value=0) %}
-                {% set staged_records = namespace(value=0) %}
+                {% if schedule %}
 
-                {% for receipt in receipts %}
+                    {% for item in schedule[:5] %}
 
-                    {% set status = (receipt.get('staging_status', '') or '')|lower %}
+                        <div class="schedule-row">
 
-                    {% if 'complete' in status or 'staged' in status %}
-                        {% set staged_records.value = staged_records.value + 1 %}
-                    {% elif 'partial' in status %}
-                        {% set partial_records.value = partial_records.value + 1 %}
-                    {% elif 'await' in status or 'pending' in status %}
-                        {% set awaiting_records.value = awaiting_records.value + 1 %}
-                    {% else %}
-                        {% set received_records.value = received_records.value + 1 %}
-                    {% endif %}
+                            <div class="schedule-date">
+                                <div class="schedule-date-day">
+                                    {{ item.get('day', item.get('date', '—')) }}
+                                </div>
 
-                {% endfor %}
+                                <div class="schedule-date-month">
+                                    {{ item.get('month', '') }}
+                                </div>
+                            </div>
 
-                <div class="status-list">
+                            <div class="schedule-info">
 
-                    <div class="status-item">
-                        <span class="status-name">Staged Records</span>
-                        <span class="status-count">{{ staged_records.value }}</span>
+                                <div class="schedule-name">
+                                    {{ item.get('name', item.get('milestone', item.get('title', 'Schedule Item'))) }}
+                                </div>
+
+                                <div class="schedule-detail">
+                                    {{ item.get('description', item.get('detail', item.get('type', 'Project milestone'))) }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+                        No schedule milestones are currently listed for this project.
                     </div>
 
-                    <div class="status-item">
-                        <span class="status-name">Partially Staged</span>
-                        <span class="status-count">{{ partial_records.value }}</span>
-                    </div>
-
-                    <div class="status-item">
-                        <span class="status-name">Awaiting / Pending</span>
-                        <span class="status-count">{{ awaiting_records.value }}</span>
-                    </div>
-
-                    <div class="status-item">
-                        <span class="status-name">Received / Recorded</span>
-                        <span class="status-count">{{ received_records.value }}</span>
-                    </div>
-
-                </div>
+                {% endif %}
 
             </div>
 
@@ -716,53 +816,52 @@
 
                 <div class="section-heading">
                     <div>
-                        <h2>Project Information</h2>
-                        <p>Basic project ownership and identification.</p>
+                        <h2>Material Status</h2>
+                        <p>Current receiving and staging position.</p>
                     </div>
                 </div>
 
-                <div class="details-grid">
+                {% set received_lines = namespace(value=0) %}
+                {% set partial_lines = namespace(value=0) %}
+                {% set awaiting_lines = namespace(value=0) %}
+                {% set staged_lines = namespace(value=0) %}
 
-                    <div class="detail">
-                        <div class="detail-label">Project</div>
-                        <div class="detail-value">
-                            {{ project.get('name', '—') }}
-                        </div>
+                {% for receipt in receipts %}
+
+                    {% set status = (receipt.get('staging_status', '') or '')|lower %}
+
+                    {% if 'complete' in status or 'staged' in status %}
+                        {% set staged_lines.value = staged_lines.value + 1 %}
+                    {% elif 'partial' in status %}
+                        {% set partial_lines.value = partial_lines.value + 1 %}
+                    {% elif 'await' in status or 'pending' in status %}
+                        {% set awaiting_lines.value = awaiting_lines.value + 1 %}
+                    {% else %}
+                        {% set received_lines.value = received_lines.value + 1 %}
+                    {% endif %}
+
+                {% endfor %}
+
+                <div class="status-list">
+
+                    <div class="status-item">
+                        <span class="status-name">Received / Recorded</span>
+                        <span class="status-count">{{ received_lines.value }}</span>
                     </div>
 
-                    <div class="detail">
-                        <div class="detail-label">Client</div>
-                        <div class="detail-value">
-                            {{ project.get('client', '—') }}
-                        </div>
+                    <div class="status-item">
+                        <span class="status-name">Partially Staged</span>
+                        <span class="status-count">{{ partial_lines.value }}</span>
                     </div>
 
-                    <div class="detail">
-                        <div class="detail-label">Project Manager</div>
-                        <div class="detail-value">
-                            {{ project.get('pm', '—') }}
-                        </div>
+                    <div class="status-item">
+                        <span class="status-name">Awaiting / Pending</span>
+                        <span class="status-count">{{ awaiting_lines.value }}</span>
                     </div>
 
-                    <div class="detail">
-                        <div class="detail-label">Status</div>
-                        <div class="detail-value">
-                            {{ project.get('status', '—') }}
-                        </div>
-                    </div>
-
-                    <div class="detail">
-                        <div class="detail-label">Package Count</div>
-                        <div class="detail-value">
-                            {{ schedule|length }}
-                        </div>
-                    </div>
-
-                    <div class="detail">
-                        <div class="detail-label">Tracked Receiving</div>
-                        <div class="detail-value">
-                            {{ ticket_numbers|length }} record{% if ticket_numbers|length != 1 %}s{% endif %}
-                        </div>
+                    <div class="status-item">
+                        <span class="status-name">Staged</span>
+                        <span class="status-count">{{ staged_lines.value }}</span>
                     </div>
 
                 </div>
@@ -775,7 +874,53 @@
 
 
     <!-- =====================================================
-         PROJECT WORKSPACES
+         PROJECT DETAILS
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="panel">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Project Details</h2>
+                    <p>Basic information for the selected project.</p>
+                </div>
+            </div>
+
+            <div class="details-grid">
+
+                <div class="detail">
+                    <div class="detail-label">Project Number</div>
+                    <div class="detail-value">{{ project.number }}</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">{{ project.status }}</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-label">Project</div>
+                    <div class="detail-value">{{ project.name }}</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-label">Project Manager</div>
+                    <div class="detail-value">
+                        {{ project.manager|default(project.project_manager, true)|default('—', true) }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WORKSPACE LINKS
     ====================================================== -->
 
     <section class="section">
@@ -806,7 +951,7 @@
             >
                 <div class="workspace-title">Project Schedule</div>
                 <div class="workspace-description">
-                    Review package milestones, completion percentages, dates, and schedule risks.
+                    Review the milestones and schedule information associated with this project.
                 </div>
                 <div class="workspace-link">Open schedule →</div>
             </a>
@@ -817,7 +962,7 @@
             >
                 <div class="workspace-title">Materials</div>
                 <div class="workspace-description">
-                    Review material status, receiving records, staging, and remaining quantities.
+                    Review received material, staging status, locations, and remaining quantities.
                 </div>
                 <div class="workspace-link">Open materials →</div>
             </a>
@@ -826,116 +971,59 @@
 
     </section>
 
-
 </div>
 
-<style>
-    .schedule-package {
-        margin-bottom: 14px;
-    }
 
-    .schedule-package:last-child {
-        margin-bottom: 0;
-    }
+<script>
+let projectFlyoutTimer;
 
-    .package-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 13px;
-        border-bottom: 1px solid #edf0ef;
-    }
+function changeWorkspace(value) {
+    if (value) window.location.href = value;
+}
 
-    .package-name {
-        color: #25313a;
-        font-size: 15px;
-        font-weight: 700;
-    }
+function openProjectFlyout() {
+    clearTimeout(projectFlyoutTimer);
+    const flyout = document.getElementById("projectFlyout");
+    if (flyout) flyout.classList.add("open");
+}
 
-    .package-meta {
-        margin-top: 4px;
-        color: #7a858b;
-        font-size: 11px;
-    }
+function closeProjectFlyout() {
+    const flyout = document.getElementById("projectFlyout");
+    if (flyout) flyout.classList.remove("open");
+}
 
-    .milestone-list {
-        margin-top: 4px;
-    }
+function scheduleProjectFlyoutClose() {
+    clearTimeout(projectFlyoutTimer);
+    projectFlyoutTimer = setTimeout(closeProjectFlyout, 300);
+}
 
-    .milestone-row {
-        display: grid;
-        grid-template-columns: minmax(180px, 1.5fr) minmax(150px, 1fr) 105px;
-        gap: 18px;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #edf0ef;
-    }
+function cancelProjectFlyoutClose() {
+    clearTimeout(projectFlyoutTimer);
+}
 
-    .milestone-row:last-child {
-        border-bottom: 0;
-    }
+function toggleProjectFlyout(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const flyout = document.getElementById("projectFlyout");
+    if (flyout) flyout.classList.toggle("open");
+}
 
-    .milestone-name {
-        color: #35424a;
-        font-size: 12px;
-        font-weight: 700;
-    }
+function filterFlyoutProjects() {
+    const input = document.getElementById("flyoutProjectSearch");
+    const noResults = document.getElementById("flyoutNoResults");
+    const query = (input ? input.value : "").toLowerCase().trim();
+    let visible = 0;
 
-    .milestone-date {
-        margin-top: 4px;
-        color: #7a858b;
-        font-size: 10px;
-    }
+    document.querySelectorAll(".flyout-project-list .flyout-project").forEach(function(item) {
+        const matches = (item.dataset.project || "").toLowerCase().includes(query);
+        item.style.display = matches ? "flex" : "none";
+        if (matches) visible++;
+    });
 
-    .progress-value {
-        margin-bottom: 5px;
-        color: #52616a;
-        font-size: 10px;
-        font-weight: 700;
-    }
-
-    .progress-track {
-        width: 100%;
-        height: 6px;
-        overflow: hidden;
-        background: #e9eeec;
-        border-radius: 6px;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: #24745d;
-        border-radius: 6px;
-    }
-
-    .milestone-status {
-        color: #24745d;
-        font-size: 10px;
-        font-weight: 700;
-        text-align: right;
-    }
-
-    .package-risk {
-        margin-top: 12px;
-        padding: 10px 12px;
-        border-radius: 6px;
-        background: #f7f9f8;
-        color: #66737b;
-        font-size: 11px;
-        line-height: 1.5;
-    }
-
-    @media (max-width: 800px) {
-        .milestone-row {
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-
-        .milestone-status {
-            text-align: left;
-        }
-    }
-</style>
+    if (noResults) noResults.style.display = visible ? "none" : "block";
+}
+</script>
 
 </body>
 </html>
+```
